@@ -54,6 +54,13 @@ export default function EditCategoryFoodView({ navigation }) {
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
+  function editCategories () {
+    // addDoc(collection(db, "categories"), {
+    //   danhmuc: danhmuc,
+    // }); 
+    navigation.goBack('EditMenuView');
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 0.85 }}>
@@ -83,8 +90,8 @@ export default function EditCategoryFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={onChangeText}
-                  value={text}
+                  onChangeText={onDanhMuc}
+                  value={danhmuc}
                   
                 ></TextInput>
               </View>
@@ -158,7 +165,7 @@ export default function EditCategoryFoodView({ navigation }) {
           }}
         >
           <View style={{marginLeft: 10, marginRight: 10}}>
-            <TouchableOpacity style={{
+            <TouchableOpacity onPress={editCategories} style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
                 width: "97%",
