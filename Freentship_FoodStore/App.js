@@ -19,8 +19,8 @@ export default function App() {
     
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="EditFoodView" component={EditFoodView} />
-        
+        <Stack.Screen name="EditMenuView" component={EditMenuView} />
+        <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
       </Stack.Navigator>
     </NavigationContainer>
 

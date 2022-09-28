@@ -50,7 +50,7 @@ export default function EditCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [text, onChangeText] = React.useState("Tra sua");
+  const [danhmuc, onDanhMuc] = React.useState("Tra sua");
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 

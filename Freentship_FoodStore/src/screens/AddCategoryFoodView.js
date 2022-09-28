@@ -13,7 +13,8 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
-
+import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { db } from '../services/config'
 
 const DATA = {
   id: 1,
@@ -35,7 +36,6 @@ const DATA = {
 };
 // 
 
-
 // Navigation
 export default function AddCategoryFoodView({ navigation }) {
   React.useLayoutEffect(() => {
@@ -56,6 +56,12 @@ export default function AddCategoryFoodView({ navigation }) {
 
   const [danhmuc, onDanhMuc] = React.useState("");
   
+  function create () {
+    addDoc(collection(db, "categories"), {
+      danhmuc: danhmuc,
+    }); 
+    navigation.goBack('EditMenuView');
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -87,7 +93,7 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={"Nhập tên danh mục"}
-                  onChangeText={onDanhMuc}
+                  onChangeText={(danhmuc) => {onDanhMuc(danhmuc)}}
                   value={danhmuc}
                 ></TextInput>
               </View>
@@ -114,7 +120,7 @@ export default function AddCategoryFoodView({ navigation }) {
           }}
         >
           <View style={{marginLeft: 10, marginRight: 10}}>
-            <TouchableOpacity style={{
+            <TouchableOpacity onPress={create} style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
                 width: "98%",
