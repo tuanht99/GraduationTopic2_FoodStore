@@ -57,6 +57,13 @@ export default function EditFoodView({ navigation }) {
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
+  function editFood () {
+    // addDoc(collection(db, "categories"), {
+    //   danhmuc: danhmuc,
+    // }); 
+    navigation.goBack('EditMenuView');
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 0.85 }}>
@@ -301,7 +308,7 @@ export default function EditFoodView({ navigation }) {
           }}
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
-            <TouchableOpacity
+            <TouchableOpacity onPress={editFood}
               style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
@@ -311,7 +318,7 @@ export default function EditFoodView({ navigation }) {
                 justifyContent: "center",
               }}
             >
-              <Text style={{color: "#fff",}}>Thêm</Text>
+              <Text style={{color: "#fff",}}>Lưu</Text>
             </TouchableOpacity>
           </View>
         </View>

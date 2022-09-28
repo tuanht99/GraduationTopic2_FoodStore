@@ -153,6 +153,7 @@ export default function EditMenuView({ navigation }) {
               {/* // */}
               <View style={{ marginRight: 10, paddingRight: "20%" }}>
                 <TouchableOpacity
+                  onPress={() => navigation.navigate("EditCategoryFoodView")}
                   style={{
                     backgroundColor: "#fff",
                     borderRadius: 5,
@@ -184,6 +185,7 @@ export default function EditMenuView({ navigation }) {
               {/* // */}
               <View style={{ marginRight: 10 }}>
                 <TouchableOpacity
+                  onPress={() => navigation.navigate("AddFoodView")}
                   style={{
                     backgroundColor: "#fff",
                     borderRadius: 5,
@@ -228,7 +230,7 @@ export default function EditMenuView({ navigation }) {
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
             {/* shop */}
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("EditFoodView")}>
               <View
                 style={{
                   flexDirection: "row",
