@@ -55,6 +55,12 @@ export default function AddCategoryFoodView({ navigation }) {
   const [giaban, onGiaBan] = React.useState("");
   const [mota, onMoTa] = React.useState("");
 
+  function addFood () {
+    // addDoc(collection(db, "categories"), {
+    //   danhmuc: danhmuc,
+    // }); 
+    navigation.goBack('EditMenuView');
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -253,7 +259,9 @@ export default function AddCategoryFoodView({ navigation }) {
           }}
         >
           <View style={{marginLeft: 10, marginRight: 10}}>
-            <TouchableOpacity style={{
+            <TouchableOpacity 
+                onPress={addFood}
+                style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
                 width: "97%",
