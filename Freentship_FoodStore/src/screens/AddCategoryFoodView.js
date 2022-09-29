@@ -54,11 +54,12 @@ export default function AddCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [danhmuc, onDanhMuc] = React.useState("");
+  const [categoryId] = React.useState("");
+  const [categoryName, setCategoryName] = React.useState("");
   
   function create () {
     addDoc(collection(db, "categories"), {
-      danhmuc: danhmuc,
+      categoryName: categoryName,
     }); 
     navigation.goBack('EditMenuView');
   }
@@ -93,8 +94,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={"Nhập tên danh mục"}
-                  onChangeText={(danhmuc) => {onDanhMuc(danhmuc)}}
-                  value={danhmuc}
+                  onChangeText={(categoryName) => {setCategoryName(categoryName)}}
+                  value={categoryName}
                 ></TextInput>
               </View>
             </View>
