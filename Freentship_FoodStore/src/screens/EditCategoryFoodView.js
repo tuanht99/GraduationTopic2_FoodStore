@@ -12,6 +12,8 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
+import { doc, setDoc, addDoc, collection, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from '../services/config'
 
 const DATA = {
   id: 1,
@@ -50,15 +52,21 @@ export default function EditCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [danhmuc, onDanhMuc] = React.useState("Tra sua");
+  const [categoryId] = React.useState("");
+  const [categoryName, setCategoryName] = React.useState("");
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   function editCategories () {
-    // addDoc(collection(db, "categories"), {
-    //   danhmuc: danhmuc,
-    // }); 
+    updateDoc(doc(db, "categories", "Q26nrHy7qKuwI6CXQDmt"), {
+      categoryName: categoryName,
+    }); 
     navigation.goBack('EditMenuView');
+  }
+
+  function deleteCategories () {
+    deleteDoc(doc(db, "categories", "Q26nrHy7qKuwI6CXQDmt"));
+    navigation.goBack('EditMenuView'); 
   }
 
   return (
@@ -90,8 +98,8 @@ export default function EditCategoryFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={onDanhMuc}
-                  value={danhmuc}
+                  onChangeText={setCategoryName}
+                  value={categoryName}
                   
                 ></TextInput>
               </View>
@@ -135,7 +143,7 @@ export default function EditCategoryFoodView({ navigation }) {
 
         {/* Xoa danh muc */}
         <View style={{marginLeft: 10, marginRight: 10}}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={deleteCategories}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{paddingRight: 10}}>
             <AntDesign name="delete" size={24} color="black" />
