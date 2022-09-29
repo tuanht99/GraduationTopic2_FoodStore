@@ -12,6 +12,9 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
+import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { db } from '../services/config'
+
 
 const DATA = {
   id: 1,
@@ -50,15 +53,19 @@ export default function AddCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [danhmuc, onDanhMuc] = React.useState("");
-  const [monan, onMonAn] = React.useState("");
-  const [giaban, onGiaBan] = React.useState("");
-  const [mota, onMoTa] = React.useState("");
+  const [categoryId] = React.useState("");
+  const [categoryName, setCategoryName] = React.useState("");
+  const [foodName, setFoodName] = React.useState("");
+  const [foodPrice, setFoodPrice] = React.useState("");
+  const [foodDescription, setFoodDescription] = React.useState("");
 
   function addFood () {
-    // addDoc(collection(db, "categories"), {
-    //   danhmuc: danhmuc,
-    // }); 
+      addDoc(collection(db, "foods"), {
+        categoryName: "Kem",
+        foodName:foodName,
+        foodPrice:foodPrice,
+        foodDescription: foodDescription,
+      }); 
     navigation.goBack('EditMenuView');
   }
 
@@ -129,8 +136,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={'Trà sữa'}
-                  onChangeText={onDanhMuc}
-                  value={danhmuc}
+                  onChangeText={setCategoryName}
+                  value={categoryName}
                 ></TextInput>
               </View>
             </View>
@@ -164,8 +171,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={'bún chả cá'}
-                  onChangeText={onMonAn}
-                  value={monan}
+                  onChangeText={setFoodName}
+                  value={foodName}
                 ></TextInput>
               </View>
             </View>
@@ -199,8 +206,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={'25.000'}
-                  onChangeText={onGiaBan}
-                  value={giaban}
+                  onChangeText={setFoodPrice}
+                  value={foodPrice}
                 ></TextInput>
               </View>
             </View>
@@ -234,8 +241,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={'thơm ngon'}
-                  onChangeText={onMoTa}
-                  value={onMoTa}
+                  onChangeText={setFoodDescription}
+                  value={foodDescription}
                 ></TextInput>
               </View>
             </View>
