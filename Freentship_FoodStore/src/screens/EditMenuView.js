@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   SafeAreaView,
@@ -10,6 +10,18 @@ import {
 
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+
+import {
+  doc,
+  setDoc,
+  addDoc,
+  collection,
+  editDoc,
+  QuerySnapshot,
+  Firestore,
+  item,
+} from "firebase/firestore";
+import { db } from "../services/config";
 
 const DATA = {
   id: 1,
@@ -30,25 +42,12 @@ const DATA = {
   txtDis: "Thông tin sản phẩm",
 };
 
-// dữ liệu flatList
-const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
-
-<View style={{ flex: 9, backgroundColor: "white" }}>
-    <FlatList
-    style={{ padding: 20 }}
-    data={DATA}
-    renderItem={renderItem}
-    keyExtractor={(item) => item.id}>
-
-    </FlatList>
-  
-</View>
-
-const renderItem = ({ item }) => <Item title={item.title} />;
+// function create () {
+//   editDoc(collection(db, "categories"), {
+//     categoryName: categoryName,
+//   });
+//   navigation.goBack('EditMenuView');
+// }
 
 // Navigation
 export default function EditMenuView({ navigation }) {
@@ -73,6 +72,26 @@ export default function EditMenuView({ navigation }) {
       },
     });
   }, [navigation]);
+
+  const [listCate, setListCate] = useState([]);
+  //const todoRef = db.collection("categories");
+  const todoRef = collection(db, "categories");
+
+  useEffect(async () => {
+    todoRef.onSnapshot((querySnapshot) => {
+      const listCate = [];
+      querySnapshot.forEach((doc) => {
+        const { category_Name } = doc.data();
+        listCate.push({
+          id: doc.id,
+          category_Name,
+        });
+      });
+    setListCate(listCate);
+    console.log(listCate);
+
+    });
+  }, []);
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -129,132 +148,148 @@ export default function EditMenuView({ navigation }) {
       <View style={{ paddingBottom: 10 }}></View>
 
       {/* danh mục cua cua hang */}
-      <View>
+      <View style={{ flex: 1 }}>
         {/* Danh muc */}
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "#fff",
-            paddingTop: 10,
-            paddingBottom: 10,
-            borderBottomWidth: 0.3,
-            borderBottomColor: "#808080",
-          }}
-        >
-          <View style={{ marginLeft: 10, marginRight: 10 }}>
+        <FlatList
+          style={{ height: "100%" }}
+          data={listCate}
+          numColumns={1}
+          renderItem={({ item }) => (
             <View>
-              <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
-                Trà sữa
-              </Text>
-            </View>
-
-            {/* 2 cai nut */}
-            <View style={{ flexDirection: "row" }}>
-              {/* // */}
-              <View style={{ marginRight: 10, paddingRight: "20%" }}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("EditCategoryFoodView")}
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: 5,
-                    width: "100%",
-                    height: 45,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderWidth: 1,
-                    borderColor: "#E94730",
-                  }}
-                >
-                  <View style={{ flexDirection: "row", margin: 10 }}>
-                    <View>
-                      <AntDesign name="edit" size={24} color="#E94730" />
-                    </View>
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingLeft: 5,
-                      }}
-                    >
-                      <Text style={{ color: "#E94730" }}>Chỉnh sửa</Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-
-              {/* // */}
-              <View style={{ marginRight: 10 }}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("AddFoodView")}
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: 5,
-                    width: "100%",
-                    height: 45,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderWidth: 1,
-                    borderColor: "#E94730",
-                  }}
-                >
-                  <View style={{ flexDirection: "row", margin: 10 }}>
-                    <View>
-                      <AntDesign name="plus" size={24} color="#E94730" />
-                    </View>
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingLeft: 5,
-                      }}
-                    >
-                      <Text style={{ color: "#E94730" }}>Thêm món ăn</Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* mon của danh muc */}
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "#fff",
-            paddingTop: 20,
-            paddingBottom: 20,
-            borderBottomWidth: 0.3,
-            borderBottomColor: "#808080",
-          }}
-        >
-          <View style={{ marginLeft: 10, marginRight: 10 }}>
-            {/* shop */}
-            <TouchableOpacity onPress={() => navigation.navigate("EditFoodView")}>
+              {/* Danh muc */}
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
+                  flex: 1,
+                  backgroundColor: "#fff",
+                  paddingTop: 10,
+                  paddingBottom: 10,
+                  borderBottomWidth: 0.3,
+                  borderBottomColor: "#808080",
                 }}
               >
-                <Image
-                  source={DATA.monAn1}
-                  style={{ width: 40, height: 40, borderRadius: 25 }}
-                />
+                <View style={{ marginLeft: 10, marginRight: 10 }}>
+                  <View>
+                    <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
+                      {/* {item.category_Name} */}
+                    </Text>
+                  </View>
 
-                <View style={{ paddingLeft: 10 }}>
-                  <Text
-                    numberOfLines={1}
-                    style={{ fontWeight: "bold", width: 180 }}
-                  >
-                    {DATA.name}
-                  </Text>
-                  <Text>{DATA.price}</Text>
+                  {/* 2 cai nut */}
+                  <View style={{ flexDirection: "row" }}>
+                    {/* // */}
+                    <View style={{ marginRight: 10, paddingRight: "20%" }}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate("EditCategoryFoodView")
+                        }
+                        style={{
+                          backgroundColor: "#fff",
+                          borderRadius: 5,
+                          width: "100%",
+                          height: 45,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderWidth: 1,
+                          borderColor: "#E94730",
+                        }}
+                      >
+                        <View style={{ flexDirection: "row", margin: 10 }}>
+                          <View>
+                            <AntDesign name="edit" size={24} color="#E94730" />
+                          </View>
+                          <View
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                              paddingLeft: 5,
+                            }}
+                          >
+                            <Text style={{ color: "#E94730" }}>Chỉnh sửa</Text>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* // */}
+                    <View style={{ marginRight: 10 }}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("AddFoodView")}
+                        style={{
+                          backgroundColor: "#fff",
+                          borderRadius: 5,
+                          width: "100%",
+                          height: 45,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderWidth: 1,
+                          borderColor: "#E94730",
+                        }}
+                      >
+                        <View style={{ flexDirection: "row", margin: 10 }}>
+                          <View>
+                            <AntDesign name="plus" size={24} color="#E94730" />
+                          </View>
+                          <View
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                              paddingLeft: 5,
+                            }}
+                          >
+                            <Text style={{ color: "#E94730" }}>
+                              Thêm món ăn
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </TouchableOpacity>
-          </View>
-        </View>
+
+              {/* mon của danh muc */}
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "#fff",
+                  paddingTop: 20,
+                  paddingBottom: 20,
+                  borderBottomWidth: 0.3,
+                  borderBottomColor: "#808080",
+                }}
+              >
+                <View style={{ marginLeft: 10, marginRight: 10 }}>
+                  {/* shop */}
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("EditFoodView")}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        source={DATA.monAn1}
+                        style={{ width: 40, height: 40, borderRadius: 25 }}
+                      />
+
+                      <View style={{ paddingLeft: 10 }}>
+                        <Text
+                          numberOfLines={1}
+                          style={{ fontWeight: "bold", width: 180 }}
+                        >
+                          {DATA.name}
+                        </Text>
+                        <Text>{DATA.price}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
+        />
       </View>
     </ScrollView>
   );
