@@ -6,6 +6,8 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -14,13 +16,18 @@ import { ScrollView } from "react-native-gesture-handler";
 import {
   doc,
   setDoc,
-  addDoc,
   collection,
-  editDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+  where,
+  query,
   QuerySnapshot,
-  Firestore,
-  item,
+  editDoc,
 } from "firebase/firestore";
+
 import { db } from "../services/config";
 
 const DATA = {
@@ -42,12 +49,6 @@ const DATA = {
   txtDis: "Thông tin sản phẩm",
 };
 
-// function create () {
-//   editDoc(collection(db, "categories"), {
-//     categoryName: categoryName,
-//   });
-//   navigation.goBack('EditMenuView');
-// }
 
 // Navigation
 export default function EditMenuView({ navigation }) {
@@ -73,25 +74,40 @@ export default function EditMenuView({ navigation }) {
     });
   }, [navigation]);
 
+// todos, setTodos
+// todoRef = catRef
   const [listCate, setListCate] = useState([]);
-  //const todoRef = db.collection("categories");
-  const todoRef = collection(db, "categories");
+  const [refreshing, setRefreshing] = useState(true);
+  console.log(listCate);
 
-  useEffect(async () => {
-    todoRef.onSnapshot((querySnapshot) => {
+  useEffect(() => {
+    const getCat = async () => {
+      const catRef = collection(db, "categories");
+      const c = query(catRef);
+      console.log(c);
+
+      const querySnapshot = await getDocs(c);
       const listCate = [];
       querySnapshot.forEach((doc) => {
-        const { category_Name } = doc.data();
         listCate.push({
+          ...doc.data(),
           id: doc.id,
-          category_Name,
         });
+        setRefreshing(false);
+        // doc.data() is never undefined for query doc snapshots
+        console.log(" getCAT ", doc.id, " => ", doc.data());
       });
-    setListCate(listCate);
-    console.log(listCate);
-
-    });
+      setListCate(listCate);
+    };
+    getCat();
   }, []);
+
+  const onRefresh = () => {
+    //xoa data cu
+    setListCate([]);
+    //goi data moi
+    getCat();
+  };
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -146,17 +162,18 @@ export default function EditMenuView({ navigation }) {
       </View>
 
       <View style={{ paddingBottom: 10 }}></View>
-
       {/* danh mục cua cua hang */}
-      <View style={{ flex: 1 }}>
-        {/* Danh muc */}
-        <FlatList
-          style={{ height: "100%" }}
-          data={listCate}
-          numColumns={1}
-          renderItem={({ item }) => (
-            <View>
-              {/* Danh muc */}
+      <View>
+        {refreshing ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            data={listCate}
+            numColumns={1}
+            renderItem={({ item }) => (
               <View
                 style={{
                   flex: 1,
@@ -167,10 +184,11 @@ export default function EditMenuView({ navigation }) {
                   borderBottomColor: "#808080",
                 }}
               >
+                {/* Danh muc */}
                 <View style={{ marginLeft: 10, marginRight: 10 }}>
                   <View>
                     <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
-                      {/* {item.category_Name} */}
+                      {item.category_Name}
                     </Text>
                   </View>
 
@@ -180,7 +198,7 @@ export default function EditMenuView({ navigation }) {
                     <View style={{ marginRight: 10, paddingRight: "20%" }}>
                       <TouchableOpacity
                         onPress={() =>
-                          navigation.navigate("EditCategoryFoodView")
+                          navigation.navigate("EditCategoryFoodView", {item})
                         }
                         style={{
                           backgroundColor: "#fff",
@@ -209,7 +227,7 @@ export default function EditMenuView({ navigation }) {
                         </View>
                       </TouchableOpacity>
                     </View>
-
+                    
                     {/* // */}
                     <View style={{ marginRight: 10 }}>
                       <TouchableOpacity
@@ -245,51 +263,51 @@ export default function EditMenuView({ navigation }) {
                     </View>
                   </View>
                 </View>
-              </View>
 
-              {/* mon của danh muc */}
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: "#fff",
-                  paddingTop: 20,
-                  paddingBottom: 20,
-                  borderBottomWidth: 0.3,
-                  borderBottomColor: "#808080",
-                }}
-              >
-                <View style={{ marginLeft: 10, marginRight: 10 }}>
-                  {/* shop */}
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("EditFoodView")}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
+                {/* mon của danh muc */}
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#fff",
+                    paddingTop: 20,
+                    paddingBottom: 20,
+                    borderBottomWidth: 0.3,
+                    borderBottomColor: "#808080",
+                  }}
+                >
+                  <View style={{ marginLeft: 10, marginRight: 10 }}>
+                    {/* shop */}
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("EditFoodView")}
                     >
-                      <Image
-                        source={DATA.monAn1}
-                        style={{ width: 40, height: 40, borderRadius: 25 }}
-                      />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Image
+                          source={DATA.monAn1}
+                          style={{ width: 40, height: 40, borderRadius: 25 }}
+                        />
 
-                      <View style={{ paddingLeft: 10 }}>
-                        <Text
-                          numberOfLines={1}
-                          style={{ fontWeight: "bold", width: 180 }}
-                        >
-                          {DATA.name}
-                        </Text>
-                        <Text>{DATA.price}</Text>
+                        <View style={{ paddingLeft: 10 }}>
+                          <Text
+                            numberOfLines={1}
+                            style={{ fontWeight: "bold", width: 180 }}
+                          >
+                            {DATA.name}
+                          </Text>
+                          <Text>{DATA.price}</Text>
+                        </View>
                       </View>
-                    </View>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
+        )}
       </View>
     </ScrollView>
   );
