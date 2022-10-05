@@ -41,7 +41,10 @@ const DATA = {
 };
 
 // Navigation
-export default function EditCategoryFoodView({ navigation }) {
+export default function EditCategoryFoodView({ navigation, route }) {
+  const { category } = route.params;
+  console.log('id:', category);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -59,83 +62,48 @@ export default function EditCategoryFoodView({ navigation }) {
   }, [navigation]);
 
   const [categoryId] = React.useState("");
-  const [category_Name, setCategoryName] = React.useState(doc.id);
+  const [category_Name, setCategoryName] = React.useState(text);
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  function editCategories() {
-    updateDoc(doc(db, "categories", "Q26nrHy7qKuwI6CXQDmt"), {
-      category_Name: category_Name,
+  const [text, setText] = React.useState(category.category_Name);
+  console.log(text);
+
+  function editCategories(text) {
+    updateDoc(doc(db, "categories", category.id), {
+      category_Name: text,
     });
     navigation.goBack("EditMenuView");
   }
 
-  function deleteCategories(item) {
-    deleteDoc(doc(db, "categories", "categoryId"));
+  function deleteCategories(e) {
+    deleteDoc(doc(db, "categories", e));
     navigation.goBack("EditMenuView");
   }
 
   const [listCate, setListCate] = useState([]);
-  const [refreshing, setRefreshing] = useState(true);
+  
   console.log(listCate);
 
-  useEffect(() => {
-    const getCat = async () => {
-      const catRef = collection(db, "categories");
-      const c = query(catRef);
-      console.log(c);
+  // function update(text) {
+  //   updateDoc(doc(db, "categories", "2Wc0wbrilUYhFOnrJxSE"), {
+  //     category_Name: text,
+  //   })
+  //     .then(() => {
+  //       // Data saved successfully!
+  //       console.log("data submitted");
+  //     })
+  //     .catch((error) => {
+  //       // The write failed...
+  //       console.log(error);
+  //     });
+  // }
 
-      const querySnapshot = await getDocs(c);
-      const listCate = [];
-      querySnapshot.forEach((doc) => {
-        listCate.push({
-          ...doc.data(),
-          id: doc.id,
-        });
-        setRefreshing(false);
-        // doc.data() is never undefined for query doc snapshots
-        console.log(" getCAT ", doc.id, " => ", doc.data());
-      });
-      setListCate(listCate);
-    };
-    getCat();
-  }, []);
-
-  const onRefresh = () => {
-    //xoa data cu
-    setListCate([]);
-    //goi data moi
-    getCat();
-  };
-
-  const deleteTodo = (listCate) => {
-    catRef
-      .doc(listCate.id)
-      .delete()
-      .then(() => {
-        //thanh cong
-        alert("xoa thanh cong");
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
-
-  const updateTodo = () => {
-    if (category_Name && category_Name.length > 0) {
-      catRef
-        .doc()
-        .update({
-          category_Name: category_Name,
-        })
-        .then(() => {
-          navigation.navigate("EditMenuView");
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
-    }
-  };
+  // function deleteData(e) {
+  //   console.log("data", e);
+  //   deleteDoc(doc(db, "categories", e));
+  // }
+  
 
   return (
     <View style={{ flex: 1 }}>
@@ -151,7 +119,9 @@ export default function EditCategoryFoodView({ navigation }) {
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
             <View style={{ paddingBottom: 20 }}>
-              <Text style={{ fontWeight: "bold" }}>Tên danh mục</Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Tên danh mục
+              </Text>
             </View>
 
             <View>
@@ -166,9 +136,9 @@ export default function EditCategoryFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={setCategoryName}
-                  value={category_Name}
-                ></TextInput>
+                  onChangeText={(text) => setText(text)}
+                  value={text}
+                />
               </View>
             </View>
           </View>
@@ -209,7 +179,7 @@ export default function EditCategoryFoodView({ navigation }) {
 
         {/* Xoa danh muc */}
         <View style={{ marginLeft: 10, marginRight: 10 }}>
-          <TouchableOpacity onPress={() => deleteTodo(item)}>
+          <TouchableOpacity onPress={() => deleteCategories(category.id)}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <View style={{ paddingRight: 10 }}>
                 <AntDesign name="delete" size={24} color="black" />
@@ -238,7 +208,6 @@ export default function EditCategoryFoodView({ navigation }) {
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
             <TouchableOpacity
-              
               style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
@@ -247,8 +216,9 @@ export default function EditCategoryFoodView({ navigation }) {
                 alignItems: "center",
                 justifyContent: "center",
               }}
-
-              onPress={() => {updateTodo()}}
+              onPress={() => {
+                editCategories(text);
+              }}
             >
               <Text style={{ color: "#fff" }}>Lưu</Text>
             </TouchableOpacity>
