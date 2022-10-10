@@ -31,7 +31,10 @@ const DATA = {
 };
 
 // Navigation
-export default function EditFoodView({ navigation }) {
+export default function EditFoodView({ navigation, route }) {
+  const {category} = route.params;
+  const { food } = route.params;
+  console.log('idfood:', food);
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -48,21 +51,37 @@ export default function EditFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [danhmuc, onDanhMuc] = React.useState("Trà sữa");
-  const [monan, onMonAn] = React.useState("Bún chả cá");
-  const [giaban, onGiaBan] = React.useState("25.000");
-  const [mota, onMoTa] = React.useState("Thơm ngon");
+  const [category_Name, setCategoryName] = React.useState("");
+  const [food_Name, setFoodName] = React.useState("");
+  const [food_Price, setFoodPrice] = React.useState("");
+  const [food_Description, setFoodDescription] = React.useState("");
 
-  const [text, onChangeText] = React.useState("Tra sua");
+  
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  function editFood () {
-    // addDoc(collection(db, "categories"), {
-    //   danhmuc: danhmuc,
-    // }); 
-    navigation.goBack('EditMenuView');
-  }
+  const [text, setText] = React.useState()
+  //const [text, setText] = React.useState(category.category_Name);
+  //console.log(text);
+
+  // function editFood () {
+  //   updateDoc(doc(db, "foods", food.id), {
+  //       category_Id: category.id,
+  //       name:food_Name,
+  //       price:food_Price,
+  //       description: food_Description,
+  //       image: 'a',
+  //       food_store_id: '7T5uG3Si5NHioADgam1Z',
+  //       discount: 0,
+  //       status: 1
+  //   });
+  //   navigation.goBack('EditMenuView');
+  // }
+
+  // function deleteFood(e) {
+  //   deleteDoc(doc(db, "foods", e));
+  //   navigation.goBack("EditMenuView");
+  // }
 
   return (
     <View style={{ flex: 1 }}>
@@ -130,9 +149,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onDanhMuc}
-                  value={danhmuc}
+                  onChangeText={(text) => setText(text)}
+                  value={text}
                 ></TextInput>
               </View>
             </View>
@@ -165,9 +183,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onMonAn}
-                  value={monan}
+                  onChangeText={(food_Name) => {setFoodName(food_Name)}}
+                  value={food_Name}
                 ></TextInput>
               </View>
             </View>
@@ -202,9 +219,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onGiaBan}
-                  value={giaban}
+                  onChangeText={(food_Price) => {setFoodName(food_Price)}}
+                  value={food_Price}
                 ></TextInput>
               </View>
             </View>
@@ -237,9 +253,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onMoTa}
-                  value={mota}
+                  onChangeText={(food_Description) => {setFoodName(food_Description)}}
+                  value={food_Description}
                 ></TextInput>
               </View>
             </View>
@@ -281,13 +296,13 @@ export default function EditFoodView({ navigation }) {
 
         {/* Xoa danh muc */}
         <View style={{ marginLeft: 10, marginRight: 10, paddingBottom: 20 }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => deleteFood(food.id)}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={{ paddingRight: 10 }}>
               <AntDesign name="delete" size={24} color="black" />
             </View>
             <View>
-              <Text>Xóa danh mục</Text>
+              <Text>Xóa món</Text>
             </View>
           </View>
           </TouchableOpacity>
