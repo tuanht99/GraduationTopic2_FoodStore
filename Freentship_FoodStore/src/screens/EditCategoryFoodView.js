@@ -61,7 +61,7 @@ export default function EditCategoryFoodView({ navigation, route }) {
     });
   }, [navigation]);
 
-  const [categoryId] = React.useState("");
+  
   const [category_Name, setCategoryName] = React.useState(text);
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -84,26 +84,6 @@ export default function EditCategoryFoodView({ navigation, route }) {
   const [listCate, setListCate] = useState([]);
   
   console.log(listCate);
-
-  // function update(text) {
-  //   updateDoc(doc(db, "categories", "2Wc0wbrilUYhFOnrJxSE"), {
-  //     category_Name: text,
-  //   })
-  //     .then(() => {
-  //       // Data saved successfully!
-  //       console.log("data submitted");
-  //     })
-  //     .catch((error) => {
-  //       // The write failed...
-  //       console.log(error);
-  //     });
-  // }
-
-  // function deleteData(e) {
-  //   console.log("data", e);
-  //   deleteDoc(doc(db, "categories", e));
-  // }
-  
 
   return (
     <View style={{ flex: 1 }}>
