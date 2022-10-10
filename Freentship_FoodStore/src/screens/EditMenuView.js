@@ -26,7 +26,7 @@ import {
   query,
   QuerySnapshot,
   editDoc,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 
 import { db } from "../services/config";
@@ -52,6 +52,8 @@ const DATA = {
 
 // Navigation
 export default function EditMenuView({ navigation }) {
+  // const {category} = route.params;
+  // const { food } = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -60,11 +62,11 @@ export default function EditMenuView({ navigation }) {
         </TouchableOpacity>
       ),
 
-      headerRight: () => (
-        <TouchableOpacity onPress={navigation.goBack}>
-          <Text>Lưu</Text>
-        </TouchableOpacity>
-      ),
+      // headerRight: () => (
+      //   <TouchableOpacity onPress={navigation.goBack}>
+      //     <Text>Lưu</Text>
+      //   </TouchableOpacity>
+      // ),
 
       title: "Chỉnh sửa menu",
       headerTitleAlign: "center",
@@ -74,15 +76,15 @@ export default function EditMenuView({ navigation }) {
     });
   }, [navigation]);
 
-  // todos, setTodos
-  // todoRef = catRef
   const [listCate, setListCate] = useState([]);
-
+  const [listFood, setListFood] = useState([]);
   console.log(listCate);
+  console.log(listFood);
 
+  // list cate
   useEffect(() => {
     let unsubscribe;
-    setListCate(null)
+    setListCate(null);
     const getCat = async () => {
       const catRef = collection(db, "categories");
       const c = query(catRef);
@@ -91,11 +93,13 @@ export default function EditMenuView({ navigation }) {
       const querySnapshot = await getDocs(c);
       const listCate = [];
       unsubscribe = onSnapshot(c, (querySnapshot) => {
-        setListCate(querySnapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data()
-            })));
-      })
+        setListCate(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      });
       // unsubscribe = await getDocs(c).then((querySnapshot) => {
       //   setListCate(querySnapshot.docs.map((doc) => ({
       //     id: doc.id,
@@ -108,7 +112,7 @@ export default function EditMenuView({ navigation }) {
       //     id: doc.id,
       //   });
 
-        // doc.data() is never undefined for query doc snapshots
+      // doc.data() is never undefined for query doc snapshots
       //   console.log(" getCAT ", doc.id, " => ", doc.data());
       // });
       // setListCate(listCate);
@@ -116,14 +120,39 @@ export default function EditMenuView({ navigation }) {
     getCat();
     return unsubscribe;
   }, []);
-  console.log('listCate', listCate)
+  console.log("listCate", listCate);
+
+  // list food of cate
+  useEffect(() => {
+    let unsubscribe;
+    setListFood(null);
+    const getFood = async () => {
+      const foodRef = collection(db, "foods");
+      const c = query(foodRef);
+      console.log(collection(db, "foods"));
+
+      const querySnapshot = await getDocs(c);
+      const listFood = [];
+      unsubscribe = onSnapshot(c, (querySnapshot) => {
+        setListFood(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      });
+    };
+    getFood();
+    return unsubscribe;
+  }, []);
+  console.log("listFood", listFood);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {/* Ten danh muc */}
       <View
         style={{
-          width: '100%',
+          width: "100%",
           backgroundColor: "#fff",
           paddingTop: 10,
           paddingBottom: 10,
@@ -236,7 +265,9 @@ export default function EditMenuView({ navigation }) {
                   {/* // */}
                   <View style={{ marginRight: 10 }}>
                     <TouchableOpacity
-                      onPress={() => navigation.navigate("AddFoodView")}
+                      onPress={() =>
+                        navigation.navigate("AddFoodView", { category: item })
+                      }
                       style={{
                         backgroundColor: "#fff",
                         borderRadius: 5,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -7,13 +7,17 @@ import {
   
   TouchableOpacity,
   Switch,
+  Alert,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import * as ImagePicker from 'expo-image-picker';
+
+import { doc, setDoc, addDoc, collection, updateDoc } from "firebase/firestore";
 import { db } from '../services/config'
+import { async } from "@firebase/util";
 
 
 const DATA = {
@@ -36,7 +40,12 @@ const DATA = {
 };
 
 // Navigation
-export default function AddCategoryFoodView({ navigation }) {
+export default function AddCategoryFoodView({ navigation, route }) {
+  const { category } = route.params;
+  const { food } = route.params;
+  console.log('idadd:', category);
+  console.log('idFood: ', food);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -53,21 +62,62 @@ export default function AddCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [categoryId] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [foodName, setFoodName] = React.useState("");
-  const [foodPrice, setFoodPrice] = React.useState("");
-  const [foodDescription, setFoodDescription] = React.useState("");
+  
+  const [category_Name, setCategoryName] = React.useState("");
+  const [food_Name, setFoodName] = React.useState("");
+  const [food_Price, setFoodPrice] = React.useState("");
+  const [food_Description, setFoodDescription] = React.useState("");
+  const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const [text, setText] = React.useState(category.category_Name);
+  // const [aFood, setAFood] = React.useState(food.id)
 
   function addFood () {
       addDoc(collection(db, "foods"), {
-        categoryName: "Kem",
-        foodName:foodName,
-        foodPrice:foodPrice,
-        foodDescription: foodDescription,
+        category_Id: category.id,
+        name:food_Name,
+        price:food_Price,
+        description: food_Description,
+        image: 'a',
+        food_store_id: '7T5uG3Si5NHioADgam1Z',
+        discount: 0,
+        status: 1
       }); 
     navigation.goBack('EditMenuView');
   }
+
+  // const ImagePicker = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+  //     allowEditing: true, 
+  //     aspect: [4, 3],
+  //     quality: 1,
+  //   });
+
+  //   const source = {url: result.url};
+  //   console.log(source);
+  //   setImage(source);
+  // };
+
+  // const uploadImage = async () => {
+  //   setUploading(true);
+  //   const response = await fetch(image.url)
+  //   const blob = await response.blob();
+  //   const filename = image.url.substring(image.url.lastIndexOf('/')+1);
+  //   var ref = firebase.storage().ref().child(filename).put(blob);
+
+  //   try{
+  //     await ref;
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  //   setUploading(false);
+  //   Alert.alert(
+  //     'photo uploader..'
+  //   );
+  //   setImage(null);  
+  // };
 
   return (
     <View style={{ flex: 1 }}>
@@ -92,13 +142,17 @@ export default function AddCategoryFoodView({ navigation }) {
               >
                 <TouchableOpacity>
                   <View>
-                  <Image
-                    source={DATA.shopimage}
+                    <Image
+                      source={DATA.shopimage}
                     style={{ width: "100%",
                     height: 360,
                     marginTop: 10,
                     marginBottom: 10,}}
-                  />
+                    />
+                    {/* {image && <Image source={{uri: image.uri}} style={{ width: "100%",
+                    height: 360,
+                    marginTop: 10,
+                    marginBottom: 10}}  />} */}
                 </View>
                 </TouchableOpacity>
                 
@@ -135,9 +189,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  placeholder={'Trà sữa'}
-                  onChangeText={setCategoryName}
-                  value={categoryName}
+                  onChangeText={(text) => setText(text)}
+                  value={text}
                 ></TextInput>
               </View>
             </View>
@@ -171,8 +224,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={'bún chả cá'}
-                  onChangeText={setFoodName}
-                  value={foodName}
+                  onChangeText={(food_Name) => {setFoodName(food_Name)}}
+                  value={food_Name}
                 ></TextInput>
               </View>
             </View>
@@ -206,8 +259,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={'25.000'}
-                  onChangeText={setFoodPrice}
-                  value={foodPrice}
+                  onChangeText={(food_Price) => {setFoodPrice(food_Price)}}
+                  value={food_Price}
                 ></TextInput>
               </View>
             </View>
@@ -241,8 +294,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={'thơm ngon'}
-                  onChangeText={setFoodDescription}
-                  value={foodDescription}
+                  onChangeText={(food_Description) => {setFoodDescription(food_Description)}}
+                  value={food_Description}
                 ></TextInput>
               </View>
             </View>
