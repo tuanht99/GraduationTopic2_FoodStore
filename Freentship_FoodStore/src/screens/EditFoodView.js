@@ -8,6 +8,24 @@ import {
   Switch,
 } from "react-native";
 
+import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+  where,
+  query,
+  QuerySnapshot,
+  editDoc,
+  onSnapshot,
+} from "firebase/firestore";
+
+import { db } from "../services/config";
+
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
@@ -31,7 +49,10 @@ const DATA = {
 };
 
 // Navigation
-export default function EditFoodView({ navigation }) {
+export default function EditFoodView({ navigation, route}) {
+  const {category, food} = route.params;
+  // const { food } = route.params;
+  // console.log('idfood:', food);
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -48,20 +69,38 @@ export default function EditFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [danhmuc, onDanhMuc] = React.useState("Trà sữa");
-  const [monan, onMonAn] = React.useState("Bún chả cá");
-  const [giaban, onGiaBan] = React.useState("25.000");
-  const [mota, onMoTa] = React.useState("Thơm ngon");
-
-  const [text, onChangeText] = React.useState("Tra sua");
+  const [category_Name, setCategoryName] = React.useState("");
+  const [food_Name, setFoodName] = React.useState("");
+  const [food_Price, setFoodPrice] = React.useState("");
+  const [food_Description, setFoodDescription] = React.useState("");
+  
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
+  const [text, setText] = React.useState(category);
+  const [textName, setTextName] = React.useState(food.name)
+  const [textPrice, setTextPrice] = React.useState(food.price)
+  const [textDescription, setTextDescription] = React.useState(food.description)
+  console.log("name: ",category);
+
   function editFood () {
-    // addDoc(collection(db, "categories"), {
-    //   danhmuc: danhmuc,
-    // }); 
-    navigation.goBack('EditMenuView');
+    console.log('food name: ',textName)
+    updateDoc(doc(db, "foods" , food.id), {
+    //     // category_Name: text,
+        name: textName,
+        price:textPrice,
+        description: textDescription,
+        image: 'a',
+        food_store_id: '7T5uG3Si5NHioADgam1Z',
+        discount: 0,
+        status: 1
+    });
+    navigation.goBack('ShowFullFoodView');
+  }
+
+  function deleteFood(e) {
+    deleteDoc(doc(db, "foods", e));
+    navigation.goBack("EditMenuView");
   }
 
   return (
@@ -130,9 +169,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onDanhMuc}
-                  value={danhmuc}
+                  onChangeText={(text) => setText(text)}
+                  value={text}
                 ></TextInput>
               </View>
             </View>
@@ -165,9 +203,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onMonAn}
-                  value={monan}
+                  onChangeText={(textName) => setTextName(textName)}
+                  value={textName}
                 ></TextInput>
               </View>
             </View>
@@ -202,9 +239,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onGiaBan}
-                  value={giaban}
+                  onChangeText={(textPrice) => setTextPrice(textPrice)}
+                  value={textPrice}
                 ></TextInput>
               </View>
             </View>
@@ -237,9 +273,8 @@ export default function EditFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  
-                  onChangeText={onMoTa}
-                  value={mota}
+                  onChangeText={(textDescription) => setTextDescription(textDescription)}
+                  value={textDescription}
                 ></TextInput>
               </View>
             </View>
@@ -279,15 +314,15 @@ export default function EditFoodView({ navigation }) {
 
         <View style={{ paddingBottom: 20 }}></View>
 
-        {/* Xoa danh muc */}
+        {/* Xoa mon */}
         <View style={{ marginLeft: 10, marginRight: 10, paddingBottom: 20 }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => deleteFood(food.id)}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={{ paddingRight: 10 }}>
               <AntDesign name="delete" size={24} color="black" />
             </View>
             <View>
-              <Text>Xóa danh mục</Text>
+              <Text>Xóa món</Text>
             </View>
           </View>
           </TouchableOpacity>

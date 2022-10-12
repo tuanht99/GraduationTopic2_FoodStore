@@ -26,7 +26,7 @@ import {
   query,
   QuerySnapshot,
   editDoc,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 
 import { db } from "../services/config";
@@ -52,6 +52,8 @@ const DATA = {
 
 // Navigation
 export default function EditMenuView({ navigation }) {
+  // const {category} = route.params;
+  // const { food } = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -60,11 +62,11 @@ export default function EditMenuView({ navigation }) {
         </TouchableOpacity>
       ),
 
-      headerRight: () => (
-        <TouchableOpacity onPress={navigation.goBack}>
-          <Text>Lưu</Text>
-        </TouchableOpacity>
-      ),
+      // headerRight: () => (
+      //   <TouchableOpacity onPress={navigation.goBack}>
+      //     <Text>Lưu</Text>
+      //   </TouchableOpacity>
+      // ),
 
       title: "Chỉnh sửa menu",
       headerTitleAlign: "center",
@@ -74,15 +76,15 @@ export default function EditMenuView({ navigation }) {
     });
   }, [navigation]);
 
-  // todos, setTodos
-  // todoRef = catRef
   const [listCate, setListCate] = useState([]);
-
+  const [listFood, setListFood] = useState([]);
   console.log(listCate);
+  //console.log(listFood);
 
+  // list cate
   useEffect(() => {
     let unsubscribe;
-    setListCate(null)
+    setListCate(null);
     const getCat = async () => {
       const catRef = collection(db, "categories");
       const c = query(catRef);
@@ -91,39 +93,53 @@ export default function EditMenuView({ navigation }) {
       const querySnapshot = await getDocs(c);
       const listCate = [];
       unsubscribe = onSnapshot(c, (querySnapshot) => {
-        setListCate(querySnapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data()
-            })));
-      })
-      // unsubscribe = await getDocs(c).then((querySnapshot) => {
-      //   setListCate(querySnapshot.docs.map((doc) => ({
-      //     id: doc.id,
-      //     ...doc.data()
-      //   })));
-      // })
-      // querySnapshot.forEach((doc) => {
-      //   listCate.push({
-      //     ...doc.data(),
-      //     id: doc.id,
-      //   });
-
-        // doc.data() is never undefined for query doc snapshots
-      //   console.log(" getCAT ", doc.id, " => ", doc.data());
-      // });
-      // setListCate(listCate);
+        setListCate(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      });
     };
     getCat();
     return unsubscribe;
   }, []);
-  console.log('listCate', listCate)
+  console.log("listCate", listCate);
+
+  // list food of cate
+  useEffect(() => {
+    let unsubscribe;
+    setListFood(null);
+    const getFood = async () => {
+      const foodRef = collection(db, "foods");
+      const c = query(
+        foodRef,
+        where("category_Id", "==", "uHBXNbOrJgocBGCTAaA2")
+      );
+      console.log(collection(db, "foods"));
+
+      const querySnapshot = await getDocs(c);
+      const listFood = [];
+      unsubscribe = onSnapshot(c, (querySnapshot) => {
+        setListFood(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      });
+    };
+    getFood();
+    console.log("listFood category: ", listFood);
+    return unsubscribe;
+  }, []);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {/* Ten danh muc */}
       <View
         style={{
-          width: '100%',
+          width: "100%",
           backgroundColor: "#fff",
           paddingTop: 10,
           paddingBottom: 10,
@@ -189,16 +205,27 @@ export default function EditMenuView({ navigation }) {
             >
               {/* Danh muc */}
               <View style={{ marginLeft: 10, marginRight: 10 }}>
-                <View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                   <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
                     {item.category_Name}
                   </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("ShowFullFoodView", {
+                        category: item
+                      })
+                    }
+                  >
+                    <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
+                      Xem tất cả
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
                 {/* 2 cai nut */}
                 <View style={{ flexDirection: "row" }}>
                   {/* // */}
-                  <View style={{ marginRight: 10, paddingRight: "20%" }}>
+                  <View style={{ marginRight: 10, paddingRight: "24%" }}>
                     <TouchableOpacity
                       onPress={() =>
                         navigation.navigate("EditCategoryFoodView", {
@@ -236,7 +263,11 @@ export default function EditMenuView({ navigation }) {
                   {/* // */}
                   <View style={{ marginRight: 10 }}>
                     <TouchableOpacity
-                      onPress={() => navigation.navigate("AddFoodView")}
+                      onPress={() =>
+                        navigation.navigate("AddFoodView", {
+                          category: item,
+                        })
+                      }
                       style={{
                         backgroundColor: "#fff",
                         borderRadius: 5,
@@ -264,47 +295,6 @@ export default function EditMenuView({ navigation }) {
                       </View>
                     </TouchableOpacity>
                   </View>
-                </View>
-              </View>
-
-              {/* mon của danh muc */}
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: "#fff",
-                  paddingTop: 20,
-                  paddingBottom: 20,
-                  borderBottomWidth: 0.3,
-                  borderBottomColor: "#808080",
-                }}
-              >
-                <View style={{ marginLeft: 10, marginRight: 10 }}>
-                  {/* shop */}
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("EditFoodView")}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Image
-                        source={DATA.monAn1}
-                        style={{ width: 40, height: 40, borderRadius: 25 }}
-                      />
-
-                      <View style={{ paddingLeft: 10 }}>
-                        <Text
-                          numberOfLines={1}
-                          style={{ fontWeight: "bold", width: 180 }}
-                        >
-                          {DATA.name}
-                        </Text>
-                        <Text>{DATA.price}</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
                 </View>
               </View>
             </View>
