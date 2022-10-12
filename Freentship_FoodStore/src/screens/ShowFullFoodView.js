@@ -199,7 +199,7 @@ export default function ShowFullFoodView({ navigation, route }) {
                           {item.name}
                         </Text>
                         <Text>{item.price}</Text>
-        
+                        <Text style={{color: '#000'}}>{item.description}</Text>
                       </View>
                     </View>
                   </TouchableOpacity>
