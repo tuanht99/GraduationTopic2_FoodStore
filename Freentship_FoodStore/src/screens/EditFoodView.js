@@ -8,6 +8,24 @@ import {
   Switch,
 } from "react-native";
 
+import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+  where,
+  query,
+  QuerySnapshot,
+  editDoc,
+  onSnapshot,
+} from "firebase/firestore";
+
+import { db } from "../services/config";
+
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
@@ -31,10 +49,10 @@ const DATA = {
 };
 
 // Navigation
-export default function EditFoodView({ navigation, route }) {
-  const {category} = route.params;
-  const { food } = route.params;
-  console.log('idfood:', food);
+export default function EditFoodView({ navigation, route}) {
+  const {category, food} = route.params;
+  // const { food } = route.params;
+  // console.log('idfood:', food);
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -55,33 +73,35 @@ export default function EditFoodView({ navigation, route }) {
   const [food_Name, setFoodName] = React.useState("");
   const [food_Price, setFoodPrice] = React.useState("");
   const [food_Description, setFoodDescription] = React.useState("");
-
   
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  const [text, setText] = React.useState()
-  //const [text, setText] = React.useState(category.category_Name);
-  //console.log(text);
+  const [text, setText] = React.useState(category);
+  const [textName, setTextName] = React.useState(food.name)
+  const [textPrice, setTextPrice] = React.useState(food.price)
+  const [textDescription, setTextDescription] = React.useState(food.description)
+  console.log("name: ",category);
 
-  // function editFood () {
-  //   updateDoc(doc(db, "foods", food.id), {
-  //       category_Id: category.id,
-  //       name:food_Name,
-  //       price:food_Price,
-  //       description: food_Description,
-  //       image: 'a',
-  //       food_store_id: '7T5uG3Si5NHioADgam1Z',
-  //       discount: 0,
-  //       status: 1
-  //   });
-  //   navigation.goBack('EditMenuView');
-  // }
+  function editFood () {
+    console.log('food name: ',textName)
+    updateDoc(doc(db, "foods" , food.id), {
+    //     // category_Name: text,
+        name: textName,
+        price:textPrice,
+        description: textDescription,
+        image: 'a',
+        food_store_id: '7T5uG3Si5NHioADgam1Z',
+        discount: 0,
+        status: 1
+    });
+    navigation.goBack('ShowFullFoodView');
+  }
 
-  // function deleteFood(e) {
-  //   deleteDoc(doc(db, "foods", e));
-  //   navigation.goBack("EditMenuView");
-  // }
+  function deleteFood(e) {
+    deleteDoc(doc(db, "foods", e));
+    navigation.goBack("EditMenuView");
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -183,8 +203,8 @@ export default function EditFoodView({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={(food_Name) => {setFoodName(food_Name)}}
-                  value={food_Name}
+                  onChangeText={(textName) => setTextName(textName)}
+                  value={textName}
                 ></TextInput>
               </View>
             </View>
@@ -219,8 +239,8 @@ export default function EditFoodView({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={(food_Price) => {setFoodName(food_Price)}}
-                  value={food_Price}
+                  onChangeText={(textPrice) => setTextPrice(textPrice)}
+                  value={textPrice}
                 ></TextInput>
               </View>
             </View>
@@ -253,8 +273,8 @@ export default function EditFoodView({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={(food_Description) => {setFoodName(food_Description)}}
-                  value={food_Description}
+                  onChangeText={(textDescription) => setTextDescription(textDescription)}
+                  value={textDescription}
                 ></TextInput>
               </View>
             </View>
@@ -294,7 +314,7 @@ export default function EditFoodView({ navigation, route }) {
 
         <View style={{ paddingBottom: 20 }}></View>
 
-        {/* Xoa danh muc */}
+        {/* Xoa mon */}
         <View style={{ marginLeft: 10, marginRight: 10, paddingBottom: 20 }}>
           <TouchableOpacity onPress={() => deleteFood(food.id)}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
