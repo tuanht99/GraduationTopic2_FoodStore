@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   SafeAreaView,
   Image,
   Text,
-  
   TouchableOpacity,
   Switch,
-  useWindowDimensions,
+  RefreshControl,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -54,15 +53,16 @@ export default function AddCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [danhmuc, onDanhMuc] = React.useState("");
+  const [categoryId] = React.useState("");
+  const [category_Name, setCategoryName] = React.useState("");
   
   function create () {
     addDoc(collection(db, "categories"), {
-      danhmuc: danhmuc,
-    }); 
+      category_Name: category_Name,
+    });
     navigation.goBack('EditMenuView');
   }
-
+  
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 0.85 }}>
@@ -93,8 +93,8 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={"Nhập tên danh mục"}
-                  onChangeText={(danhmuc) => {onDanhMuc(danhmuc)}}
-                  value={danhmuc}
+                  onChangeText={(category_Name) => {setCategoryName(category_Name)}}
+                  value={category_Name}
                 ></TextInput>
               </View>
             </View>
