@@ -187,7 +187,7 @@ export default function ShowFullFoodView({ navigation, route }) {
                       }}
                     >
                       <Image
-                        source={DATA.monAn1}
+                        source={{uri: item.image}}
                         style={{ width: 40, height: 40, borderRadius: 25 }}
                       />
 

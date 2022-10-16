@@ -79,7 +79,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
         name:food_Name,
         price:food_Price,
         description: food_Description,
-        image: 'a',
+        image: image,
         food_store_id: '7T5uG3Si5NHioADgam1Z',
         discount: 0,
         status: 1
@@ -100,24 +100,24 @@ export default function AddCategoryFoodView({ navigation, route }) {
   //   setImage(source);
   // };
 
-  // const uploadImage = async () => {
-  //   setUploading(true);
-  //   const response = await fetch(image.url)
-  //   const blob = await response.blob();
-  //   const filename = image.url.substring(image.url.lastIndexOf('/')+1);
-  //   var ref = firebase.storage().ref().child(filename).put(blob);
+  const uploadImage = async () => {
+    setUploading(true);
+    const response = await fetch(image.url)
+    const blob = await response.blob();
+    const filename = image.url.substring(image.url.lastIndexOf('/')+1);
+    var ref = firebase.storage().ref().child(filename).put(blob);
 
-  //   try{
-  //     await ref;
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  //   setUploading(false);
-  //   Alert.alert(
-  //     'photo uploader..'
-  //   );
-  //   setImage(null);  
-  // };
+    try{
+      await ref;
+    } catch (e) {
+      console.log(e);
+    }
+    setUploading(false);
+    Alert.alert(
+      'photo uploader..'
+    );
+    setImage(null);  
+  };
 
   return (
     <View style={{ flex: 1 }}>
