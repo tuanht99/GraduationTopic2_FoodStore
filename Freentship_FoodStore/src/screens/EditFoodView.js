@@ -81,6 +81,7 @@ export default function EditFoodView({ navigation, route}) {
   const [textName, setTextName] = React.useState(food.name)
   const [textPrice, setTextPrice] = React.useState(food.price)
   const [textDescription, setTextDescription] = React.useState(food.description)
+  const [textImage, setTextImage] = React.useState(food.image)
   console.log("name: ",category);
 
   function editFood () {
@@ -90,7 +91,7 @@ export default function EditFoodView({ navigation, route}) {
         name: textName,
         price:textPrice,
         description: textDescription,
-        image: 'a',
+        image: textImage,
         food_store_id: '7T5uG3Si5NHioADgam1Z',
         discount: 0,
         status: 1
@@ -127,7 +128,7 @@ export default function EditFoodView({ navigation, route}) {
                 <TouchableOpacity>
                   <View>
                   <Image
-                    source={DATA.shopimage}
+                    source={{uri: textImage}}
                     style={{ width: "100%",
                     height: 360,
                     marginTop: 10,
