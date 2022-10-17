@@ -4,10 +4,11 @@ import {
   SafeAreaView,
   Image,
   Text,
-  
+  Platform,
   TouchableOpacity,
   Switch,
   Alert,
+  Button
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -67,7 +68,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
   const [food_Name, setFoodName] = React.useState("");
   const [food_Price, setFoodPrice] = React.useState("");
   const [food_Description, setFoodDescription] = React.useState("");
-  const [image, setImage] = useState(null);
+  //const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   const [text, setText] = React.useState(category.category_Name);
@@ -87,37 +88,42 @@ export default function AddCategoryFoodView({ navigation, route }) {
     navigation.goBack('EditMenuView');
   }
 
-  // const ImagePicker = async () => {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowEditing: true, 
-  //     aspect: [4, 3],
-  //     quality: 1,
-  //   });
+  const [image, setImage] = useState(null);
 
-  //   const source = {url: result.url};
-  //   console.log(source);
-  //   setImage(source);
-  // };
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-  const uploadImage = async () => {
-    setUploading(true);
-    const response = await fetch(image.url)
-    const blob = await response.blob();
-    const filename = image.url.substring(image.url.lastIndexOf('/')+1);
-    var ref = firebase.storage().ref().child(filename).put(blob);
+    console.log(result);
 
-    try{
-      await ref;
-    } catch (e) {
-      console.log(e);
+    if (!result.cancelled) {
+      setImage(result.uri);
     }
-    setUploading(false);
-    Alert.alert(
-      'photo uploader..'
-    );
-    setImage(null);  
   };
+
+  // const uploadImage = async () => {
+  //   setUploading(true);
+  //   const response = await fetch(image.url)
+  //   const blob = await response.blob();
+  //   const filename = image.url.substring(image.url.lastIndexOf('/')+1);
+  //   var ref = firebase.storage().ref().child(filename).put(blob);
+
+  //   try{
+  //     await ref;
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  //   setUploading(false);
+  //   Alert.alert(
+  //     'photo uploader..'
+  //   );
+  //   setImage(null);  
+  // };
 
   return (
     <View style={{ flex: 1 }}>
@@ -129,34 +135,32 @@ export default function AddCategoryFoodView({ navigation, route }) {
             backgroundColor: "#fff",
             paddingTop: 10,
             paddingBottom: 10,
+            width: '100%',
+            height: 420
           }}
         >
           <View style={{marginLeft: 10, marginRight: 10}}>
-            <View style={{ paddingRight: 10 }}>
+            <View style={{ paddingRight: 2 }}>
               <View
                 style={{
                   borderRadius: 15,
                   borderColor: "#E94730",
                   borderWidth: 1,
+                  width: '100%',
+                  height: 342, paddingBottom: 10
                 }}
               >
-                <TouchableOpacity>
+                <TouchableOpacity onPress={pickImage}>
                   <View>
-                    <Image
-                      source={DATA.shopimage}
-                    style={{ width: "100%",
-                    height: 360,
-                    marginTop: 10,
-                    marginBottom: 10,}}
-                    />
-                    {/* {image && <Image source={{uri: image.uri}} style={{ width: "100%",
-                    height: 360,
-                    marginTop: 10,
-                    marginBottom: 10}}  />} */}
+                    {image && <Image source={{ uri: image }} style={{borderRadius: 15 , width: '100%', height: 340,  }} />}
                 </View>
                 </TouchableOpacity>
                 
               </View>
+              <View style={{paddingTop: 20, }}>
+                <Button title="Chọn hình" onPress={pickImage} />
+              </View>
+              
             </View>
           </View>
         </View>
