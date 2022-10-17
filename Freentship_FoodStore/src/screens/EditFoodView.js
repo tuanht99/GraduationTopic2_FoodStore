@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -6,6 +6,8 @@ import {
   Text,
   TouchableOpacity,
   Switch,
+  Platform,
+  Button,
 } from "react-native";
 
 import {
@@ -23,6 +25,8 @@ import {
   editDoc,
   onSnapshot,
 } from "firebase/firestore";
+
+import * as ImagePicker from "expo-image-picker";
 
 import { db } from "../services/config";
 
@@ -49,8 +53,8 @@ const DATA = {
 };
 
 // Navigation
-export default function EditFoodView({ navigation, route}) {
-  const {category, food} = route.params;
+export default function EditFoodView({ navigation, route }) {
+  const { category, food } = route.params;
   // const { food } = route.params;
   // console.log('idfood:', food);
   React.useLayoutEffect(() => {
@@ -73,36 +77,56 @@ export default function EditFoodView({ navigation, route}) {
   const [food_Name, setFoodName] = React.useState("");
   const [food_Price, setFoodPrice] = React.useState("");
   const [food_Description, setFoodDescription] = React.useState("");
-  
+
   const [isEnabled, setIsEnabled] = React.useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const [text, setText] = React.useState(category);
-  const [textName, setTextName] = React.useState(food.name)
-  const [textPrice, setTextPrice] = React.useState(food.price)
-  const [textDescription, setTextDescription] = React.useState(food.description)
-  const [textImage, setTextImage] = React.useState(food.image)
-  console.log("name: ",category);
+  const [textName, setTextName] = React.useState(food.name);
+  const [textPrice, setTextPrice] = React.useState(food.price);
+  const [textDescription, setTextDescription] = React.useState(
+    food.description
+  );
+  const [textImage, setTextImage] = React.useState(food.image);
+  console.log("name: ", category);
 
-  function editFood () {
-    console.log('food name: ',textName)
-    updateDoc(doc(db, "foods" , food.id), {
-    //     // category_Name: text,
-        name: textName,
-        price:textPrice,
-        description: textDescription,
-        image: textImage,
-        food_store_id: '7T5uG3Si5NHioADgam1Z',
-        discount: 0,
-        status: 1
+  function editFood() {
+    console.log("food name: ", textName);
+    updateDoc(doc(db, "foods", food.id), {
+      //     // category_Name: text,
+      name: textName,
+      price: textPrice,
+      description: textDescription,
+      image: image,
+      food_store_id: "7T5uG3Si5NHioADgam1Z",
+      discount: 0,
+      status: 1,
     });
-    navigation.goBack('ShowFullFoodView');
+    navigation.goBack("ShowFullFoodView");
   }
 
   function deleteFood(e) {
     deleteDoc(doc(db, "foods", e));
     navigation.goBack("EditMenuView");
   }
+
+  const [image, setImage] = useState(food.image);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -114,6 +138,8 @@ export default function EditFoodView({ navigation, route}) {
             backgroundColor: "#fff",
             paddingTop: 10,
             paddingBottom: 10,
+            width: "100%",
+            height: 420,
           }}
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
@@ -123,20 +149,30 @@ export default function EditFoodView({ navigation, route}) {
                   borderRadius: 15,
                   borderColor: "#E94730",
                   borderWidth: 1,
+                  width: "100%",
+                  height: 342,
+                  paddingBottom: 10,
                 }}
               >
                 <TouchableOpacity>
                   <View>
-                  <Image
-                    source={{uri: textImage}}
-                    style={{ width: "100%",
-                    height: 360,
-                    marginTop: 10,
-                    marginBottom: 10,}}
-                  />
-                </View>
+                    <View>
+                      {image && (
+                        <Image
+                          source={{ uri: image }}
+                          style={{
+                            borderRadius: 15,
+                            width: "100%",
+                            height: 340,
+                          }}
+                        />
+                      )}
+                    </View>
+                  </View>
                 </TouchableOpacity>
-                
+                <View style={{ paddingTop: 20 }}>
+                  <Button title="Chọn hình" onPress={pickImage} />
+                </View>
               </View>
             </View>
           </View>
@@ -274,7 +310,9 @@ export default function EditFoodView({ navigation, route}) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={(textDescription) => setTextDescription(textDescription)}
+                  onChangeText={(textDescription) =>
+                    setTextDescription(textDescription)
+                  }
                   value={textDescription}
                 ></TextInput>
               </View>
@@ -297,8 +335,8 @@ export default function EditFoodView({ navigation, route}) {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{fontWeight: 'bold'}}>Hiển thị trên menu</Text>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontWeight: "bold" }}>Hiển thị trên menu</Text>
               </View>
               <View style={{ paddingRight: 10 }}>
                 <Switch
@@ -319,15 +357,14 @@ export default function EditFoodView({ navigation, route}) {
         <View style={{ marginLeft: 10, marginRight: 10, paddingBottom: 20 }}>
           <TouchableOpacity onPress={() => deleteFood(food.id)}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View style={{ paddingRight: 10 }}>
-              <AntDesign name="delete" size={24} color="black" />
+              <View style={{ paddingRight: 10 }}>
+                <AntDesign name="delete" size={24} color="black" />
+              </View>
+              <View>
+                <Text>Xóa món</Text>
+              </View>
             </View>
-            <View>
-              <Text>Xóa món</Text>
-            </View>
-          </View>
           </TouchableOpacity>
-          
         </View>
       </ScrollView>
       <View style={{ flex: 0.15 }}>
@@ -344,7 +381,8 @@ export default function EditFoodView({ navigation, route}) {
           }}
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
-            <TouchableOpacity onPress={editFood}
+            <TouchableOpacity
+              onPress={editFood}
               style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
@@ -354,7 +392,7 @@ export default function EditFoodView({ navigation, route}) {
                 justifyContent: "center",
               }}
             >
-              <Text style={{color: "#fff",}}>Lưu</Text>
+              <Text style={{ color: "#fff" }}>Lưu</Text>
             </TouchableOpacity>
           </View>
         </View>
