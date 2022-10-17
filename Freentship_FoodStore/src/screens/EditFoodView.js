@@ -98,11 +98,12 @@ export default function EditFoodView({ navigation, route }) {
       price: textPrice,
       description: textDescription,
       image: image,
-      food_store_id: "7T5uG3Si5NHioADgam1Z",
+      food_store_id: "4dpAvRWJVrvdbml9vKDL",
       discount: 0,
       status: 1,
     });
     navigation.goBack("ShowFullFoodView");
+    // 7T5uG3Si5NHioADgam1Z
   }
 
   function deleteFood(e) {
@@ -276,6 +277,7 @@ export default function EditFoodView({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
+                  keyboardType='numeric'
                   onChangeText={(textPrice) => setTextPrice(textPrice)}
                   value={textPrice}
                 ></TextInput>
