@@ -83,7 +83,7 @@ export default function EditFoodView({ navigation, route }) {
 
   const [text, setText] = React.useState(category);
   const [textName, setTextName] = React.useState(food.name);
-  const [textPrice, setTextPrice] = React.useState(food.price);
+  const [textPrice, setTextPrice] = React.useState("" + food.price);
   const [textDescription, setTextDescription] = React.useState(
     food.description
   );
@@ -155,7 +155,7 @@ export default function EditFoodView({ navigation, route }) {
                   paddingBottom: 10,
                 }}
               >
-                <TouchableOpacity>
+                <TouchableOpacity onPress={pickImage}>
                   <View>
                     <View>
                       {image && (
@@ -261,7 +261,7 @@ export default function EditFoodView({ navigation, route }) {
           <View style={{ marginLeft: 10, marginRight: 10 }}>
             <View style={{ paddingBottom: 20 }}>
               <Text style={{ fontWeight: "bold" }}>
-                Giá bán (tối thiểu 20.000)
+                Giá bán
               </Text>
             </View>
 
