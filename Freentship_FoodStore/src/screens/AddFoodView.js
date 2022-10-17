@@ -21,6 +21,8 @@ import { db } from '../services/config'
 import { async } from "@firebase/util";
 
 
+
+
 const DATA = {
   id: 1,
   name: "Nước ngọt c2",
@@ -85,6 +87,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
         discount: 0,
         status: 1
       }); 
+      
     navigation.goBack('EditMenuView');
   }
 
@@ -105,30 +108,30 @@ export default function AddCategoryFoodView({ navigation, route }) {
       setImage(result.uri);
     }
   };
-
+  
   // food_Name
-  const [isFoodName, setIsFoodName] = useState(true)
-  const verityFoodName = (food_Name) => {
-    // it nhat 1 ki tu
-    let regex = new RegExp(/[a-A0-9]{1,}/);
-    if(!food_Name) return true;
-    if (regex.test(food_Name)){
-      return true;
-    } 
-    return false;
-  }
+  // const [isFoodName, setIsFoodName] = useState(true)
+  // const verityFoodName = (food_Name) => {
+  //   // it nhat 1 ki tu
+  //   let regex = new RegExp(/[a-A0-9]{1,}/);
+  //   if(!food_Name) return true;
+  //   if (regex.test(food_Name)){
+  //     return true;
+  //   } 
+  //   return false;
+  // }
 
   // Gia
-  const [isFoodPrice, setIsFoodPrice] = useState(true)
-  const verityFoodPrice = (food_Price) => {
-    // it nhat 1 ki tu so
-    let regex = new RegExp(/[a-A0-9]{1,}/);
-    if(!food_Price) return true;
-    if (regex.test(food_Price)){
-      return true;
-    } 
-    return false;
-  }
+  // const [isFoodPrice, setIsFoodPrice] = useState(true)
+  // const verityFoodPrice = (food_Price) => {
+  //   // it nhat 1 ki tu so
+  //   let regex = new RegExp(/[a-A0-9]{1,}/);
+  //   if(!food_Price) return true;
+  //   if (regex.test(food_Price)){
+  //     return true;
+  //   } 
+  //   return false;
+  // }
 
   return (
     <View style={{ flex: 1 }}>
@@ -160,6 +163,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
                     {image && <Image source={{ uri: image }} style={{borderRadius: 15 , width: '100%', height: 340,  }} />}
                 </View>
                 </TouchableOpacity>
+
                 
               </View>
               <View style={{paddingTop: 20, }}>
@@ -235,14 +239,15 @@ export default function AddCategoryFoodView({ navigation, route }) {
                   placeholder={'bún chả cá'}
                   onChangeText={(food_Name) => {setFoodName(food_Name);
                     //  
-                  const isValid = verityFoodName(food_Name);
-                  isValid? setIsFoodName(true): setIsFoodName(false);}}
+                  // const isValid = verityFoodName(food_Name);
+                  // isValid? setIsFoodName(true): setIsFoodName(false);
+                }}
                   value={food_Name}
                    
                 ></TextInput>
-                <Text style={{color: '#3366cc', fontSize: 10, paddingLeft: 10}}>
+                {/* <Text style={{color: '#3366cc', fontSize: 10, paddingLeft: 10}}>
                   {isFoodName? "" : "Tên món ăn k đc để trống 👍"}
-                </Text>
+                </Text> */}
               </View>
             </View>
           </View>
@@ -259,7 +264,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
         >
           <View style={{marginLeft: 10, marginRight: 10}}>
             <View style={{ paddingBottom: 20 }}>
-              <Text style={{ fontWeight: "bold" }}>Giá bán (tối thiểu 20.000)</Text>
+              <Text style={{ fontWeight: "bold" }}>Giá bán</Text>
             </View>
 
             <View>
@@ -277,14 +282,15 @@ export default function AddCategoryFoodView({ navigation, route }) {
                   keyboardType='numeric'
                   placeholder={'25.000'}
                   onChangeText={(food_Price) => {setFoodPrice(food_Price);
-                    const isValid = verityFoodPrice(food_Price);
-                    isValid? setIsFoodPrice(true): setIsFoodPrice(false);}}
+                    // const isValid = verityFoodPrice(food_Price);
+                    // isValid? setIsFoodPrice(true): setIsFoodPrice(false);
+                  }}
                   value={food_Price}
                   
                 ></TextInput>
-                <Text style={{color: 'red', fontSize: 10, paddingLeft: 10}}>
+                {/* <Text style={{color: 'red', fontSize: 10, paddingLeft: 10}}>
                   {isFoodPrice? "" : "Gia k đc để trống 👍"}
-                </Text>
+                </Text> */}
               </View>
             </View>
           </View>
@@ -325,7 +331,6 @@ export default function AddCategoryFoodView({ navigation, route }) {
           </View>
         </View>          
 
-        
       </ScrollView>
       <View style={{ flex: 0.15 }}>
         <View
