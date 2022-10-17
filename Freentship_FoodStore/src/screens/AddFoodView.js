@@ -88,7 +88,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
     navigation.goBack('EditMenuView');
   }
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -106,24 +106,29 @@ export default function AddCategoryFoodView({ navigation, route }) {
     }
   };
 
-  // const uploadImage = async () => {
-  //   setUploading(true);
-  //   const response = await fetch(image.url)
-  //   const blob = await response.blob();
-  //   const filename = image.url.substring(image.url.lastIndexOf('/')+1);
-  //   var ref = firebase.storage().ref().child(filename).put(blob);
+  // food_Name
+  const [isFoodName, setIsFoodName] = useState(true)
+  const verityFoodName = (food_Name) => {
+    // it nhat 1 ki tu
+    let regex = new RegExp(/[a-A0-9]{1,}/);
+    if(!food_Name) return true;
+    if (regex.test(food_Name)){
+      return true;
+    } 
+    return false;
+  }
 
-  //   try{
-  //     await ref;
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  //   setUploading(false);
-  //   Alert.alert(
-  //     'photo uploader..'
-  //   );
-  //   setImage(null);  
-  // };
+  // Gia
+  const [isFoodPrice, setIsFoodPrice] = useState(true)
+  const verityFoodPrice = (food_Price) => {
+    // it nhat 1 ki tu so
+    let regex = new RegExp(/[a-A0-9]{1,}/);
+    if(!food_Price) return true;
+    if (regex.test(food_Price)){
+      return true;
+    } 
+    return false;
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -228,9 +233,16 @@ export default function AddCategoryFoodView({ navigation, route }) {
                     borderRadius: 5,
                   }}
                   placeholder={'bún chả cá'}
-                  onChangeText={(food_Name) => {setFoodName(food_Name)}}
+                  onChangeText={(food_Name) => {setFoodName(food_Name);
+                    //  
+                  const isValid = verityFoodName(food_Name);
+                  isValid? setIsFoodName(true): setIsFoodName(false);}}
                   value={food_Name}
+                   
                 ></TextInput>
+                <Text style={{color: '#3366cc', fontSize: 10, paddingLeft: 10}}>
+                  {isFoodName? "" : "Tên món ăn k đc để trống 👍"}
+                </Text>
               </View>
             </View>
           </View>
@@ -262,10 +274,17 @@ export default function AddCategoryFoodView({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
+                  keyboardType='numeric'
                   placeholder={'25.000'}
-                  onChangeText={(food_Price) => {setFoodPrice(food_Price)}}
+                  onChangeText={(food_Price) => {setFoodPrice(food_Price);
+                    const isValid = verityFoodPrice(food_Price);
+                    isValid? setIsFoodPrice(true): setIsFoodPrice(false);}}
                   value={food_Price}
+                  
                 ></TextInput>
+                <Text style={{color: 'red', fontSize: 10, paddingLeft: 10}}>
+                  {isFoodPrice? "" : "Gia k đc để trống 👍"}
+                </Text>
               </View>
             </View>
           </View>
