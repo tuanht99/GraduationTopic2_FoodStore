@@ -73,7 +73,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
   //const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const [text, setText] = React.useState(category.category_Name);
+  const [text, setText] = React.useState(category.name);
   // const [aFood, setAFood] = React.useState(food.id)
 
   function addFood () {

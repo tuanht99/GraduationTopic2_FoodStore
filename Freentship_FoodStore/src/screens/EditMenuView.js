@@ -207,7 +207,7 @@ export default function EditMenuView({ navigation }) {
               <View style={{ marginLeft: 10, marginRight: 10 }}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                   <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
-                    {item.category_Name}
+                    {item.name}
                   </Text>
                   <TouchableOpacity
                     onPress={() =>

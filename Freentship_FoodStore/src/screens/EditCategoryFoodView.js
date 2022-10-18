@@ -66,12 +66,12 @@ export default function EditCategoryFoodView({ navigation, route }) {
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  const [text, setText] = React.useState(category.category_Name);
+  const [text, setText] = React.useState(category.name);
   console.log(text);
 
   function editCategories(text) {
     updateDoc(doc(db, "categories", category.id), {
-      category_Name: text,
+      name: text,
     });
     navigation.goBack("EditMenuView");
   }
