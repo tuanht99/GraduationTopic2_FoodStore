@@ -58,7 +58,7 @@ export default function AddCategoryFoodView({ navigation }) {
   
   function create () {
     addDoc(collection(db, "categories"), {
-      category_Name: category_Name,
+      name: category_Name,
     });
     navigation.goBack('EditMenuView');
   }

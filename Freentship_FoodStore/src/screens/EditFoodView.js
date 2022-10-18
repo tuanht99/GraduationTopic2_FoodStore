@@ -54,7 +54,8 @@ const DATA = {
 
 // Navigation
 export default function EditFoodView({ navigation, route }) {
-  const { category, food } = route.params;
+  const { category } = route.params;
+  const { food } = route.params;
   // const { food } = route.params;
   // console.log('idfood:', food);
   React.useLayoutEffect(() => {
@@ -93,7 +94,7 @@ export default function EditFoodView({ navigation, route }) {
   function editFood() {
     console.log("food name: ", textName);
     updateDoc(doc(db, "foods", food.id), {
-      //     // category_Name: text,
+      //category_Id: category.id,
       name: textName,
       price: textPrice,
       description: textDescription,
