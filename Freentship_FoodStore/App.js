@@ -13,19 +13,22 @@ import EditCategoryFoodView from './src/screens/EditCategoryFoodView';
 import AddFoodView from './src/screens/AddFoodView';
 import EditFoodView from './src/screens/EditFoodView';
 import  MainNavigator  from './src/navigators/MainNavigator';
+import HomeScreen from './src/screens/HomeScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
   
-     
+     <HomeScreen>
+      
+     </HomeScreen>
    
-    <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen name="EditMenuView" component={EditMenuView} />
-      <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
-    </Stack.Navigator>
-  </NavigationContainer>
+  //   <NavigationContainer>
+  //   <Stack.Navigator>
+  //     <Stack.Screen name="EditMenuView" component={EditMenuView} />
+  //     <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
+  //   </Stack.Navigator>
+  // </NavigationContainer>
   
   );
 }
