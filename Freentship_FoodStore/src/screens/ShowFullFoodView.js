@@ -62,7 +62,7 @@ export default function ShowFullFoodView({ navigation, route }) {
         </TouchableOpacity>
       ),
 
-      title: category.category_Name,
+      title: category.name,
       headerTitleAlign: "center",
       headerTitleStyle: {
         fontSize: 15,
