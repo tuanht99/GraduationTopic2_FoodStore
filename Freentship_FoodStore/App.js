@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,SafeAreaView } from 'react-native';
 
 // import LoginNavigator from './navigators/LoginNavigator';
 // import InforSettingView from './views/InforSettingView';
@@ -12,17 +12,20 @@ import AddCategoryFoodView from './src/screens/AddCategoryFoodView';
 import EditCategoryFoodView from './src/screens/EditCategoryFoodView';
 import AddFoodView from './src/screens/AddFoodView';
 import EditFoodView from './src/screens/EditFoodView';
+import  MainNavigator  from './src/navigators/MainNavigator';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    
+  
+     
+   
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="EditMenuView" component={EditMenuView} />
-        <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
-      </Stack.Navigator>
-    </NavigationContainer>
-
+    <Stack.Navigator>
+      <Stack.Screen name="EditMenuView" component={EditMenuView} />
+      <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
+    </Stack.Navigator>
+  </NavigationContainer>
+  
   );
 }
