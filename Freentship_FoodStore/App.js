@@ -12,16 +12,15 @@ import AddCategoryFoodView from './src/screens/AddCategoryFoodView';
 import EditCategoryFoodView from './src/screens/EditCategoryFoodView';
 import AddFoodView from './src/screens/AddFoodView';
 import EditFoodView from './src/screens/EditFoodView';
-import  MainNavigator  from './src/navigators/MainNavigator';
+import  MainNavigator  from './src/components/MainNavigator';
 import HomeScreen from './src/screens/HomeScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-  
-     <HomeScreen>
-      
-     </HomeScreen>
+  <MainNavigator></MainNavigator>
+    
    
   //   <NavigationContainer>
   //   <Stack.Navigator>
