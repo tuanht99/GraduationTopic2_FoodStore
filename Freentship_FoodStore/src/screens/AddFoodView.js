@@ -1,26 +1,14 @@
-import React, { useState } from "react";
-import {
-  View,
-  SafeAreaView,
-  Image,
-  Text,
-  Platform,
-  TouchableOpacity,
-  Switch,
-  Alert,
-  Button
-} from "react-native";
+import React, {useState} from "react";
+import {Button, Image, Text, TouchableOpacity, View} from "react-native";
 
-import { AntDesign } from "@expo/vector-icons";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import {AntDesign} from "@expo/vector-icons";
+import {ScrollView, TextInput} from "react-native-gesture-handler";
 
 import * as ImagePicker from 'expo-image-picker';
 
-import { doc, setDoc, addDoc, collection, updateDoc } from "firebase/firestore";
-import { db } from '../services/config'
-import { async } from "@firebase/util";
-
-
+import {addDoc, collection} from "firebase/firestore";
+import {db} from '../services/config'
+import {getStorage, ref, uploadBytes, getDownloadURL, getBlob} from "firebase/storage";
 
 
 const DATA = {
@@ -44,10 +32,9 @@ const DATA = {
 
 // Navigation
 export default function AddCategoryFoodView({ navigation, route }) {
+
   const { category } = route.params;
   const { food } = route.params;
-  console.log('idadd:', category);
-  console.log('idFood: ', food);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -65,7 +52,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
     });
   }, [navigation]);
 
-  
+  const [namePathImage, setNamePathImage] = React.useState(null);
   const [category_Name, setCategoryName] = React.useState("");
   const [food_Name, setFoodName] = React.useState("");
   const [food_Price, setFoodPrice] = React.useState("");
@@ -77,16 +64,23 @@ export default function AddCategoryFoodView({ navigation, route }) {
   // const [aFood, setAFood] = React.useState(food.id)
 
   function addFood () {
+    const storage = getStorage();
+    getDownloadURL(ref(storage, namePathImage)).then((url) => {
+      setImage(url);
       addDoc(collection(db, "foods"), {
         category_Id: category.id,
         name:food_Name,
         price:food_Price,
         description: food_Description,
-        image: image,
+        image: url,
         food_store_id: '7T5uG3Si5NHioADgam1Z',
         discount: 0,
         status: 1
-      }); 
+      });
+    }).catch((error) => {
+      console.log(error)
+    })
+
       
     navigation.goBack('EditMenuView');
   }
@@ -105,10 +99,36 @@ export default function AddCategoryFoodView({ navigation, route }) {
     console.log(result);
 
     if (!result.cancelled) {
+      const storage = getStorage();
+      // const id = Math.random().toString(36).substring(7);
+      // const id = React.useId()
+      const bytes = new Uint8Array(result.uri)
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+      const imgName = "img-" + new Date().getTime();
+      setNamePathImage(`images/${imgName}.jpg`);
+      const storageRef = ref(storage, `images/${imgName}.jpg`);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function() {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', result.uri, true);
+        xhr.send(null);
+      });
+
+      uploadBytes(storageRef, blob).then((snapshot) => { // causes crash
+        console.log('Uploaded a blob or file!');
+      });
       setImage(result.uri);
     }
   };
-  
+
   // food_Name
   // const [isFoodName, setIsFoodName] = useState(true)
   // const verityFoodName = (food_Name) => {
