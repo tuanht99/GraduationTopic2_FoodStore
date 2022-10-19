@@ -8,51 +8,53 @@ import {
     query,
     where,
     updateDoc,
+    getDocs
 } from 'firebase/firestore'
-const DATA = [
-    {
-        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        title: "Cơm tấm",
-        Quantity: "2",
-        fee: 3000,
-        status: "0",
-        statusName: "Chờ cọc"
-    },
-    {
-        id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-        title: "bánh bột lọc",
-        Quantity: "2",
-        fee: 3000,
-        status: "1",
-        statusName: "Đã cọc"
-    },
-    {
-        id: "58694a0f-3da1-471f-bd96-145571e29d72",
-        title: "cơm gà",
-        fee: 3000,
-        Quantity: "2",
-        status: "2",
-        statusName: "Hoàn thành"
-    },
-];
+const cancelOrder = async () => {
+    const orderState = doc(db, 'orders', lastestOrders.id + '')
+
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(orderState, {
+        status: 8,
+    })
+
+}
+const acceptTheOrder = async () => {
+    const orderState = doc(db, 'orders', lastestOrder.id + '')
+
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(orderState, {
+        status: 1,
+    })
+}
+const feeTheOrder = async () => {
+    const orderState = doc(db, 'orders', lastestOrder.id + '')
+
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(orderState, {
+        status: 7,
+    })
+}
 
 // giao diện thông báo
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
+const Item = ({ item, onPress,}) => (
 
 
 
 
     <View style={{ flex: 1 }}>
         <View>
-            <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
+            <TouchableOpacity onPress={onPress} style={[styles.item, {backgroundColor:"gray"} ]}>
                 <Text style={[styles.title, { color: "white", padding: 2 }]}>Mã đơn: {item.id}</Text>
-                <Text style={[styles.title, { color: "white" }]}>Tên món: {item.title}</Text>
-                <Text style={[styles.title, { color: "white" }]}>Số lượng: {item.Quantity}</Text>
-                <Text style={[styles.title, { color: "white" }]}>Tiền khách cọc: {item.fee}</Text>
+                <Text style={[styles.title, { color: "white" }]}>Tổng tiền: {item.totalPrice}</Text>
+                <Text style={[styles.title, { color: "white" }]}>Số lượng: {item.ordered_food[0].qty}</Text>
+                <Text style={[styles.title, { color: "white" }]}>Tiền khách cọc: {item.ship_fee}</Text>
+                
+                <Text style={[styles.title, { color: "white" }]}>Trạng thái: {item.status}</Text>
 
 
-                <Text style={[textColor, { color: "red", paddingLeft: 300 }]}>{item.statusName}</Text>
 
+               
             </TouchableOpacity>
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }}>
@@ -60,7 +62,7 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => (
                         title="Huỷ"
                         color="#ff5c5c"
                         //change "function" with your function for the button pressing
-                        onPress={() => { id }}
+                        onPress={() => { cancelOrder }}
                     />
 
                 </View>
@@ -68,6 +70,7 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => (
                     <Button
                         title="Đã Nhận Cọc"
                         color="yellow"
+                        onPress={() => { feeTheOrder }}
                     //change "function" with your function for the button pressing
                     />
 
@@ -75,6 +78,7 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => (
                 <View style={{ flex: 1, backgroundColor: "green" }}>
                     <Button
                         title="Đã Giao Hàng"
+                        onPress={() => { acceptTheOrder }}
                     //change "function" with your function for the button pressing
                     />
 
@@ -133,69 +137,46 @@ function Order() {
     // Constants declaration
     const [lastestOrders, setLastestOrders] = useState([])
     const [orderState, setOrderState] = useState([])
-    const idFoodStore = "2a0HmLolzLzkazuwjBu3"
+    const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
 
 
-    const cancelOrder = async () => {
-        const orderState = doc(db, 'orders', lastestOrder.id + '')
-
-        // Set the "capital" field of the city 'DC'
-        await updateDoc(orderState, {
-            status: 8,
-        })
-
-      
-
-        // Set the "capital" field of the city 'DC'
-        await updateDoc(cacelOrder, {
-            lastest_order_id: '',
-        })
-    }
-
+    
     // Get lastest order
     useEffect(() => {
-        const unsubscribe = onSnapshot(
-            doc(db, 'orders', 'mu5Mdy3uPMLC1Mo5xvph'),
-            (item) => {
-                setLastestOrder({ id: item.id, ...item.data() })
-                console.log("lastestOrder.user_id :" + lastestOrder.user_id)
-            },
-        )
-        const q = query(collection(db, 'order_status'))
-
-        const order = onSnapshot(q, (querySnapshot) => {
+        const orders = async () => {
+            const q = query(collection(db, "orders"), where("food_store_id", "==", idFoodStore + ''), where("status", "==", 3));
+            let lastestOrders = []
+            const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-                setOrderState((orderState) => [...orderState, doc.data().value])
-            })
-        })
+                // doc.data() is never undefined for query doc snapshots
+                lastestOrders.push({ id: doc.id, ...doc.data()})
+            });
+            setLastestOrders(lastestOrders)
+        }
+        orders()
+    }, [])
 
-    }, [lastestOrder.user_id])
-// Accept the order
-const acceptTheOrder = async () => {
-    const orderState = doc(db, 'orders', lastestOrder.id + '')
+    console.log(lastestOrders);
+    // Accept the order
+   
 
-    // Set the "capital" field of the city 'DC'
-    await updateDoc(orderState, {
-      status: 7,
-    })
-  }
 
     const cancelTheOrder = () => {
         Alert.alert('Thông báo', 'Bạn có muốn huỷ đơn hàng này không?', [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: () => {
-              cancelOrder()
+            {
+                text: 'Cancel',
+                style: 'cancel',
             },
-          },
+            {
+                text: 'OK',
+                onPress: () => {
+                    cancelOrder()
+                },
+            },
         ])
-      }
+    }
 
- 
+
 
 
 
@@ -231,7 +212,7 @@ const acceptTheOrder = async () => {
     };
     // không có đơn hàng
 
-    if (setSelectedId == null) {
+    if (lastestOrders.status == 3) {
         return <EmptyOrder />
     } else {
         // có đơn
@@ -239,7 +220,7 @@ const acceptTheOrder = async () => {
             <View style={styles.ListOrders}>
 
                 <FlatList
-                    data={orderState}
+                    data={lastestOrders}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     extraData={selectedId}
