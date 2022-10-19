@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   SafeAreaView,
   Image,
   Text,
-  
   TouchableOpacity,
   Switch,
 } from "react-native";
@@ -12,6 +11,15 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
+import {
+  doc,
+  setDoc,
+  addDoc,
+  collection,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../services/config";
 
 const DATA = {
   id: 1,
@@ -33,7 +41,10 @@ const DATA = {
 };
 
 // Navigation
-export default function EditCategoryFoodView({ navigation }) {
+export default function EditCategoryFoodView({ navigation, route }) {
+  const { category } = route.params;
+  console.log('id:', category);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -50,9 +61,29 @@ export default function EditCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
-  const [danhmuc, onDanhMuc] = React.useState("Tra sua");
+  
+  const [category_Name, setCategoryName] = React.useState(text);
   const [isEnabled, setIsEnabled] = React.useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+  const [text, setText] = React.useState(category.name);
+  console.log(text);
+
+  function editCategories(text) {
+    updateDoc(doc(db, "categories", category.id), {
+      name: text,
+    });
+    navigation.goBack("EditMenuView");
+  }
+
+  function deleteCategories(e) {
+    deleteDoc(doc(db, "categories", e));
+    navigation.goBack("EditMenuView");
+  }
+
+  const [listCate, setListCate] = useState([]);
+  
+  console.log(listCate);
 
   return (
     <View style={{ flex: 1 }}>
@@ -66,9 +97,11 @@ export default function EditCategoryFoodView({ navigation }) {
             paddingBottom: 10,
           }}
         >
-          <View style={{marginLeft: 10, marginRight: 10}}>
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
             <View style={{ paddingBottom: 20 }}>
-              <Text style={{ fontWeight: "bold" }}>Tên danh mục</Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Tên danh mục
+              </Text>
             </View>
 
             <View>
@@ -83,16 +116,15 @@ export default function EditCategoryFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  onChangeText={onChangeText}
+                  onChangeText={(text) => setText(text)}
                   value={text}
-                  
-                ></TextInput>
+                />
               </View>
             </View>
           </View>
         </View>
 
-        <View style={{paddingBottom: 10}}></View>
+        <View style={{ paddingBottom: 10 }}></View>
 
         {/* Hien thi tren menu */}
         <View
@@ -103,14 +135,14 @@ export default function EditCategoryFoodView({ navigation }) {
             paddingBottom: 10,
           }}
         >
-          <View style={{marginLeft: 10, marginRight: 10}}>
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{fontWeight: 'bold'}}>Hiển thị trên menu</Text>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontWeight: "bold" }}>Hiển thị trên menu</Text>
               </View>
-              <View style={{paddingRight: 10}}>
+              <View style={{ paddingRight: 10 }}>
                 <Switch
                   trackColor={{ false: "#767577", true: "#81b0ff" }}
                   thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
@@ -123,23 +155,20 @@ export default function EditCategoryFoodView({ navigation }) {
           </View>
         </View>
 
-        <View style={{paddingBottom: 20}}></View>
-        
+        <View style={{ paddingBottom: 20 }}></View>
 
         {/* Xoa danh muc */}
-        <View style={{marginLeft: 10, marginRight: 10}}>
-          <TouchableOpacity>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{paddingRight: 10}}>
-            <AntDesign name="delete" size={24} color="black" />
-          </View>
-          <View>
-            <Text>Xóa danh mục</Text>
-          </View>
-          </View>
+        <View style={{ marginLeft: 10, marginRight: 10 }}>
+          <TouchableOpacity onPress={() => deleteCategories(category.id)}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View style={{ paddingRight: 10 }}>
+                <AntDesign name="delete" size={24} color="black" />
+              </View>
+              <View>
+                <Text>Xóa danh mục</Text>
+              </View>
+            </View>
           </TouchableOpacity>
-          
-          
         </View>
       </ScrollView>
 
@@ -157,16 +186,21 @@ export default function EditCategoryFoodView({ navigation }) {
             bottom: 0,
           }}
         >
-          <View style={{marginLeft: 10, marginRight: 10}}>
-            <TouchableOpacity style={{
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <TouchableOpacity
+              style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
                 width: "97%",
                 height: 50,
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
-              <Text style={{color: "#fff",}}>Lưu</Text>
+              }}
+              onPress={() => {
+                editCategories(text);
+              }}
+            >
+              <Text style={{ color: "#fff" }}>Lưu</Text>
             </TouchableOpacity>
           </View>
         </View>
