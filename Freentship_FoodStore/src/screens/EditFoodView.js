@@ -54,8 +54,7 @@ const DATA = {
 
 // Navigation
 export default function EditFoodView({ navigation, route }) {
-  const { category } = route.params;
-  const { food } = route.params;
+  const { categoryName, food } = route.params;
   // const { food } = route.params;
   // console.log('idfood:', food);
   React.useLayoutEffect(() => {
@@ -82,14 +81,13 @@ export default function EditFoodView({ navigation, route }) {
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  const [text, setText] = React.useState(category);
+  const [text, setText] = React.useState(categoryName);
   const [textName, setTextName] = React.useState(food.name);
   const [textPrice, setTextPrice] = React.useState("" + food.price);
   const [textDescription, setTextDescription] = React.useState(
     food.description
   );
   const [textImage, setTextImage] = React.useState(food.image);
-  console.log("name: ", category);
 
   function editFood() {
     console.log("food name: ", textName);

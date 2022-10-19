@@ -71,7 +71,7 @@ export default function ShowFullFoodView({ navigation, route }) {
   }, [navigation]);
 
   const [category_Name, setCategoryName] = React.useState(text);
-  const [text, setText] = React.useState(category.category_Name);
+  const [text, setText] = React.useState(category.name);
 
   const [listCate, setListCate] = useState([]);
   const [listFood, setListFood] = useState([]);
@@ -177,7 +177,7 @@ export default function ShowFullFoodView({ navigation, route }) {
                   {/* shop */}
                   <TouchableOpacity
                     onPress={() => navigation.navigate("EditFoodView", 
-                      {category: text, food: item}
+                      {categoryName: text, food: item}
                     )}
                   >
                     <View
