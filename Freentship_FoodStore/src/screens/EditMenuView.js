@@ -51,7 +51,8 @@ const DATA = {
 };
 
 // Navigation
-export default function EditMenuView({ navigation }) {
+export default function EditMenuView({ navigation, route }) {
+  console.log(route.params);
   // const {category} = route.params;
   // const { food } = route.params;
   React.useLayoutEffect(() => {
