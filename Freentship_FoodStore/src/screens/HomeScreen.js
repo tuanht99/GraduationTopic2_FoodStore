@@ -9,12 +9,13 @@ import {
     Alert,
 
 } from 'react-native'
+
 import { Switch } from 'react-native-switch';
 import React, { useEffect, useState } from 'react'
 // import ReadyForOrderToggle from '../components/ReadyForOrderToggle'
 import SvgTest from '../../assets/logo-store.svg'
 // import { db } from '../services/config'
-import Notify from '../components/Notify'
+import Notify from './Notify'
 export default function HomeScreen({ navigation }) {
    
 
@@ -54,18 +55,3 @@ const styles = StyleSheet.create({
    
 
 })
-
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-
-const HomeScreen = () => {
-  return (
-    <View>
-      <Text>HomeScreen</Text>
-    </View>
-  )
-}
-
-export default HomeScreen
-
-const styles = StyleSheet.create({})
