@@ -206,25 +206,52 @@ export default function EditMenuView({ navigation, route }) {
             >
               {/* Danh muc */}
               <View style={{ marginLeft: 10, marginRight: 10 }}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
-                    {item.name}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("ShowFullFoodView", {
-                        category: item
-                      })
-                    }
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "row",
+                    }}
                   >
-                    <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
-                      Xem tất cả
-                    </Text>
-                  </TouchableOpacity>
+                    <View style={{ paddingRight: 10 }}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width: 40, height: 40, borderRadius: 25 }}
+                      />
+                    </View>
+                    <View>
+                      <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+                    </View>
+                  </View>
+
+                  <View style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "row",
+                    }}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("ShowFullFoodView", {
+                          category: item,
+                        })
+                      }
+                    >
+                      <Text style={{ fontWeight: "bold"}}>
+                        Xem tất cả
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
                 {/* 2 cai nut */}
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", paddingTop: 10 }}>
                   {/* // */}
                   <View style={{ marginRight: 10, paddingRight: "24%" }}>
                     <TouchableOpacity

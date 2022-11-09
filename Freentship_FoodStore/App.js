@@ -21,7 +21,7 @@ export default function App() {
     
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name='LocationView' component={LocationView} />
+        {/* <Stack.Screen name='LocationView' component={LocationView} /> */}
         <Stack.Screen name="EditMenuView" component={EditMenuView} />
         <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
         <Stack.Screen name="EditCategoryFoodView" component={EditCategoryFoodView} />

@@ -7,13 +7,22 @@ import {
   TouchableOpacity,
   Switch,
   RefreshControl,
+  Button,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
 import { doc, setDoc, addDoc, collection } from "firebase/firestore";
-import { db } from '../services/config'
+import { db } from "../services/config";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  getBlob,
+} from "firebase/storage";
+import * as ImagePicker from "expo-image-picker";
 
 const DATA = {
   id: 1,
@@ -33,7 +42,7 @@ const DATA = {
 
   txtDis: "Thông tin sản phẩm",
 };
-// 
+//
 
 // Navigation
 export default function AddCategoryFoodView({ navigation }) {
@@ -56,16 +65,116 @@ export default function AddCategoryFoodView({ navigation }) {
   const [categoryId] = React.useState("");
   const [category_Name, setCategoryName] = React.useState("");
   
-  function create () {
-    addDoc(collection(db, "categories"), {
-      name: category_Name,
-    });
-    navigation.goBack('EditMenuView');
+  const [namePathImage, setNamePathImage] = React.useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  function create() {
+    const storage = getStorage();
+    getDownloadURL(ref(storage, namePathImage))
+      .then((url) => {
+        setImage(url);
+        addDoc(collection(db, "categories"), {
+          name: category_Name,
+          image: url,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    navigation.goBack("EditMenuView");
   }
-  
+
+  const [image, setImage] = useState("");
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      const storage = getStorage();
+      // const id = Math.random().toString(36).substring(7);
+      // const id = React.useId()
+      const bytes = new Uint8Array(result.uri);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+      const imgName = "img-" + new Date().getTime();
+      setNamePathImage(`images/${imgName}.jpg`);
+      const storageRef = ref(storage, `images/${imgName}.jpg`);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function () {
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", result.uri, true);
+        xhr.send(null);
+      });
+
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        // causes crash
+        console.log("Uploaded a blob or file!");
+      });
+      setImage(result.uri);
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 0.85 }}>
+        {/* image */}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingTop: 10,
+            paddingBottom: 10,
+            width: "100%",
+            height: 420,
+          }}
+        >
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <View style={{ paddingRight: 2 }}>
+              <View
+                style={{
+                  borderRadius: 15,
+                  borderColor: "#E94730",
+                  borderWidth: 1,
+                  width: "100%",
+                  height: 342,
+                  paddingBottom: 10,
+                }}
+              >
+                <TouchableOpacity onPress={pickImage}>
+                  <View>
+                    {image && (
+                      <Image
+                        source={{ uri: image }}
+                        style={{ borderRadius: 15, width: "100%", height: 340 }}
+                      />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View style={{ paddingTop: 20 }}>
+                <Button title="Chọn hình" onPress={pickImage} />
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={{ paddingBottom: 10 }}></View>
+
         {/* Tạo danh mục */}
         <View
           style={{
@@ -75,7 +184,7 @@ export default function AddCategoryFoodView({ navigation }) {
             paddingBottom: 10,
           }}
         >
-          <View style={{marginLeft: 10, marginRight: 10}}>
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
             <View style={{ paddingBottom: 20 }}>
               <Text style={{ fontWeight: "bold" }}>Tên danh mục</Text>
             </View>
@@ -93,7 +202,9 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderRadius: 5,
                   }}
                   placeholder={"Nhập tên danh mục"}
-                  onChangeText={(category_Name) => {setCategoryName(category_Name)}}
+                  onChangeText={(category_Name) => {
+                    setCategoryName(category_Name);
+                  }}
                   value={category_Name}
                 ></TextInput>
               </View>
@@ -101,9 +212,7 @@ export default function AddCategoryFoodView({ navigation }) {
           </View>
         </View>
 
-        <View style={{paddingBottom: 10}}></View>
-                  
-        
+        <View style={{ paddingBottom: 10 }}></View>
       </ScrollView>
       <View style={{ flex: 0.15 }}>
         <View
@@ -119,16 +228,19 @@ export default function AddCategoryFoodView({ navigation }) {
             bottom: 0,
           }}
         >
-          <View style={{marginLeft: 10, marginRight: 10}}>
-            <TouchableOpacity onPress={create} style={{
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <TouchableOpacity
+              onPress={create}
+              style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
                 width: "98%",
                 height: 50,
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
-              <Text style={{color: "#fff",}}>Tạo danh mục</Text>
+              }}
+            >
+              <Text style={{ color: "#fff" }}>Tạo danh mục</Text>
             </TouchableOpacity>
           </View>
         </View>
