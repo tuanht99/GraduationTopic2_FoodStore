@@ -52,6 +52,8 @@ const DATA = {
   txtDis: "Thông tin sản phẩm",
 };
 
+import {getStorage, ref, uploadBytes, getDownloadURL, getBlob} from "firebase/storage";
+
 // Navigation
 export default function EditFoodView({ navigation, route }) {
   const { categoryName, food } = route.params;
@@ -73,6 +75,7 @@ export default function EditFoodView({ navigation, route }) {
     });
   }, [navigation]);
 
+  const [namePathImage, setNamePathImage] = React.useState(null);
   const [category_Name, setCategoryName] = React.useState("");
   const [food_Name, setFoodName] = React.useState("");
   const [food_Price, setFoodPrice] = React.useState("");
@@ -91,16 +94,23 @@ export default function EditFoodView({ navigation, route }) {
 
   function editFood() {
     console.log("food name: ", textName);
+    const storage = getStorage();
+    getDownloadURL(ref(storage, namePathImage)).then((url) => {
+      setImage(url);
     updateDoc(doc(db, "foods", food.id), {
       //category_Id: category.id,
       name: textName,
       price: textPrice,
       description: textDescription,
-      image: image,
+      image: url,
       food_store_id: "4dpAvRWJVrvdbml9vKDL",
       discount: 0,
       status: 1,
     });
+  }).catch((error) => {
+    console.log(error)
+  })
+
     navigation.goBack("ShowFullFoodView");
     // 7T5uG3Si5NHioADgam1Z
   }
@@ -123,7 +133,36 @@ export default function EditFoodView({ navigation, route }) {
 
     console.log(result);
 
+    // if (!result.cancelled) {
+    //   setImage(result.uri);
+    // }
     if (!result.cancelled) {
+      const storage = getStorage();
+      // const id = Math.random().toString(36).substring(7);
+      // const id = React.useId()
+      const bytes = new Uint8Array(result.uri)
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+      const imgName = "img-" + new Date().getTime();
+      setNamePathImage(`images/${imgName}.jpg`);
+      const storageRef = ref(storage, `images/${imgName}.jpg`);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function() {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', result.uri, true);
+        xhr.send(null);
+      });
+
+      uploadBytes(storageRef, blob).then((snapshot) => { // causes crash
+        console.log('Uploaded a blob or file!');
+      });
       setImage(result.uri);
     }
   };
