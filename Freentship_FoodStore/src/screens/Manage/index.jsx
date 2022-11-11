@@ -1,11 +1,9 @@
 import React from "react";
 import Header from "../../components/Header";
-import { View ,Text } from "react-native";
+import { View, Text } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import FindOrderCode from "../FindOrderCode";
 import Turnover from "../Turnover";
-
-
 
 const Manage = () => {
   const [index, setIndex] = React.useState(0);
@@ -34,13 +32,14 @@ const Manage = () => {
               <Text style={{ color: color, margin: 8, fontSize: 16 }}>
                 {route.title}
               </Text>
+
             )}
             style={{ backgroundColor: "white" }}
           />
         )}
         renderScene={renderScene}
-        onIndexChange={setIndex}     
-        scrollEnabled 
+        onIndexChange={setIndex}
+        scrollEnabled
       />
     </View>
   );
