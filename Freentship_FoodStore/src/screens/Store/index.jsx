@@ -19,46 +19,20 @@ import React, { useState, useCallback } from "react";
 import DatePicker from "react-native-modern-datepicker";
 
 const Store = () => {
-  const [date, setDate] = useState("");
-  const [showMonth, setShowMonth] = useState(false);
-
-  var date1 = new Date('11/11/2022');
-  var firstDay = new Date(date1.getFullYear(), date1.getMonth(), 1);
-  var lastDay = new Date(date1.getFullYear(), date1.getMonth() + 1, 0);
-  const showPicker = useCallback((value) => setShowMonth(value), []);
-  const onValueChange = useCallback(
-    (event, newDate) => {
-      const selectedDate = newDate || date;
-
-      showPicker(false);
-      setDate(selectedDate);
-    },
-    [date, showPicker]
+  const array2 = [
+    { id: 1, val: 60 },
+    { id: 2, val: 2 },
+    { id: 3, val: 89 },
+    { id: 4, val: 78 },
+  ];
+  const max2 = array2.reduce(
+    (op, item) => (op = op > item.val ? op : item.val),
+    0
   );
+
+  console.log(max2);
   return (
-    <SafeAreaView className="flex justify-center items-center mt-10">
-      <Text>{firstDay.toString()}</Text>
-      {/* <Text>{moment(date, "MM-YYYY")}</Text> */}
-      <TouchableOpacity onPress={() => showPicker(true)}>
-        <Text>OPEN</Text>
-      </TouchableOpacity>
-
-      {showMonth && (
-        <DatePicker
-          mode="monthYear"
-          selectorStartingYear={2000}
-          onMonthYearChange={(selectedDate) => setDate(selectedDate)}
-          onPress={() => showPicker(false)}
-          options={{ backgroundColor: "red" }}
-        />
-      )}
-
-      {showMonth && (
-        <TouchableOpacity onPress={() => showPicker(false)}>
-          <Text>OPEN</Text>
-        </TouchableOpacity>
-      )}
-    </SafeAreaView>
+    <SafeAreaView className="flex justify-center items-center mt-10"></SafeAreaView>
   );
 };
 export default Store;

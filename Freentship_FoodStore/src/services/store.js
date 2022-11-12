@@ -27,7 +27,7 @@ export async function GetAllOrder() {
   const q = query(
     orderRef,
     where("food_store_id", "==", '4dpAvRWJVrvdbml9vKDL'),
-    where("status", "==", 3)
+    // where("status", "==", 3)
   );
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((docRef) => {
