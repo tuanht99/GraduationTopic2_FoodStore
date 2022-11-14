@@ -13,14 +13,19 @@ import EditCategoryFoodView from './src/screens/EditCategoryFoodView';
 import AddFoodView from './src/screens/AddFoodView';
 import EditFoodView from './src/screens/EditFoodView';
 import ShowFullFoodView from './src/screens/ShowFullFoodView';
-import {LocationView} from "./src/screens/LocationView";
+import { LocationView } from "./src/screens/LocationView";
+import LoginScreen from './src/screens/LoginScreen';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    
+
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        initialRouteName='LoginScreen'
+      >
+        <Stack.Screen name='LoginScreen' component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name='LocationView' component={LocationView} />
         <Stack.Screen name="EditMenuView" component={EditMenuView} />
         <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
