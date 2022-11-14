@@ -14,7 +14,10 @@ import AddFoodView from './src/screens/AddFoodView';
 import EditFoodView from './src/screens/EditFoodView';
 import ShowFullFoodView from './src/screens/ShowFullFoodView';
 import { LocationView } from "./src/screens/LocationView";
-import LoginScreen from './src/screens/LoginScreen';
+import { LoginScreen } from './src/screens/LoginScreen';
+import { ConfirmOTP } from './src/screens/ConfirmOTP';
+import { SignupPending } from './src/screens/SignupPending';
+import { SignupScreen } from './src/screens/SignupScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +28,9 @@ export default function App() {
       <Stack.Navigator
         initialRouteName='LoginScreen'
       >
+        <Stack.Screen name='SignupScreen' component={SignupScreen} options={{ headerShown: false }} />
+        <Stack.Screen name='SignupPending' component={SignupPending} options={{ headerShown: false }} />
+        <Stack.Screen name='ConfirmOTP' component={ConfirmOTP} options={{ headerShown: false }} />
         <Stack.Screen name='LoginScreen' component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name='LocationView' component={LocationView} />
         <Stack.Screen name="EditMenuView" component={EditMenuView} />
