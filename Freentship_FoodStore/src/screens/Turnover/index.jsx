@@ -18,7 +18,7 @@ const Turnover = () => {
     setSelectedDate(payload);
     setType(type);
   };
-  // console.log("selectedDate", selectedDate);
+  console.log("order", order);
 
   useEffect(() => {
     GetStore()
@@ -56,7 +56,7 @@ const Turnover = () => {
         if (
           i.orderDate >= secondsStart &&
           i.orderDate <= secondsEnd &&
-          i.status === 3
+          i.status === 5
         ) {
           setOrderByDate((prev) => [...prev, i.total_food]);
         }
@@ -74,7 +74,7 @@ const Turnover = () => {
   useEffect(() => {
     if (orderByDate.length > 0) {
       setTotalRevenue(orderByDate.reduce(myFunc));
-      setAmountPaidToAdmin((orderByDate.reduce(myFunc) * 10) / 100);
+      setAmountPaidToAdmin((orderByDate.reduce(myFunc) * 20) / 100);
     } else {
       setTotalRevenue(0);
       setAmountPaidToAdmin(0);

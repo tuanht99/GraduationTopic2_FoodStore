@@ -26,8 +26,7 @@ export async function GetAllOrder() {
   const orderRef = collection(db, "orders");
   const q = query(
     orderRef,
-    where("food_store_id", "==", '4dpAvRWJVrvdbml9vKDL'),
-    // where("status", "==", 3)
+    where("food_store_id", "==", "4dpAvRWJVrvdbml9vKDL")
   );
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((docRef) => {
@@ -35,7 +34,6 @@ export async function GetAllOrder() {
       ...docRef.data(),
       orderDate: docRef.data().order_date.seconds,
     });
-    // console.log(docRef.id, " => ", docRef.data() , "dasd" , " => " , docRef.data().order_date.seconds);
   });
   return allOrder;
 }
