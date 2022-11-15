@@ -6,7 +6,13 @@ import call from "react-native-phone-call";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { GetNewOrder, GetOrderDetail, GetShipper } from "../../services";
+import {
+  GetNewOrder,
+  GetOrderDetail,
+  GetShipper,
+  GetFoods,
+  UpdateStatus,
+} from "../../services";
 import formatCash from "../../components/FormatCash";
 
 import { db } from "../../services/config";
@@ -23,9 +29,11 @@ import {
 const NewOrders = () => {
   const [orders, setOrders] = useState([]);
   const [orderDetailt, setOrderDetailt] = useState();
+  const [isActiveOrders, setActiveOrders] = useState("");
+  // const [foods, setFoods] = useState([]);
   const [orderNotExists, setOrderNotExists] = useState(true);
 
-  console.log("orderDetailt", orderDetailt);
+  console.log("isActiveOrders", isActiveOrders);
   useEffect(() => {
     const q = query(
       collection(db, "orders"),
@@ -43,29 +51,40 @@ const NewOrders = () => {
     };
   }, []);
 
-  // const GetOrder = (id) => {
-  //   GetOrderDetail(id).then((doc) => {
-  //     setOrderDetailt(doc);
-  //   });
-  // };
-  useEffect(() => {
+  const GetOrder = (id) => {
     if (orders.length > 0) {
-      GetOrderDetail("").then((doc) => {
-        // console.log("user_id", doc.user_id);
+      setActiveOrders(id);
+      GetOrderDetail(id).then((doc) => {
         GetShipper(doc.user_id).then((user) => {
-          // console.log("usser", user);
-          setOrderDetailt({ order: doc, user: user });
+          const foods = [];
+          doc.ordered_food.map((e) => {
+            GetFoods(e.food_id).then((food) => {
+              const a = [...a, food];
+              foods.push(a);
+              setOrderDetailt({ order: doc, user: user, foods: foods });
+            });
+          });
         });
       });
     }
+  };
+  useEffect(() => {
+    GetOrder();
   }, [orders]);
 
-  if (orderDetailt !== undefined) {
-    const args = {
-      number: orderDetailt.user.phone + "", // Use commas to add time between digits.
-      prompt: false,
-    };
-  }
+  useEffect(() => {
+    if (orders.length > 0) {
+      const arr = [];
+      orders.map((i) => {
+        if (i.info.status === 3) {
+          arr.push(i.info.order_date.seconds);
+          if (i.info.order_date.seconds === Math.max(...arr)) {
+            GetOrder(i.idOrder);
+          }
+        }
+      });
+    }
+  }, [orders]);
 
   const TimeOrder = (time) => {
     const date = new Date(time);
@@ -103,13 +122,19 @@ const NewOrders = () => {
         </View>
         <TouchableOpacity
           className="absolute right-2"
-          onPress={() => call(args).catch(console.error)}
+          onPress={() =>
+            call({
+              number: orderDetailt.user.phone + "",
+              prompt: false,
+            }).catch(console.error)
+          }
         >
           <Text className="mt-1 text-red-600 bg-white p-2 rounded-md ">
             Gọi tài xế
           </Text>
         </TouchableOpacity>
       </View>
+
       <View className="h-24 flex justify-around">
         <View className="flex-row mx-4">
           <AntDesign name="warning" size={24} color="red" />
@@ -127,14 +152,27 @@ const NewOrders = () => {
           <Text className="ml-8 text-[15px]">Chi tiết đơn hàng</Text>
           <Feather name="arrow-right" size={20} color="black" />
         </View>
+        <ScrollView className="h-24">
+          {orderDetailt !== undefined && (
+            <View className="flex-row ml-2 mt-4">
+              <View className="flex-col w-1/6">
+                {orderDetailt.order.ordered_food.map((o) => (
+                  <Text className="text-base font-bold ">
+                    {o.qty + " "}
+                    <Text className="font-normal text-[#888888]">x</Text>
+                  </Text>
+                ))}
+              </View>
 
-        <View className=" flex-row ml-2 mt-4">
-          <Text className="text-base font-bold w-1/6">
-            2 <Text className="font-normal text-[#888888]">x</Text>{" "}
-          </Text>
-          <Text className="text-base font-bold w-2/3"> Mi xao mau </Text>
-          <Text className="text-base font-bold text-red-600"></Text>
-        </View>
+              <View className="flex-col w-2/3">
+                {orderDetailt.foods.map((f) => (
+                  <Text className="text-base font-bold ">{f[1].name}</Text>
+                  // <Text className="text-base font-bold text-red-600"></Text>
+                ))}
+              </View>
+            </View>
+          )}
+        </ScrollView>
       </View>
       <View className="h-auto p-3 bg-[#FFFFCC]">
         <View className="flex-row justify-between">
@@ -173,7 +211,10 @@ const NewOrders = () => {
           công
         </Text>
       </View>
-      <TouchableOpacity className="bg-[#0099FF] flex justify-center items-center px-5 py-3 m-3 rounded-md">
+      <TouchableOpacity
+        onPress={() => UpdateStatus(isActiveOrders)}
+        className="bg-[#0099FF] flex justify-center items-center px-5 py-3 m-3 rounded-md"
+      >
         <Text className="font-bold text-white">
           Đơn hàng đã được chuẩn bị xong
         </Text>
@@ -181,59 +222,72 @@ const NewOrders = () => {
     </View>
   );
 
+  const OrderCard = ({ index, order, checkOrder, notCheckOrder, status }) => (
+    <TouchableOpacity
+      onPress={() => GetOrder(order.idOrder)}
+      key={index}
+      className={
+        isActiveOrders == order.idOrder ? ` ${checkOrder}` : ` ${notCheckOrder}`
+      }
+    >
+      {status}
+      <Text className="font-semibold text-red-500">
+        {order.idOrder.substr(0, 5)}
+      </Text>
+      <Text className="text-red-500">
+        {TimeOrder(order.info.order_date.seconds * 1000)}
+      </Text>
+    </TouchableOpacity>
+  );
   return (
     <View>
       <Header />
       <ScrollView horizontal className="h-24  flex-row ">
         {orders.map((order, index) => {
+          const NotCheckOrder =
+            "w-20 border h-20 m-2 rounded-md flex items-center p-1 justify-between";
+          const checkOrder =
+            "w-20 h-20 m-2 border-blue-600 border-4 rounded-md flex items-center p-1 justify-between";
+          const successOrd = (
+            <View className=" bg-green-500 px-3 py-[3px] rounded-md">
+              <FontAwesome name="check" size={14} color="white" />
+            </View>
+          );
+          const newOrd = (
+            <Text className="bg-red-600 rounded-md text-white"> New </Text>
+          );
+
+          let status;
           if (order.info.status === 3) {
+            status = newOrd;
             return (
-              <TouchableOpacity
-                // onPress={() => GetOrder(order.idOrder)}
-                key={index}
-                className="w-20 border h-20 m-2 rounded-md flex items-center p-1 justify-between"
-              >
-                <Text className="bg-red-600 rounded-md text-white"> New </Text>
-                <Text className="font-semibold text-red-500">
-                  {order.idOrder.substr(0, 5)}
-                </Text>
-                <Text className="text-red-500">
-                  {TimeOrder(order.info.order_date.seconds * 1000)}
-                </Text>
-              </TouchableOpacity>
+              <OrderCard
+                index={index}
+                order={order}
+                checkOrder={checkOrder}
+                notCheckOrder={NotCheckOrder}
+                successOrd={successOrd}
+                status={status}
+              />
             );
           }
+
           if (order.info.status === 4) {
+            status = successOrd;
             return (
-              <TouchableOpacity
-                onPress={() => GetOrder(order.idOrder)}
-                key={index}
-                className="w-20 border h-20 m-2 rounded-md flex items-center p-1 justify-between"
-              >
-                <View className=" bg-green-500 px-3 py-[3px] rounded-md">
-                  <FontAwesome name="check" size={14} color="white" />
-                </View>
-                <Text className="font-semibold text-red-500">
-                  {order.idOrder.substr(0, 5)}
-                </Text>
-                <Text className="text-red-500">
-                  {TimeOrder(order.info.order_date.seconds * 1000)}
-                </Text>
-              </TouchableOpacity>
+              <OrderCard
+                index={index}
+                order={order}
+                checkOrder={checkOrder}
+                notCheckOrder={NotCheckOrder}
+                successOrd={successOrd}
+                status={status}
+              />
             );
           }
         })}
       </ScrollView>
-      {orderDetailt !== undefined ? <OrderInfo /> : ""}
-
-      {/* {orders.map((order) => {
-        if (order.status === 3 || order.status === 4) {
-          return <OrderInfo />;
-        }
-        // else {
-        //  return <OrderDoesNotExits/>
-        // }
-      })} */}
+      {orderDetailt !== undefined ? <OrderInfo /> : <OrderDoesNotExits />}
     </View>
   );
 };

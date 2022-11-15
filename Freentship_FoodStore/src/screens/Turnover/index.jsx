@@ -18,7 +18,7 @@ const Turnover = () => {
     setSelectedDate(payload);
     setType(type);
   };
-  console.log("order", order);
+
 
   useEffect(() => {
     GetStore()
