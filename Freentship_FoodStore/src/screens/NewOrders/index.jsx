@@ -6,8 +6,8 @@ import call from "react-native-phone-call";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import TimeOrder from '../../components/GetTime'
 import {
-  GetNewOrder,
   GetOrderDetail,
   GetShipper,
   GetFoods,
@@ -18,10 +18,7 @@ import formatCash from "../../components/FormatCash";
 import { db } from "../../services/config";
 import {
   collection,
-  getDocs,
   query,
-  doc,
-  getDoc,
   onSnapshot,
   where,
 } from "firebase/firestore";
@@ -30,10 +27,8 @@ const NewOrders = () => {
   const [orders, setOrders] = useState([]);
   const [orderDetailt, setOrderDetailt] = useState();
   const [isActiveOrders, setActiveOrders] = useState("");
-  // const [foods, setFoods] = useState([]);
-  const [orderNotExists, setOrderNotExists] = useState(true);
-
-  console.log("isActiveOrders", isActiveOrders);
+ 
+  console.log('orderDetailt' ,orderDetailt);
   useEffect(() => {
     const q = query(
       collection(db, "orders"),
@@ -86,11 +81,7 @@ const NewOrders = () => {
     }
   }, [orders]);
 
-  const TimeOrder = (time) => {
-    const date = new Date(time);
-    const hoursAndMinutes = date.getHours() + ":" + date.getMinutes();
-    return hoursAndMinutes;
-  };
+ 
 
   const Rose = (money) => {
     return (money * 20) / 100;
@@ -144,7 +135,7 @@ const NewOrders = () => {
         </View>
         <Text className=" ml-4 ">
           Hoàn thành đơn trước{" "}
-          <Text className=" text-red-500 font-bold">14:20</Text>
+          <Text className=" text-red-500 font-bold">{TimeOrder((orderDetailt.order.order_date.seconds + 1800) * 1000)}</Text>
         </Text>
       </View>
       <View className="h-auto bg-[#CCFF99] p-3">
@@ -232,7 +223,7 @@ const NewOrders = () => {
     >
       {status}
       <Text className="font-semibold text-red-500">
-        {order.idOrder.substr(0, 5)}
+        {order.idOrder.substr(0, 6).toUpperCase()}
       </Text>
       <Text className="text-red-500">
         {TimeOrder(order.info.order_date.seconds * 1000)}

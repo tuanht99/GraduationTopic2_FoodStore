@@ -32,7 +32,7 @@ export async function GetAllOrder() {
   querySnapshot.forEach((docRef) => {
     allOrder.push({
       ...docRef.data(),
-      orderDate: docRef.data().order_date.seconds,
+      orderDate: docRef.data().order_date.seconds , id : docRef.id,
     });
   });
   return allOrder;
