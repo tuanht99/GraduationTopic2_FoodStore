@@ -1,12 +1,12 @@
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
-import ordernt from "../../../assets/chuacodonhang.png";
 import call from "react-native-phone-call";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import TimeOrder from '../../components/GetTime'
+import TimeOrder from "../../components/GetTime";
+import OrderDoesNotExits from "../../components/OrderDoesNotExits";
 import {
   GetOrderDetail,
   GetShipper,
@@ -16,19 +16,14 @@ import {
 import formatCash from "../../components/FormatCash";
 
 import { db } from "../../services/config";
-import {
-  collection,
-  query,
-  onSnapshot,
-  where,
-} from "firebase/firestore";
+import { collection, query, onSnapshot, where } from "firebase/firestore";
 
 const NewOrders = () => {
   const [orders, setOrders] = useState([]);
   const [orderDetailt, setOrderDetailt] = useState();
   const [isActiveOrders, setActiveOrders] = useState("");
- 
-  console.log('orderDetailt' ,orderDetailt);
+
+  console.log("orderDetailt", orderDetailt);
   useEffect(() => {
     const q = query(
       collection(db, "orders"),
@@ -50,16 +45,18 @@ const NewOrders = () => {
     if (orders.length > 0) {
       setActiveOrders(id);
       GetOrderDetail(id).then((doc) => {
-        GetShipper(doc.user_id).then((user) => {
-          const foods = [];
-          doc.ordered_food.map((e) => {
-            GetFoods(e.food_id).then((food) => {
-              const a = [...a, food];
-              foods.push(a);
-              setOrderDetailt({ order: doc, user: user, foods: foods });
+        GetShipper(doc.user_id)
+          .then((user) => {
+            const foods = [];
+            doc.ordered_food.map((e) => {
+              GetFoods(e.food_id).then((food) => {
+                const a = [...a, food];
+                foods.push(a);
+                setOrderDetailt({ order: doc, user: user, foods: foods });
+              });
             });
-          });
-        });
+          })
+          .catch((err) => console("err =>", err));
       });
     }
   };
@@ -81,8 +78,6 @@ const NewOrders = () => {
     }
   }, [orders]);
 
- 
-
   const Rose = (money) => {
     return (money * 20) / 100;
   };
@@ -91,15 +86,6 @@ const NewOrders = () => {
     return a - b;
   };
 
-  const OrderDoesNotExits = () => (
-    <View className="flex items-center mt-9 z-0">
-      <Image className="w-36 h-36 rounded-full" source={ordernt} />
-      <Text className="text-[#AAAAAA] mt-7">
-        {" "}
-        Hiện tại chưa có đơn hàng nào{" "}
-      </Text>
-    </View>
-  );
   const OrderInfo = () => (
     <View className="z-10">
       <View className="h-14 bg-red-600 flex-row relative">
@@ -135,7 +121,9 @@ const NewOrders = () => {
         </View>
         <Text className=" ml-4 ">
           Hoàn thành đơn trước{" "}
-          <Text className=" text-red-500 font-bold">{TimeOrder((orderDetailt.order.order_date.seconds + 1800) * 1000)}</Text>
+          <Text className=" text-red-500 font-bold">
+            {TimeOrder((orderDetailt.order.order_date.seconds + 1800) * 1000)}
+          </Text>
         </Text>
       </View>
       <View className="h-auto bg-[#CCFF99] p-3">
@@ -249,6 +237,7 @@ const NewOrders = () => {
           );
 
           let status;
+
           if (order.info.status === 3) {
             status = newOrd;
             return (
@@ -276,9 +265,15 @@ const NewOrders = () => {
               />
             );
           }
+          if (order.info.status === 3 || order.info.status === 4) {
+          }
         })}
       </ScrollView>
-      {orderDetailt !== undefined ? <OrderInfo /> : <OrderDoesNotExits />}
+      {orderDetailt !== undefined ? (
+        <OrderInfo />
+      ) : (
+        <OrderDoesNotExits title={" Hiện tại chưa có đơn hàng nào"} />
+      )}
     </View>
   );
 };

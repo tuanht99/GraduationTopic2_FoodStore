@@ -6,6 +6,7 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  documentId,
   where,
 } from "firebase/firestore";
 
@@ -32,7 +33,8 @@ export async function GetAllOrder() {
   querySnapshot.forEach((docRef) => {
     allOrder.push({
       ...docRef.data(),
-      orderDate: docRef.data().order_date.seconds , id : docRef.id,
+      orderDate: docRef.data().order_date.seconds,
+      id: docRef.id,
     });
   });
   return allOrder;
@@ -47,4 +49,20 @@ export async function GetFoods(id) {
     // doc.data() will be undefined in this case
     console.log("No such document!");
   }
+}
+
+export async function SeacrhOrderById() {
+  const orders = [];
+  const orderRef = collection(db, "orders");
+  const q = query(orderRef, where(documentId(), "in", "3MiJP5Ywfn4mmbvFW4MN"));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((docRef) => {
+    orders.push({
+      ...docRef.data(),
+      orderDate: docRef.data().order_date.seconds,
+      id: docRef.id,
+    });
+  });
+  return orders;
 }

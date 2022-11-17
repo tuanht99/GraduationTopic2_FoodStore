@@ -1,7 +1,7 @@
 import { db } from "../services";
 import {
   collection,
-  getDocs,
+  documentId ,
   updateDoc,
   query,
   doc,
@@ -28,7 +28,6 @@ export async function GetNewOrder() {
 export async function GetOrderDetail(id) {
   const docRef = doc(db, "orders", `${id}`);
   const docSnap = await getDoc(docRef);
-
   if (docSnap.exists()) {
     return docSnap.data();
   } else {
