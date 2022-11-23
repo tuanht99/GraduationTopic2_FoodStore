@@ -10,7 +10,9 @@ import React from "react";
 import Header from "../../components/Header";
 import { Feather } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
-
+import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { EvilIcons } from "@expo/vector-icons";
 const Store = () => {
   return (
     <View>
@@ -74,10 +76,52 @@ const Store = () => {
         </View>
         <View className="border-b-8 border-[#DDDDDD] my-2"></View>
         <View className="">
-          <View>
-            <Text>Đánh giá trên Freen'tship </Text>
+          <View className="divide-y divide-[#808080]">
+            <Text className="p-4 text-[#808080] text-base">
+              Đánh giá trên Freen'tship{" "}
+            </Text>
+            <Text className="p-4 text-[#808080] text-base">
+              Chỉnh sửa menu{" "}
+            </Text>
           </View>
         </View>
+        <View className="border-b-8 border-[#DDDDDD] my-2"></View>
+        <View className="p-4 border-b border-[#AAAAAA]">
+          <View className="flex-row justify-between pb-2 items-center">
+            <Text className="font-bold text-lg">Thông tin cửa hàng</Text>
+            <View className="flex-row">
+              <AntDesign name="edit" size={20} color="black" />
+              <Text className="ml-2 text-gray-500">Chỉnh sửa</Text>
+            </View>
+          </View>
+
+          <View className="flex-row py-1">
+            <Ionicons name="location-outline" size={24} color="black" />
+            <Text className="ml-2 text-gray-600 text-base">Chỉnh sửa</Text>
+          </View>
+          <View className="flex-row py-1">
+            <Ionicons name="phone-portrait-outline" size={24} color="black" />
+            <Text className="ml-2 text-gray-600 text-base">Chỉnh sửa</Text>
+          </View>
+          <View className="flex-row py-1">
+            <EvilIcons name="clock" size={24} color="black" />
+            <Text className="ml-2 text-gray-600 text-base">Chỉnh sửa</Text>
+          </View>
+          <View className="flex-row py-1">
+            <AntDesign name="shoppingcart" size={24} color="black" />
+            <Text className="ml-2 text-gray-600 text-base">Chỉnh sửa</Text>
+          </View>
+        </View>
+
+        <View className = 'flex justify-center items-center h-28 mx-8 '>
+          <TouchableOpacity className = 'flex-row justify-center items-center py-3 rounded-xl w-full bg-[#00FF33]'>
+            <Feather name="phone" size={24} color="white" />
+            <Text className = 'text-white font-bold text-base ml-2'>Liên hệ nhân viên Freen'tship</Text>
+          </TouchableOpacity>
+          
+        </View>
+
+        <View className = 'h-40'></View>
       </ScrollView>
     </View>
   );
