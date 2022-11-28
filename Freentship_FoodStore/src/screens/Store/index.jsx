@@ -1,4 +1,26 @@
 import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+  where,
+  query,
+  QuerySnapshot,
+  editDoc,
+  onSnapshot,
+} from "firebase/firestore";
+
+import * as ImagePicker from "expo-image-picker";
+
+import { db } from "../../services/config";
+
+import {getStorage, ref, uploadBytes, getDownloadURL, getBlob} from "firebase/storage";
+
+import {
   View,
   Text,
   TouchableWithoutFeedback,
@@ -6,7 +28,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, {useState} from "react";
 import Header from "../../components/Header";
 import { Feather } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
@@ -14,7 +36,82 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 const Store = ({navigation}) => {
+  const [namePathImage, setNamePathImage] = React.useState(null);
   
+  const [text, setText] = React.useState(categoryName);
+  const [textName, setTextName] = React.useState(food.name);
+  const [textPrice, setTextPrice] = React.useState("" + food.price);
+  const [textDescription, setTextDescription] = React.useState(
+    food.description
+  );
+  function editFood() {
+    //console.log("food name: ", textName);
+    const storage = getStorage();
+    getDownloadURL(ref(storage, namePathImage)).then((url) => {
+      setImage(url);
+    updateDoc(doc(db, "food_stores", food_store_id.id), {
+      //category_Id: category.id,
+      name: textName,
+      price: textPrice,
+      description: textDescription,
+      image: url,
+      food_store_id: "4dpAvRWJVrvdbml9vKDL",
+      discount: 0,
+      status: 1,
+    });
+  }).catch((error) => {
+    console.log(error)
+  })
+
+    navigation.goBack("ShowFullFoodView");
+    // 7T5uG3Si5NHioADgam1Z
+  }
+  const [image, setImage] = useState(food.image);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    // if (!result.cancelled) {
+    //   setImage(result.uri);
+    // }
+    if (!result.cancelled) {
+      const storage = getStorage();
+      // const id = Math.random().toString(36).substring(7);
+      // const id = React.useId()
+      const bytes = new Uint8Array(result.uri)
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+      const imgName = "img-" + new Date().getTime();
+      setNamePathImage(`images/${imgName}.jpg`);
+      const storageRef = ref(storage, `images/${imgName}.jpg`);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function() {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', result.uri, true);
+        xhr.send(null);
+      });
+
+      uploadBytes(storageRef, blob).then((snapshot) => { // causes crash
+        console.log('Uploaded a blob or file!');
+      });
+      setImage(result.uri);
+    }
+  };
   return (
     <View>
       <Header />
@@ -29,9 +126,32 @@ const Store = ({navigation}) => {
                 height: 90,
               }}
             />
-            <TouchableOpacity className="absolute bottom-0 right-0 bg-[#CCCCCC] rounded-full p-1">
+            {/* <TouchableOpacity className="absolute bottom-0 right-0 bg-[#CCCCCC] rounded-full p-1">
               <Feather name="camera" size={21} color="black" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+
+            {/* <TouchableOpacity onPress={pickImage}>
+                  <View>
+                    <View>
+                      {image && (
+                        <Image
+                          source={{ uri: image }}
+                          style={{
+                            borderRadius: 15,
+                            width: 90,
+                            height: 90,
+                          }}
+                        />
+                      )}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                
+                <TouchableOpacity onPress={pickImage} className="absolute bottom-0 right-0 bg-[#CCCCCC] rounded-full p-1">
+              <Feather name="camera" size={21} color="black" />
+            </TouchableOpacity> */}
+                
+
           </View>
           <View>
             <Text className="font-bold text-xl">Tuan shop TD</Text>

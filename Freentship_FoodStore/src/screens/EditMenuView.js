@@ -144,6 +144,7 @@ export default function EditMenuView({ navigation, route }) {
           backgroundColor: "#fff",
           paddingTop: 10,
           paddingBottom: 10,
+          flex: 0.2
         }}
       >
         <View style={{ marginLeft: 10, marginRight: 10 }}>
@@ -190,6 +191,7 @@ export default function EditMenuView({ navigation, route }) {
       <View style={{ paddingBottom: 10 }}></View>
       {/* ds danh muc, mon an */}
       <FlatList
+        style={{flex:0.8}}
         data={listCate}
         numColumns={1}
         renderItem={({ item }) => (
