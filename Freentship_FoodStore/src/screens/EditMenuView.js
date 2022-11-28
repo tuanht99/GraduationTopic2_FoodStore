@@ -147,8 +147,8 @@ export default function EditMenuView({ navigation, route }) {
         }}
       >
         <View style={{ marginLeft: 10, marginRight: 10 }}>
-          <View style={{ paddingBottom: 20 }}>
-            <Text style={{ fontWeight: "bold" }}>Anh ba gà</Text>
+          <View className="flex-1 items-center justify-center bg-white pt-10">
+            <Text className="decoration-red-500">Anh ba gà</Text>
           </View>
 
           <View>
