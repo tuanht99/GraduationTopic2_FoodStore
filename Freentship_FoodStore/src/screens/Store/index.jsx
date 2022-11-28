@@ -13,7 +13,8 @@ import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
-const Store = () => {
+const Store = ({navigation}) => {
+  
   return (
     <View>
       <Header />
@@ -80,9 +81,15 @@ const Store = () => {
             <Text className="p-4 text-[#808080] text-base">
               Đánh giá trên Freen'tship{" "}
             </Text>
-            <Text className="p-4 text-[#808080] text-base">
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate("EditMenuView")  
+            }}>
+              
+              <Text className="p-4 text-[#808080] text-base">
               Chỉnh sửa menu{" "}
             </Text>
+            </TouchableOpacity>
+            
           </View>
         </View>
         <View className="border-b-8 border-[#DDDDDD] my-2"></View>

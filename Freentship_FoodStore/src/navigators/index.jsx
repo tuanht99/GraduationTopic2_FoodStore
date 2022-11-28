@@ -8,6 +8,8 @@ import Store from "../screens/Store";
 import BestSeller from "../screens/BestSeller";
 const Stack = createNativeStackNavigator();
 
+import EditMenuView from "../screens/EditMenuView"
+
 function Navigators() {
   return (
     <NavigationContainer>
@@ -21,6 +23,8 @@ function Navigators() {
         <Stack.Screen name="Manage" component={Manage} />
         <Stack.Screen name="Store" component={Store} />
         <Stack.Screen name="BestSeller" component={BestSeller} />
+
+        <Stack.Screen name="EditMenuView" component={EditMenuView} />
       </Stack.Navigator>
     </NavigationContainer>
   );
