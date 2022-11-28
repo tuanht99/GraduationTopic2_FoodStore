@@ -9,6 +9,11 @@ import BestSeller from "../screens/BestSeller";
 const Stack = createNativeStackNavigator();
 
 import EditMenuView from "../screens/EditMenuView"
+import AddCategoryFoodView from "../screens/AddCategoryFoodView"
+import EditCategoryFoodView from "../screens/EditCategoryFoodView"
+import AddFoodView from "../screens/AddFoodView"
+import EditFoodView from "../screens/EditFoodView"
+import ShowFullFoodView from "../screens/ShowFullFoodView"
 
 function Navigators() {
   return (
@@ -25,6 +30,11 @@ function Navigators() {
         <Stack.Screen name="BestSeller" component={BestSeller} />
 
         <Stack.Screen name="EditMenuView" component={EditMenuView} />
+        <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
+        <Stack.Screen name="EditCategoryFoodView" component={EditCategoryFoodView} />
+        <Stack.Screen name="AddFoodView" component={AddFoodView} />
+        <Stack.Screen name="EditFoodView" component={EditFoodView} />
+        <Stack.Screen name="ShowFullFoodView" component={ShowFullFoodView} />
       </Stack.Navigator>
     </NavigationContainer>
   );
