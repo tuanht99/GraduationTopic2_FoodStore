@@ -52,7 +52,9 @@ const DATA = {
 
 // Navigation
 export default function EditMenuView({ navigation, route }) {
-  console.log(route.params);
+  const {inforStore} = route.params;
+  const [nameStore, setNameStore] = React.useState(inforStore.foodStoreName)
+  
   // const {category} = route.params;
   // const { food } = route.params;
   React.useLayoutEffect(() => {
@@ -149,7 +151,7 @@ export default function EditMenuView({ navigation, route }) {
       >
         <View style={{ marginLeft: 10, marginRight: 10 }}>
           <View className="flex-1 items-center justify-center bg-white pt-10">
-            <Text className="decoration-red-500">Anh ba gà</Text>
+            <Text className="decoration-red-500">{nameStore}</Text>
           </View>
 
           <View>

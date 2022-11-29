@@ -14,7 +14,11 @@ import EditCategoryFoodView from "../screens/EditCategoryFoodView"
 import AddFoodView from "../screens/AddFoodView"
 import EditFoodView from "../screens/EditFoodView"
 import ShowFullFoodView from "../screens/ShowFullFoodView"
-
+import EditInforStore from "../screens/EditInforStore";
+import EditInforStoreName from "../screens/EditInforStoreName"
+import EditInforStoreCate from "../screens/EditInforStoreCate"
+import EditInforStoreTime from "../screens/EditInforStoreTime"
+import ReviewsOfStore from "../screens/ReviewsOfStore"
 function Navigators() {
   return (
     <NavigationContainer>
@@ -35,6 +39,11 @@ function Navigators() {
         <Stack.Screen name="AddFoodView" component={AddFoodView} />
         <Stack.Screen name="EditFoodView" component={EditFoodView} />
         <Stack.Screen name="ShowFullFoodView" component={ShowFullFoodView} />
+        <Stack.Screen name="EditInforStore" component={EditInforStore}/>
+        <Stack.Screen name="EditInforStoreName" component={EditInforStoreName}/>
+        <Stack.Screen name="EditInforStoreCate" component={EditInforStoreCate}/>
+        <Stack.Screen name="EditInforStoreTime" component={EditInforStoreTime}/>
+        <Stack.Screen name="ReviewsOfStore" component={ReviewsOfStore}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
