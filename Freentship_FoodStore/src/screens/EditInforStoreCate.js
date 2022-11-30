@@ -43,18 +43,16 @@ import {
   getDownloadURL,
   getBlob,
 } from "firebase/storage";
-import { GetAllOrder } from "../services";
+import { GetAllCate } from "../services/store";
 import OrderDoesNotExits from "../components/OrderDoesNotExits";
-const FindOrderCode = () => {
-  console.log(" new Date(selectedDate)");
 
+const FindCateCode = () => {
   const [search, setSearch] = useState("");
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
 
-  console.log("filteredDataSource", filteredDataSource);
   useEffect(() => {
-    GetAllOrder()
+    GetAllCate()
       .then((data) => {
         setFilteredDataSource(data);
         setMasterDataSource(data);
@@ -69,6 +67,16 @@ const FindOrderCode = () => {
       timeZone: "UTC",
     });
     return value;
+  };
+  
+  const [listCt, setListCt] = useState([]);
+  const handleChangeListCt = (id) => {
+    if (listCt.some(ct => ct === id)) {
+      setListCt([...listCt.filter(ct => ct !== id)])
+    } else {
+      if (listCt.length > 2) return
+      setListCt([...listCt, id]);
+    }
   };
 
   const searchFilterFunction = (text) => {
@@ -94,20 +102,33 @@ const FindOrderCode = () => {
 
   const ItemView = ({ item }) => {
     return (
-      <TouchableOpacity className="flex-row border-b justify-between p-5">
-        <Text>
-          #<Text>{item.id.substr(0, 10).toUpperCase()}</Text>
-        </Text>
-        <Text className="text-[#888888]">
-          {FormatDate(item.order_date.seconds)}
-        </Text>
+      <TouchableOpacity
+        onPress={() => handleChangeListCt(item.id)}
+        className="flex-row justify-between items-center p-5 bg-white"
+      >
+        <View className="w-full flex flex-row justify-between items-center">
+          <View className="items-center flex-row content-center">
+            <View className="pr-2">
+              <Image
+                className="w-[40px] h-[40px] rounded-[25px]"
+                source={{ uri: item.image }}
+              />
+            </View>
+            <View>
+              <Text className="font-bold">{item.name}</Text>
+            </View>
+          </View>
+          {listCt && listCt.some(ct => ct === item.id) && (
+            <AntDesign name="check" size={24} color="green" />
+          )}
+        </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View>
-      <View className="bg-white ">
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 0.3 }} className="bg-white ">
         <View className="flex flex-row items-center rounded-lg border border-[#BBBBBB] p-3 my-4 mx-4">
           <AntDesign name="search1" size={24} color="black" />
           <TextInput
@@ -121,13 +142,48 @@ const FindOrderCode = () => {
 
       {filteredDataSource.length > 0 ? (
         <FlatList
+          className="bg-white"
+          style={{ flex: 0.45 }}
           data={filteredDataSource}
           keyExtractor={(item) => item.id}
           renderItem={ItemView}
         />
       ) : (
-        <OrderDoesNotExits title={"Không tìm thấy đơn hàng :(( "} />
+        <OrderDoesNotExits
+          style={{ flex: 0.45 }}
+          title={"Không tìm thấy danh mục :(( "}
+        />
       )}
+
+      <View style={{ flex: 0.25 }}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingTop: 10,
+            paddingBottom: 10,
+            width: "100%",
+            borderTopColor: "#808080",
+            borderTopWidth: 0.3,
+            bottom: 0,
+          }}
+        >
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#E94730",
+                borderRadius: 15,
+                width: "97%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#fff" }}>Lưu</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
@@ -150,32 +206,28 @@ export default function EditInforStoreCate({ navigation, route }) {
     });
   }, [navigation]);
   return (
-    <View>
-      <View>
-        {/* Nganh Kinh doanh */}
-        <View className="m-2 border-b border-[#DDDDDD]">
-          <View className="flex-row justify-start pl-2 pb-2 items-center">
-            <Text className="font-bold text-lg">
-              Vui lòng chọn tối đa 3 danh mục
-            </Text>
-          </View>
-          <View className="flex-row">
-            <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
-              <Text className="text-base pr-1 ">Bánh xèo</Text>
-              <Feather name="x-circle" size={12} color="gray" />
-            </TouchableOpacity>
-
-            <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
-              <Text className="text-base pr-1 ">Bánh xèo</Text>
-              <Feather name="x-circle" size={12} color="gray" />
-            </TouchableOpacity>
-          </View>
+    <View style={{ flex: 1 }}>
+      {/* Nganh Kinh doanh */}
+      <View style={{ flex: 0.2 }} className="m-2 border-b border-[#DDDDDD]">
+        <View className="flex-row justify-start pl-2 pb-2 items-center">
+          <Text className="font-bold text-lg">
+            Vui lòng chọn tối đa 3 danh mục
+          </Text>
         </View>
+        <View className="flex-row">
+          <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
+            <Text className="text-base pr-1 ">Bánh xèo</Text>
+            <Feather name="x-circle" size={12} color="gray" />
+          </TouchableOpacity>
 
-        <View className="border-b-8 border-[#DDDDDD] my-2"></View>
-
-        <FindOrderCode />
+          <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
+            <Text className="text-base pr-1 ">Bánh xèo</Text>
+            <Feather name="x-circle" size={12} color="gray" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <FindCateCode style={{ flex: 0.8 }} />
     </View>
   );
 }

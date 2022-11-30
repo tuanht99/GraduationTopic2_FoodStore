@@ -66,3 +66,21 @@ export async function SeacrhOrderById() {
   });
   return orders;
 }
+
+export async function GetAllCate() {
+  const allCate = [];
+  const cateRef = collection(db, "categories");
+  const q = query(
+    cateRef
+  );
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((docRef) => {
+    allCate.push({
+      ...docRef.data(),
+      id: docRef.id,
+    });
+  });
+  console.log("logvate", allCate);
+  return allCate;
+ 
+}
