@@ -59,6 +59,7 @@ export default function EditInforStore({ navigation, route }) {
   }, [navigation]);
   const [inforStore, setInforStore] = useState([]);
 
+  // food
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
   useEffect(() => {
@@ -111,7 +112,7 @@ export default function EditInforStore({ navigation, route }) {
         <View className="border-b-8 border-[#DDDDDD] my-2"></View>
 
         {/* Nganh Kinh doanh */}
-        <View className="m-2 border-b border-[#DDDDDD]">
+        <View className="p-4 border-b border-[#DDDDDD]">
           <View className="flex-row justify-between pb-2 items-center">
             <Text className="font-bold text-lg">Ngành kinh doanh</Text>
             <TouchableOpacity
