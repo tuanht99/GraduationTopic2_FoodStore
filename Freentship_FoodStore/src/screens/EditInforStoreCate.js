@@ -43,8 +43,9 @@ import {
   getDownloadURL,
   getBlob,
 } from "firebase/storage";
-import { GetAllCate } from "../services/store";
+import { GetAllCate, GetCategoriesByIds } from "../services/store";
 import OrderDoesNotExits from "../components/OrderDoesNotExits";
+import { async } from "@firebase/util";
 
 const FindCateCode = () => {
   const [search, setSearch] = useState("");
@@ -68,16 +69,48 @@ const FindCateCode = () => {
     });
     return value;
   };
-  
+
+  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [listCt, setListCt] = useState([]);
   const handleChangeListCt = (id) => {
-    if (listCt.some(ct => ct === id)) {
-      setListCt([...listCt.filter(ct => ct !== id)])
+    if (listCt.some((ct) => ct === id)) {
+      setListCt([...listCt.filter((ct) => ct !== id)]);
+      handleDeleteCategoryById(id)
     } else {
-      if (listCt.length > 2) return
+      if (listCt.length > 2) return;
       setListCt([...listCt, id]);
     }
   };
+
+  // handle delete category by id
+  const handleDeleteCategoryById = async(id) => {
+    const ctRef = doc(db, 'food_stores', idFoodStore)
+    await updateDoc(ctRef, {
+      food_categories: arrayRemove(`${id}`)
+    })
+  }
+
+  
+  const [foodStore, setFoodStore] = useState([]);
+  useEffect(() => {
+    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+      setFoodStore(doc.data());
+    });
+  }, [idFoodStore]);
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      GetCategoriesByIds(foodStore.food_categories).then((result) => {
+        // console.log('list:', result);
+        var ids = []
+        result.map((ct) => {
+          ids.push(ct.id)
+        });
+        setListCt(ids);
+      });
+    }
+  }, [foodStore.food_categories]);
 
   const searchFilterFunction = (text) => {
     // Check if searched text is not blank
@@ -101,6 +134,9 @@ const FindCateCode = () => {
   };
 
   const ItemView = ({ item }) => {
+    console.log("listCt: ", listCt);
+    console.log("id:", item.id);
+
     return (
       <TouchableOpacity
         onPress={() => handleChangeListCt(item.id)}
@@ -118,7 +154,7 @@ const FindCateCode = () => {
               <Text className="font-bold">{item.name}</Text>
             </View>
           </View>
-          {listCt && listCt.some(ct => ct === item.id) && (
+          {listCt && listCt.some((ct) => ct === item.id) && (
             <AntDesign name="check" size={24} color="green" />
           )}
         </View>
@@ -205,6 +241,25 @@ export default function EditInforStoreCate({ navigation, route }) {
       },
     });
   }, [navigation]);
+
+  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
+  const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
+  useEffect(() => {
+    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+      setFoodStore(doc.data());
+    });
+  }, [idFoodStore]);
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      GetCategoriesByIds(foodStore.food_categories).then((result) => {
+        // console.log('list:', result);
+        setListCt(result);
+      });
+    }
+  }, [foodStore.food_categories]);
   return (
     <View style={{ flex: 1 }}>
       {/* Nganh Kinh doanh */}
@@ -215,15 +270,13 @@ export default function EditInforStoreCate({ navigation, route }) {
           </Text>
         </View>
         <View className="flex-row">
-          <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
-            <Text className="text-base pr-1 ">Bánh xèo</Text>
-            <Feather name="x-circle" size={12} color="gray" />
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
-            <Text className="text-base pr-1 ">Bánh xèo</Text>
-            <Feather name="x-circle" size={12} color="gray" />
-          </TouchableOpacity>
+          {listCt &&
+            listCt.map((ct) => (
+              <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
+                <Text className="text-base pr-1 ">{ct.name}</Text>
+                <Feather name="x-circle" size={12} color="gray" />
+              </TouchableOpacity>
+            ))}
         </View>
       </View>
 

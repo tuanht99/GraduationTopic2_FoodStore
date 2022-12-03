@@ -40,6 +40,7 @@ import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
+import { GetAllCate, GetCategoriesByIds } from "../services/store";
 
 export default function EditInforStore({ navigation, route }) {
   React.useLayoutEffect(() => {
@@ -62,6 +63,7 @@ export default function EditInforStore({ navigation, route }) {
   // food
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
   useEffect(() => {
     const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
       setFoodStore(doc.data());
@@ -73,6 +75,16 @@ export default function EditInforStore({ navigation, route }) {
   const foodStorePhone = foodStore.phone;
   const foodStoreOpenTime = foodStore.openTime;
   const foodStoreCate = foodStore.food_categories;
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      GetCategoriesByIds(foodStore.food_categories).then((result) => {
+        // console.log('list:', result);
+        setListCt(result);
+      });
+    }
+  }, [foodStore.food_categories]);
 
   return (
     <View>
@@ -90,7 +102,9 @@ export default function EditInforStore({ navigation, route }) {
             </TouchableOpacity>
           </View>
 
-          <View><Text className="font-bold text-lg">Bánh Canh Bột lọc O hương</Text></View>
+          <View>
+            <Text className="font-bold text-lg">Bánh Canh Bột lọc O hương</Text>
+          </View>
 
           <View className="flex-row py-1">
             <Ionicons name="location-outline" size={24} color="black" />
@@ -124,13 +138,12 @@ export default function EditInforStore({ navigation, route }) {
             </TouchableOpacity>
           </View>
           <View className="flex-row">
-            <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
-              Bánh xèo
-            </Text>
-
-            <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
-              Bánh xèo
-            </Text>
+            {listCt &&
+              listCt.map((ct) => (
+                <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
+                  {ct.name}
+                </Text>
+              ))}
           </View>
         </View>
 
@@ -140,7 +153,10 @@ export default function EditInforStore({ navigation, route }) {
         <View className="p-4 border-b border-[#DDDDDD]">
           <View className="flex-row justify-between pb-2 items-center">
             <Text className="font-bold text-lg">Chỉnh sửa giờ mở cửa</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("EditInforStoreTime")} className="flex-row">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("EditInforStoreTime")}
+              className="flex-row"
+            >
               <AntDesign name="edit" size={20} color="black" />
               <Text className="ml-2 text-gray-500">Chỉnh sửa</Text>
             </TouchableOpacity>

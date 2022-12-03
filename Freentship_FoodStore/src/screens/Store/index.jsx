@@ -41,12 +41,14 @@ import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
+import { GetCategoriesByIds } from "../../services";
 
 export default function Store({ navigation, route }) {
   const [inforStore, setInforStore] = useState([]);
 
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
   useEffect(() => {
     const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
       setFoodStore(doc.data());
@@ -58,6 +60,16 @@ export default function Store({ navigation, route }) {
   const foodStorePhone = foodStore.phone;
   const foodStoreOpenTime = foodStore.openTime;
   const foodStoreCate = foodStore.food_categories;
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      GetCategoriesByIds(foodStore.food_categories).then((result) => {
+        // console.log('list:', result);
+        setListCt(result);
+      });
+    }
+  }, [foodStore.food_categories]);
 
   return (
     <View>
@@ -101,13 +113,12 @@ export default function Store({ navigation, route }) {
           <Text className="font-bold text-base">Ngành kinh doanh</Text>
           {/* // */}
           <View className="flex-row">
-            <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
-              Bánh xèo
-            </Text>
-
-            <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
-              Bánh xèo
-            </Text>
+            {listCt &&
+              listCt.map((ct) => (
+                <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
+                  {ct.name}
+                </Text>
+              ))}
           </View>
         </View>
 
@@ -127,9 +138,7 @@ export default function Store({ navigation, route }) {
             {/* Đánh giá */}
             <TouchableOpacity
               className="flex flex-row justify-between items-center"
-              onPress={() =>
-                navigation.navigate("ReviewsOfStore")
-              }
+              onPress={() => navigation.navigate("ReviewsOfStore")}
             >
               <Text className="p-4 text-[#808080] text-base">
                 Đánh giá trên Loship{" "}
@@ -164,7 +173,7 @@ export default function Store({ navigation, route }) {
               }
             >
               <Text className="p-4 text-[#808080] text-base">
-                  Chính sách người bán{" "}
+                Chính sách người bán{" "}
               </Text>
               <View className="pr-4">
                 <AntDesign name="arrowright" size={24} color="black" />
@@ -180,7 +189,7 @@ export default function Store({ navigation, route }) {
               }
             >
               <Text className="p-4 text-[#808080] text-base">
-                  Câu hỏi thường gặp{" "}
+                Câu hỏi thường gặp{" "}
               </Text>
               <View className="pr-4">
                 <AntDesign name="arrowright" size={24} color="black" />
@@ -230,7 +239,12 @@ export default function Store({ navigation, route }) {
             <AntDesign name="shoppingcart" size={24} color="black" />
             <Text className="ml-2 flex flex-row text-gray-600 text-base">
               Ngành kinh doanh:
-              {/* {foodStoreCate} */}
+              {listCt &&
+                listCt.map((ct) => (
+                  <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
+                    {ct.name} {','}
+                  </Text>
+                ))}
             </Text>
           </View>
         </View>
