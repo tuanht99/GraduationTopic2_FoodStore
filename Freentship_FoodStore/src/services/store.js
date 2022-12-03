@@ -9,6 +9,7 @@ import {
   documentId,
   where,
 } from "firebase/firestore";
+import { async } from "@firebase/util";
 
 export async function GetStore() {
   const store = [];
@@ -80,7 +81,25 @@ export async function GetAllCate() {
       id: docRef.id,
     });
   });
-  console.log("logvate", allCate);
+  // console.log("logvate", allCate);
   return allCate;
  
+}
+
+export async function GetCategoriesByIds(ids) {
+  const allCate = [];
+  const cateRef = collection(db, "categories");
+  const q = query(
+    cateRef
+  );
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((docRef) => {
+    if (ids.some(id => id === docRef.id)) {
+      allCate.push({
+        ...docRef.data(),
+        id: docRef.id
+      })
+    }
+  });
+  return allCate;
 }
