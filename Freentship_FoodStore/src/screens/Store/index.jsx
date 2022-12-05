@@ -44,7 +44,7 @@ import { EvilIcons } from "@expo/vector-icons";
 import { GetCategoriesByIds } from "../../services";
 
 export default function Store({ navigation, route }) {
-  const [inforStore, setInforStore] = useState([]);
+  // const [inforStore, setInforStore] = useState([]);
 
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
@@ -54,11 +54,13 @@ export default function Store({ navigation, route }) {
       setFoodStore(doc.data());
     });
   }, [idFoodStore]);
+
   const foodStoreName = foodStore.name;
   const foodStoreImage = foodStore.image;
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
   const foodStoreOpenTime = foodStore.openTime;
+  console.log("thoi gian: ", foodStoreOpenTime);
   const foodStoreCate = foodStore.food_categories;
 
   // load categories
@@ -70,6 +72,36 @@ export default function Store({ navigation, route }) {
       });
     }
   }, [foodStore.food_categories]);
+
+  // Time open of store
+  const [stores, setStores] = useState([]);
+  const [currentDate, setCurrentDate] = useState(hours * 60 + min);
+  let hours = new Date().getHours(); //Current Hours
+  let min = new Date().getMinutes(); //Current Minutes
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      hours = new Date().getHours();
+      min = new Date().getMinutes();
+      // Convert hours to minutes
+      setCurrentDate(hours * 60 + min);
+      // console.log('setTimeout', hours * 60 + min)
+    }, 60000);
+
+    if (stores.opentime) {
+      if (
+        currentDate >= stores.opentime[0] &&
+        currentDate < stores.opentime[1]
+      ) {
+        setOpenTime(true);
+      } else {
+        setOpenTime(false);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, [currentDate, stores.opentime]);
+  console.log("", currentDate);
 
   return (
     <View>
@@ -115,7 +147,7 @@ export default function Store({ navigation, route }) {
           <View className="flex-row">
             {listCt &&
               listCt.map((ct) => (
-                <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
+                <Text className="text-base border rounded-lg px-2 mr-2 my-2  border-[#AAAAAA]">
                   {ct.name}
                 </Text>
               ))}
@@ -152,7 +184,7 @@ export default function Store({ navigation, route }) {
               className="flex flex-row justify-between items-center"
               onPress={() =>
                 navigation.navigate("EditMenuView", {
-                  inforStore: foodStoreName,
+                  inforStoreName: foodStoreName,
                 })
               }
             >
@@ -168,7 +200,7 @@ export default function Store({ navigation, route }) {
               className="flex flex-row justify-between items-center"
               onPress={() =>
                 navigation.navigate("EditMenuView", {
-                  inforStore: foodStoreName,
+                  inforStoreName: foodStoreName,
                 })
               }
             >
@@ -184,7 +216,7 @@ export default function Store({ navigation, route }) {
               className="flex flex-row justify-between items-center"
               onPress={() =>
                 navigation.navigate("EditMenuView", {
-                  inforStore: foodStoreName,
+                  inforStoreName: foodStoreName,
                 })
               }
             >
@@ -202,7 +234,12 @@ export default function Store({ navigation, route }) {
           <View className="flex-row justify-between pb-2 items-center">
             <Text className="font-bold text-lg">Thông tin cửa hàng</Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("EditInforStore")}
+              onPress={() =>
+                navigation.navigate("EditInforStore", {
+                  inforStoreName: foodStoreName,
+                  inforStoreImage: foodStoreImage,
+                })
+              }
               className="flex-row"
             >
               <AntDesign name="edit" size={20} color="black" />
@@ -214,7 +251,7 @@ export default function Store({ navigation, route }) {
             <Ionicons name="location-outline" size={24} color="black" />
             <Text
               numberOfLines={1}
-              className="ml-2 w-64 text-gray-600 text-base"
+              className="ml-2 w-72 text-gray-600 text-base"
             >
               {foodStoreAddress}
             </Text>
@@ -222,7 +259,7 @@ export default function Store({ navigation, route }) {
           <View className="flex-row py-1">
             <Ionicons name="phone-portrait-outline" size={24} color="black" />
             <Text className="ml-2 text-gray-600 text-base">
-              {foodStorePhone}
+              {"0"}{foodStorePhone}
             </Text>
           </View>
           <View className="flex-row py-1">
@@ -237,12 +274,13 @@ export default function Store({ navigation, route }) {
           </View>
           <View className="flex-row py-1">
             <AntDesign name="shoppingcart" size={24} color="black" />
-            <Text className="ml-2 flex flex-row text-gray-600 text-base">
+            <Text numberOfLines={1} className="ml-2 flex flex-row text-gray-600 text-base">
               Ngành kinh doanh:
               {listCt &&
                 listCt.map((ct) => (
                   <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
-                    {ct.name} {','}
+                    {ct.name}
+                    {", "}
                   </Text>
                 ))}
             </Text>

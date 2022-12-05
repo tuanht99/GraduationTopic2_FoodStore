@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -33,7 +33,6 @@ import { db } from "../services/config";
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
-
 import {
   getStorage,
   ref,
@@ -44,8 +43,43 @@ import {
 
 // Navigation
 export default function EditInforStoreName({ navigation, route }) {
-  const [image, setImage] = useState();
+  const {inforStoreName,inforStoreImage} = route.params;
+  // food
+  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
+  const [foodStore, setFoodStore] = useState([]);
+  
+  useEffect(() => {
+    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+      setFoodStore(doc.data());
+    });
+  }, [idFoodStore]);
+  const foodStoreName = foodStore.name;
+  const foodStoreImage = foodStore.image;
+  const foodStoreAddress = foodStore.address;
+  const foodStorePhone = foodStore.phone;
+  const foodStoreOpenTime = foodStore.openTime;
+  const foodStoreCate = foodStore.food_categories;
+  
+  const [text, setText] = useState(inforStoreName)
+  const [image, setImage] = useState(inforStoreImage);
+  
   const [namePathImage, setNamePathImage] = React.useState(null);
+  function edit(text) {
+    const storage = getStorage();
+    getDownloadURL(ref(storage, namePathImage))
+      .then((url) => {
+        setImage(url);
+        updateDoc(doc(db, "food_stores", idFoodStore), {
+          name: text,
+          image: url,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    navigation.goBack("EditInforStore");
+  }
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -91,7 +125,7 @@ export default function EditInforStoreName({ navigation, route }) {
       setImage(result.uri);
     }
   };
-
+  
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -135,10 +169,24 @@ export default function EditInforStoreName({ navigation, route }) {
               >
                 <TouchableOpacity onPress={pickImage}>
                   <View>
-                    <View>
+                    {/* image2 */}
+                    {/* <View>
                       {image && (
                         <Image
                           source={{ uri: image }}
+                          style={{
+                            borderRadius: 15,
+                            width: "100%",
+                            height: 340,
+                          }}
+                        />
+                      )}
+                    </View> */}
+                    {/* image1 */}
+                    <View>
+                      {image && (
+                        <Image
+                          source={{ uri: image}}
                           style={{
                             borderRadius: 15,
                             width: "100%",
@@ -185,9 +233,9 @@ export default function EditInforStoreName({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  //   onChangeText={(textName) => setTextName(textName)}
-                  //   value={textName}
-                ></TextInput>
+                    onChangeText={(text) => setText(text)}
+                    value={text}
+                />
               </View>
             </View>
           </View>
@@ -215,6 +263,9 @@ export default function EditInforStoreName({ navigation, route }) {
                 height: 50,
                 alignItems: "center",
                 justifyContent: "center",
+              }}
+              onPress={() => {
+                edit(text);
               }}
             >
               <Text style={{ color: "#fff" }}>Lưu</Text>

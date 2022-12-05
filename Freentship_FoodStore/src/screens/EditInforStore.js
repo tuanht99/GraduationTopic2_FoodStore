@@ -43,6 +43,8 @@ import { EvilIcons } from "@expo/vector-icons";
 import { GetAllCate, GetCategoriesByIds } from "../services/store";
 
 export default function EditInforStore({ navigation, route }) {
+  const {inforStoreName, inforStoreImage} = route.params;
+  console.log("infor store: ", inforStoreName);
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -58,8 +60,7 @@ export default function EditInforStore({ navigation, route }) {
       },
     });
   }, [navigation]);
-  const [inforStore, setInforStore] = useState([]);
-
+  
   // food
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
@@ -94,7 +95,12 @@ export default function EditInforStore({ navigation, route }) {
           <View className="flex-row justify-between pb-2 items-center">
             <Text className="font-bold text-lg">Thông tin cửa hàng</Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("EditInforStoreName")}
+              onPress={() =>
+                navigation.navigate("EditInforStoreName", {
+                  inforStoreName: foodStoreName,
+                  inforStoreImage: foodStoreImage,
+                })
+              }
               className="flex-row"
             >
               <AntDesign name="edit" size={20} color="black" />
@@ -103,7 +109,7 @@ export default function EditInforStore({ navigation, route }) {
           </View>
 
           <View>
-            <Text className="font-bold text-lg">Bánh Canh Bột lọc O hương</Text>
+            <Text className="font-bold text-lg">{foodStoreName}</Text>
           </View>
 
           <View className="flex-row py-1">
@@ -140,7 +146,7 @@ export default function EditInforStore({ navigation, route }) {
           <View className="flex-row">
             {listCt &&
               listCt.map((ct) => (
-                <Text className="text-base border rounded-lg px-2 m-2 border-[#AAAAAA]">
+                <Text className="text-base border rounded-lg px-2 mr-2  border-[#AAAAAA]">
                   {ct.name}
                 </Text>
               ))}

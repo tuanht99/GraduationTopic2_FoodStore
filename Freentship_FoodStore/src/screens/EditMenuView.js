@@ -52,9 +52,7 @@ const DATA = {
 
 // Navigation
 export default function EditMenuView({ navigation, route }) {
-  const {inforStore} = route.params;
-  const [nameStore, setNameStore] = React.useState(inforStore.foodStoreName)
-  
+  const { inforStoreName } = route.params;
   // const {category} = route.params;
   // const { food } = route.params;
   React.useLayoutEffect(() => {
@@ -81,8 +79,6 @@ export default function EditMenuView({ navigation, route }) {
 
   const [listCate, setListCate] = useState([]);
   const [listFood, setListFood] = useState([]);
-  console.log(listCate);
-  //console.log(listFood);
 
   // list cate
   useEffect(() => {
@@ -91,7 +87,6 @@ export default function EditMenuView({ navigation, route }) {
     const getCat = async () => {
       const catRef = collection(db, "categories");
       const c = query(catRef);
-      console.log(collection(db, "categories"));
 
       const querySnapshot = await getDocs(c);
       const listCate = [];
@@ -107,7 +102,6 @@ export default function EditMenuView({ navigation, route }) {
     getCat();
     return unsubscribe;
   }, []);
-  console.log("listCate", listCate);
 
   // list food of cate
   useEffect(() => {
@@ -119,7 +113,6 @@ export default function EditMenuView({ navigation, route }) {
         foodRef,
         where("category_Id", "==", "uHBXNbOrJgocBGCTAaA2")
       );
-      console.log(collection(db, "foods"));
 
       const querySnapshot = await getDocs(c);
       const listFood = [];
@@ -133,7 +126,6 @@ export default function EditMenuView({ navigation, route }) {
       });
     };
     getFood();
-    console.log("listFood category: ", listFood);
     return unsubscribe;
   }, []);
 
@@ -146,12 +138,18 @@ export default function EditMenuView({ navigation, route }) {
           backgroundColor: "#fff",
           paddingTop: 10,
           paddingBottom: 10,
-          flex: 0.2
+          flex: 0.2,
         }}
       >
         <View style={{ marginLeft: 10, marginRight: 10 }}>
-          <View className="flex-1 items-center justify-center bg-white pt-10">
-            <Text className="decoration-red-500">{nameStore}</Text>
+          <View
+            style={{ 
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 10
+            }}
+          >
+            <Text style={{fontWeight: "bold"}} className="decoration-red-500">{inforStoreName}</Text>
           </View>
 
           <View>
@@ -193,7 +191,7 @@ export default function EditMenuView({ navigation, route }) {
       <View style={{ paddingBottom: 10 }}></View>
       {/* ds danh muc, mon an */}
       <FlatList
-        style={{flex:0.8}}
+        style={{ flex: 0.8 }}
         data={listCate}
         numColumns={1}
         renderItem={({ item }) => (
@@ -235,11 +233,13 @@ export default function EditMenuView({ navigation, route }) {
                     </View>
                   </View>
 
-                  <View style={{
+                  <View
+                    style={{
                       justifyContent: "center",
                       alignItems: "center",
                       flexDirection: "row",
-                    }}>
+                    }}
+                  >
                     <TouchableOpacity
                       onPress={() =>
                         navigation.navigate("ShowFullFoodView", {
@@ -247,9 +247,7 @@ export default function EditMenuView({ navigation, route }) {
                         })
                       }
                     >
-                      <Text style={{ fontWeight: "bold"}}>
-                        Xem tất cả
-                      </Text>
+                      <Text style={{ fontWeight: "bold" }}>Xem tất cả</Text>
                     </TouchableOpacity>
                   </View>
                 </View>

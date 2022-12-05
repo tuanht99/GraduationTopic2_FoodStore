@@ -273,7 +273,7 @@ export default function EditInforStoreCate({ navigation, route }) {
           {listCt &&
             listCt.map((ct) => (
               <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
-                <Text className="text-base pr-1 ">{ct.name}</Text>
+                <Text numberOfLines={2} className="text-base pr-1 ">{ct.name}</Text>
                 <Feather name="x-circle" size={12} color="gray" />
               </TouchableOpacity>
             ))}
