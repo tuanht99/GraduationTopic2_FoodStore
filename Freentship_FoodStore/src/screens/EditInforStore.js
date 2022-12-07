@@ -124,7 +124,7 @@ export default function EditInforStore({ navigation, route }) {
           <View className="flex-row py-1">
             <Ionicons name="phone-portrait-outline" size={24} color="black" />
             <Text className="ml-2 text-gray-600 text-base">
-              {foodStorePhone}
+              {"0"}{foodStorePhone}
             </Text>
           </View>
         </View>
