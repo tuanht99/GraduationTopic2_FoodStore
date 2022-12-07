@@ -19,6 +19,10 @@ import EditInforStoreName from "../screens/EditInforStoreName"
 import EditInforStoreCate from "../screens/EditInforStoreCate"
 import EditInforStoreTime from "../screens/EditInforStoreTime"
 import ReviewsOfStore from "../screens/ReviewsOfStore"
+import QuestionCustomer from "../screens/QuestionCustomer"
+import PolicySellerView from "../screens/PolicySellerView"
+
+
 function Navigators() {
   return (
     <NavigationContainer>
@@ -44,6 +48,8 @@ function Navigators() {
         <Stack.Screen name="EditInforStoreCate" component={EditInforStoreCate}/>
         <Stack.Screen name="EditInforStoreTime" component={EditInforStoreTime}/>
         <Stack.Screen name="ReviewsOfStore" component={ReviewsOfStore}/>
+        <Stack.Screen name="QuestionCustomer" component={QuestionCustomer}/>
+        <Stack.Screen name="PolicySellerView" component={PolicySellerView}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

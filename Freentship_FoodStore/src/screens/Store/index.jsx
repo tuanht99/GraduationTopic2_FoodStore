@@ -13,7 +13,7 @@ import {
   editDoc,
   onSnapshot,
 } from "firebase/firestore";
-
+import call from "react-native-phone-call";
 import * as ImagePicker from "expo-image-picker";
 
 import { db } from "../../services/config";
@@ -60,7 +60,6 @@ export default function Store({ navigation, route }) {
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
   const foodStoreOpenTime = foodStore.openTime;
-  console.log("thoi gian: ", foodStoreOpenTime);
   const foodStoreCate = foodStore.food_categories;
 
   // load categories
@@ -101,8 +100,7 @@ export default function Store({ navigation, route }) {
 
     return () => clearTimeout(timer);
   }, [currentDate, stores.opentime]);
-  console.log("", currentDate);
-
+  
   return (
     <View>
       <Header />
@@ -165,6 +163,7 @@ export default function Store({ navigation, route }) {
           </TouchableOpacity>
         </View>
         <View className="border-b-8 border-[#DDDDDD] my-2"></View>
+        {/*  */}
         <View className="">
           <View className="divide-y divide-[#808080]">
             {/* Đánh giá */}
@@ -199,9 +198,7 @@ export default function Store({ navigation, route }) {
             <TouchableOpacity
               className="flex flex-row justify-between items-center"
               onPress={() =>
-                navigation.navigate("EditMenuView", {
-                  inforStoreName: foodStoreName,
-                })
+                navigation.navigate("PolicySellerView")
               }
             >
               <Text className="p-4 text-[#808080] text-base">
@@ -215,9 +212,7 @@ export default function Store({ navigation, route }) {
             <TouchableOpacity
               className="flex flex-row justify-between items-center"
               onPress={() =>
-                navigation.navigate("EditMenuView", {
-                  inforStoreName: foodStoreName,
-                })
+                navigation.navigate("QuestionCustomer")
               }
             >
               <Text className="p-4 text-[#808080] text-base">
@@ -230,6 +225,7 @@ export default function Store({ navigation, route }) {
           </View>
         </View>
         <View className="border-b-8 border-[#DDDDDD] my-2"></View>
+        {/* Thong tin cua hang */}
         <View className="p-4 border-b border-[#AAAAAA]">
           <View className="flex-row justify-between pb-2 items-center">
             <Text className="font-bold text-lg">Thông tin cửa hàng</Text>
@@ -259,7 +255,8 @@ export default function Store({ navigation, route }) {
           <View className="flex-row py-1">
             <Ionicons name="phone-portrait-outline" size={24} color="black" />
             <Text className="ml-2 text-gray-600 text-base">
-              {"0"}{foodStorePhone}
+              {"0"}
+              {foodStorePhone}
             </Text>
           </View>
           <View className="flex-row py-1">
@@ -274,7 +271,10 @@ export default function Store({ navigation, route }) {
           </View>
           <View className="flex-row py-1">
             <AntDesign name="shoppingcart" size={24} color="black" />
-            <Text numberOfLines={1} className="ml-2 flex flex-row text-gray-600 text-base">
+            <Text
+              numberOfLines={1}
+              className="ml-2 flex flex-row text-gray-600 text-base"
+            >
               Ngành kinh doanh:
               {listCt &&
                 listCt.map((ct) => (
@@ -286,17 +286,33 @@ export default function Store({ navigation, route }) {
             </Text>
           </View>
         </View>
-
-        <View className="flex justify-center items-center h-28 mx-8 ">
-          <TouchableOpacity className="flex-row justify-center items-center py-3 rounded-xl w-full bg-[#00FF33]">
+        {/* Tao ma giam gia */}
+        <View className="flex justify-center items-center h-20 mx-8">
+          <TouchableOpacity className="flex-row justify-center items-center py-3 rounded-xl w-full bg-[#FF5733]">
+            <AntDesign name="gift" size={24} color="white" />
+            <Text className="text-white font-bold text-base ml-2">
+              Tạo mã giảm giá
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {/* Lien he voi loship */}
+        <View className="flex justify-center items-center h-20 mx-8 ">
+          <TouchableOpacity
+            onPress={() =>
+              call({
+                number: "1900636075",
+                prompt: false,
+              }).catch(console.error)
+            }
+            className="flex-row justify-center items-center py-3 rounded-xl w-full bg-[#00FF33]"
+          >
             <Feather name="phone" size={24} color="white" />
             <Text className="text-white font-bold text-base ml-2">
               Liên hệ nhân viên Freen'tship
             </Text>
           </TouchableOpacity>
         </View>
-
-        <View className="h-40"></View>
+        <View className="h-20"></View>
       </ScrollView>
     </View>
   );
