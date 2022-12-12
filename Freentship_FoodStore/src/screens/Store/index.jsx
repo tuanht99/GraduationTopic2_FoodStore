@@ -54,6 +54,10 @@ export default function Store({ navigation, route }) {
       setFoodStore(doc.data());
     });
   }, [idFoodStore]);
+  // console.log("d", foodStore.openTime);
+  if (foodStore !== undefined) {
+    console.log("opentime: ", foodStore.opentime);
+  }
 
   const foodStoreName = foodStore.name;
   const foodStoreImage = foodStore.image;
@@ -71,6 +75,8 @@ export default function Store({ navigation, route }) {
       });
     }
   }, [foodStore.food_categories]);
+
+  useEffect(() => {});
 
   // Time open of store
   const [stores, setStores] = useState([]);
@@ -97,10 +103,11 @@ export default function Store({ navigation, route }) {
         setOpenTime(false);
       }
     }
+    // console.log("Store.open", stores.openTime[0]);
 
     return () => clearTimeout(timer);
   }, [currentDate, stores.opentime]);
-  
+
   return (
     <View>
       <Header />
@@ -142,14 +149,14 @@ export default function Store({ navigation, route }) {
         <View className="m-2 border-b border-[#DDDDDD]">
           <Text className="font-bold text-base">Ngành kinh doanh</Text>
           {/* // */}
-          <View className="flex-row">
+          <ScrollView horizontal className="flex h-10">
             {listCt &&
               listCt.map((ct) => (
                 <Text className="text-base border rounded-lg px-2 mr-2 my-2  border-[#AAAAAA]">
                   {ct.name}
                 </Text>
               ))}
-          </View>
+          </ScrollView>
         </View>
 
         <View className="m-2 flex-row ">
@@ -197,9 +204,7 @@ export default function Store({ navigation, route }) {
             {/* Chính sách người bán */}
             <TouchableOpacity
               className="flex flex-row justify-between items-center"
-              onPress={() =>
-                navigation.navigate("PolicySellerView")
-              }
+              onPress={() => navigation.navigate("PolicySellerView")}
             >
               <Text className="p-4 text-[#808080] text-base">
                 Chính sách người bán{" "}
@@ -211,9 +216,7 @@ export default function Store({ navigation, route }) {
             {/* Câu hỏi thường gặp */}
             <TouchableOpacity
               className="flex flex-row justify-between items-center"
-              onPress={() =>
-                navigation.navigate("QuestionCustomer")
-              }
+              onPress={() => navigation.navigate("QuestionCustomer")}
             >
               <Text className="p-4 text-[#808080] text-base">
                 Câu hỏi thường gặp{" "}
@@ -259,6 +262,7 @@ export default function Store({ navigation, route }) {
               {foodStorePhone}
             </Text>
           </View>
+          {/* gio mo cua */}
           <View className="flex-row py-1">
             <EvilIcons name="clock" size={24} color="black" />
             <Text
@@ -266,6 +270,7 @@ export default function Store({ navigation, route }) {
               className="ml-2 flex flex-row text-gray-600 text-base"
             >
               Giờ mở cửa:
+              {"10:00 - 12:00"}
               {/* {foodStoreOpenTime} */}
             </Text>
           </View>

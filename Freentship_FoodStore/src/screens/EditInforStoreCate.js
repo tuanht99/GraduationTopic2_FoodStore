@@ -75,22 +75,27 @@ const FindCateCode = () => {
   const handleChangeListCt = (id) => {
     if (listCt.some((ct) => ct === id)) {
       setListCt([...listCt.filter((ct) => ct !== id)]);
-      handleDeleteCategoryById(id)
+      handleDeleteCategoryById(id);
     } else {
       if (listCt.length > 2) return;
       setListCt([...listCt, id]);
     }
   };
 
-  // handle delete category by id
-  const handleDeleteCategoryById = async(id) => {
-    const ctRef = doc(db, 'food_stores', idFoodStore)
-    await updateDoc(ctRef, {
-      food_categories: arrayRemove(`${id}`)
-    })
-  }
+  const handleSaveCate = () => {
+    updateDoc(doc(db, "food_stores", idFoodStore), {
+      food_categories: listCt,
+    });
+  };
 
-  
+  // handle delete category by id
+  const handleDeleteCategoryById = async (id) => {
+    const ctRef = doc(db, "food_stores", idFoodStore);
+    await updateDoc(ctRef, {
+      food_categories: arrayRemove(`${id}`),
+    });
+  };
+
   const [foodStore, setFoodStore] = useState([]);
   useEffect(() => {
     const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
@@ -103,9 +108,9 @@ const FindCateCode = () => {
     if (foodStore) {
       GetCategoriesByIds(foodStore.food_categories).then((result) => {
         // console.log('list:', result);
-        var ids = []
+        var ids = [];
         result.map((ct) => {
-          ids.push(ct.id)
+          ids.push(ct.id);
         });
         setListCt(ids);
       });
@@ -119,7 +124,7 @@ const FindCateCode = () => {
       // Filter the masterDataSource and update FilteredDataSource
       const newData = masterDataSource.filter(function (item) {
         // Applying filter for the inserted text in search bar
-        const itemData = item.id ? item.id.toUpperCase() : "".toUpperCase();
+        const itemData = item.name ? item.name.toUpperCase() : "".toUpperCase();
         const textData = text.toUpperCase();
         return itemData.indexOf(textData) > -1;
       });
@@ -136,6 +141,7 @@ const FindCateCode = () => {
   const ItemView = ({ item }) => {
     console.log("listCt: ", listCt);
     console.log("id:", item.id);
+    //console.log("name item", item.name)
 
     return (
       <TouchableOpacity
@@ -164,59 +170,69 @@ const FindCateCode = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 0.3 }} className="bg-white ">
-        <View className="flex flex-row items-center rounded-lg border border-[#BBBBBB] p-3 my-4 mx-4">
-          <AntDesign name="search1" size={24} color="black" />
-          <TextInput
-            className="w-full pl-2"
-            placeholder="Tìm danh mục"
-            onChangeText={(text) => searchFilterFunction(text)}
-            value={search}
-          />
+      <View style={{ flex: 1, borderWidth: 1, borderTopColor: "#DDDDDD" }}>
+        {/* Search */}
+        <View
+          //style={{ flex: 0.5 }}
+          className="bg-white w-full"
+        >
+          <View className="flex flex-row items-center rounded-lg border border-[#E94730] p-3 my-2 mx-4">
+            <AntDesign name="search1" size={24} color="black" />
+            <TextInput
+              className="w-full pl-2"
+              placeholder="Tìm danh mục"
+              onChangeText={(text) => searchFilterFunction(text)}
+              value={search}
+            />
+          </View>
         </View>
-      </View>
-
-      {filteredDataSource.length > 0 ? (
-        <FlatList
-          className="bg-white"
-          style={{ flex: 0.45 }}
-          data={filteredDataSource}
-          keyExtractor={(item) => item.id}
-          renderItem={ItemView}
-        />
-      ) : (
-        <OrderDoesNotExits
-          style={{ flex: 0.45 }}
-          title={"Không tìm thấy danh mục :(( "}
-        />
-      )}
-
-      <View style={{ flex: 0.25 }}>
+        {/* list cate */}
+        {filteredDataSource.length > 0 ? (
+          <FlatList
+            className="bg-white"
+            //style={{ flex: 0.45 }}
+            data={filteredDataSource}
+            keyExtractor={(item) => item.id}
+            renderItem={ItemView}
+          />
+        ) : (
+          <OrderDoesNotExits
+            //style={{ flex: 0.45 }}
+            title={"Không tìm thấy danh mục :(( "}
+          />
+        )}
+        {/* Luu */}
         <View
           style={{
-            flex: 1,
-            backgroundColor: "#fff",
-            paddingTop: 10,
-            paddingBottom: 10,
-            width: "100%",
-            borderTopColor: "#808080",
-            borderTopWidth: 0.3,
-            bottom: 0,
+            paddingBottom: 0,
           }}
         >
-          <View style={{ marginLeft: 10, marginRight: 10 }}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#E94730",
-                borderRadius: 15,
-                width: "97%",
-                height: 50,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={{ color: "#fff" }}>Lưu</Text>
-            </TouchableOpacity>
+          <View
+            style={{
+              backgroundColor: "#fff",
+              paddingTop: 10,
+              paddingBottom: 10,
+              width: "100%",
+              borderTopColor: "#808080",
+              borderTopWidth: 0.3,
+              bottom: 0,
+            }}
+          >
+            <View style={{ marginLeft: 10, marginRight: 10 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#E94730",
+                  borderRadius: 15,
+                  width: "97%",
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={handleSaveCate}
+              >
+                <Text style={{ color: "#fff" }}>Lưu</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -261,23 +277,25 @@ export default function EditInforStoreCate({ navigation, route }) {
     }
   }, [foodStore.food_categories]);
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* Nganh Kinh doanh */}
-      <View style={{ flex: 0.2 }} className="m-2 border-b border-[#DDDDDD]">
-        <View className="flex-row justify-start pl-2 pb-2 items-center">
-          <Text className="font-bold text-lg">
+      <View style={{ flex: 0.2 }} className="m-2 ">
+        <View className="flex-row justify-start pl-2 items-center">
+          <Text className="font-bold text-sm text-[#E94730]">
             Vui lòng chọn tối đa 3 danh mục
           </Text>
         </View>
-        <View className="flex-row">
+        <ScrollView horizontal className="flex h-10 pl-2">
           {listCt &&
             listCt.map((ct) => (
-              <TouchableOpacity className="flex flex-row border rounded-lg px-2 m-2 border-[#AAAAAA] items-center">
-                <Text numberOfLines={2} className="text-base pr-1 ">{ct.name}</Text>
-                <Feather name="x-circle" size={12} color="gray" />
+              <TouchableOpacity className="flex flex-row border rounded-lg mr-2 px-2 border-[#AAAAAA] items-center">
+                <Text numberOfLines={2} className="text-base pr-1 ">
+                  {ct.name}
+                </Text>
+                {/* <Feather name="x-circle" size={12} color="gray" /> */}
               </TouchableOpacity>
             ))}
-        </View>
+        </ScrollView>
       </View>
 
       <FindCateCode style={{ flex: 0.8 }} />
