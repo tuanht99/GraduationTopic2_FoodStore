@@ -250,7 +250,7 @@ export default function EditInforStoreCate({ navigation, route }) {
         </TouchableOpacity>
       ),
 
-      title: "Chỉnh sửa thông tin cửa hảng",
+      title: "Chỉnh sửa ngành kinh doanh",
       headerTitleAlign: "center",
       headerTitleStyle: {
         fontSize: 15,

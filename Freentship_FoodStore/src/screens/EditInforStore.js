@@ -43,7 +43,7 @@ import { EvilIcons } from "@expo/vector-icons";
 import { GetAllCate, GetCategoriesByIds } from "../services/store";
 
 export default function EditInforStore({ navigation, route }) {
-  const {inforStoreName, inforStoreImage} = route.params;
+  const { inforStoreName, inforStoreImage } = route.params;
   console.log("infor store: ", inforStoreName);
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -60,7 +60,7 @@ export default function EditInforStore({ navigation, route }) {
       },
     });
   }, [navigation]);
-  
+
   // food
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
@@ -74,8 +74,14 @@ export default function EditInforStore({ navigation, route }) {
   const foodStoreImage = foodStore.image;
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
-  const foodStoreOpenTime = foodStore.openTime;
-  const foodStoreCate = foodStore.food_categories;
+  // const foodStoreOpenTime = foodStore.openTime;
+  // const foodStoreCate = foodStore.food_categories;
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+      console.log(" foodStore.opentime[0]", foodStore.opentime[0]);
+    }
+  }, [foodStore]);
 
   // load categories
   useEffect(() => {
@@ -124,7 +130,8 @@ export default function EditInforStore({ navigation, route }) {
           <View className="flex-row py-1">
             <Ionicons name="phone-portrait-outline" size={24} color="black" />
             <Text className="ml-2 text-gray-600 text-base">
-              {"0"}{foodStorePhone}
+              {"0"}
+              {foodStorePhone}
             </Text>
           </View>
         </View>
@@ -171,8 +178,11 @@ export default function EditInforStore({ navigation, route }) {
           {/* // */}
           <View className="flex-row">
             <Text className="text-base rounded-full border w-auto m-3 p-1 border-[#AAAAAA]">
-              {" "}
-              10:00 - 12:00
+              {foodStore.opentime !== undefined &&
+                foodStore.opentime[0] / 60 +
+                  ":00 - " +
+                  foodStore.opentime[1] / 60 +
+                  ":00"}
             </Text>
           </View>
         </View>
