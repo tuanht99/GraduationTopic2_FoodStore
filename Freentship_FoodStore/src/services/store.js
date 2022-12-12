@@ -103,3 +103,17 @@ export async function GetCategoriesByIds(ids) {
   });
   return allCate;
 }
+
+export async function GetOpenTimeOfFoodStore() {
+  const openTime = [];
+  const timeRef = collection(db, "food_stores");
+  const q = query(timeRef);
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((docRef)=>{
+    openTime.push({
+      ...docRef.data(),
+      id: docRef.id,
+    });
+  });
+  return openTime;
+}

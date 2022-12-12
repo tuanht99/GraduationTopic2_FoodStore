@@ -143,14 +143,14 @@ export default function EditInforStore({ navigation, route }) {
               <Text className="ml-2 text-gray-500">Chỉnh sửa</Text>
             </TouchableOpacity>
           </View>
-          <View className="flex-row">
+          <ScrollView horizontal className="flex">
             {listCt &&
               listCt.map((ct) => (
                 <Text className="text-base border rounded-lg px-2 mr-2  border-[#AAAAAA]">
                   {ct.name}
                 </Text>
               ))}
-          </View>
+          </ScrollView>
         </View>
 
         <View className="border-b-8 border-[#DDDDDD] my-2"></View>
