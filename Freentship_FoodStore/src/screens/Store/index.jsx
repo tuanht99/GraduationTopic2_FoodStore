@@ -48,6 +48,7 @@ export default function Store({ navigation, route }) {
 
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
+
   const [listCt, setListCt] = useState([]);
   useEffect(() => {
     const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
@@ -55,16 +56,26 @@ export default function Store({ navigation, route }) {
     });
   }, [idFoodStore]);
   // console.log("d", foodStore.openTime);
-  if (foodStore !== undefined) {
-    console.log("opentime: ", foodStore.opentime);
-  }
+  // .map((e) => console.log("foodStore.opentime", e));
+  // Lay h
+  // useEffect(() => {
+  //   if (foodStore.opentime !== undefined) {
+  //     console.log(" foodStore.opentime[0]", foodStore.opentime[0]);
+  //   }
+  // }, [foodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+      console.log(" foodStore.opentime[0]", foodStore.opentime[0]);
+    }
+  }, [foodStore]);
 
   const foodStoreName = foodStore.name;
   const foodStoreImage = foodStore.image;
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
-  const foodStoreOpenTime = foodStore.openTime;
-  const foodStoreCate = foodStore.food_categories;
+  // const foodStoreOpenTime = foodStore.openTime;
+  // const foodStoreCate = foodStore.food_categories;
 
   // load categories
   useEffect(() => {
@@ -75,38 +86,6 @@ export default function Store({ navigation, route }) {
       });
     }
   }, [foodStore.food_categories]);
-
-  useEffect(() => {});
-
-  // Time open of store
-  const [stores, setStores] = useState([]);
-  const [currentDate, setCurrentDate] = useState(hours * 60 + min);
-  let hours = new Date().getHours(); //Current Hours
-  let min = new Date().getMinutes(); //Current Minutes
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      hours = new Date().getHours();
-      min = new Date().getMinutes();
-      // Convert hours to minutes
-      setCurrentDate(hours * 60 + min);
-      // console.log('setTimeout', hours * 60 + min)
-    }, 60000);
-
-    if (stores.opentime) {
-      if (
-        currentDate >= stores.opentime[0] &&
-        currentDate < stores.opentime[1]
-      ) {
-        setOpenTime(true);
-      } else {
-        setOpenTime(false);
-      }
-    }
-    // console.log("Store.open", stores.openTime[0]);
-
-    return () => clearTimeout(timer);
-  }, [currentDate, stores.opentime]);
 
   return (
     <View>
@@ -270,7 +249,11 @@ export default function Store({ navigation, route }) {
               className="ml-2 flex flex-row text-gray-600 text-base"
             >
               Giờ mở cửa:
-              {"10:00 - 12:00"}
+              {foodStore.opentime !== undefined &&
+                foodStore.opentime[0] / 60 +
+                  ":00 - " +
+                  foodStore.opentime[1] / 60 +
+                  ":00"}
               {/* {foodStoreOpenTime} */}
             </Text>
           </View>
