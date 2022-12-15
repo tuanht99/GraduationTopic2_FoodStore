@@ -21,7 +21,7 @@ import EditInforStoreTime from "../screens/EditInforStoreTime"
 import ReviewsOfStore from "../screens/ReviewsOfStore"
 import QuestionCustomer from "../screens/QuestionCustomer"
 import PolicySellerView from "../screens/PolicySellerView"
-
+import AllRating from "../screens/AllRating";
 
 function Navigators() {
   return (
@@ -50,6 +50,7 @@ function Navigators() {
         <Stack.Screen name="ReviewsOfStore" component={ReviewsOfStore}/>
         <Stack.Screen name="QuestionCustomer" component={QuestionCustomer}/>
         <Stack.Screen name="PolicySellerView" component={PolicySellerView}/>
+        <Stack.Screen name="AllRating" component={AllRating}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

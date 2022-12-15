@@ -29,11 +29,15 @@ import {
 import {
   View,
   Text,
-  Checkbox,
   TouchableWithoutFeedback,
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
+  Modal,
+  StyleSheet,
+  Pressable,
+  TextInput,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -42,7 +46,94 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { GetAllCate, GetCategoriesByIds } from "../services/store";
-
+import { FlatList } from "react-native-gesture-handler";
+import { RadioButton } from "react-native-paper";
+import RadioButtonRN from "radio-buttons-react-native";
+const DATA = {
+  a600: "06: 00",
+  a700: "07: 00",
+  a800: "08: 00",
+  a900: "09: 00",
+  a1000: "10: 00",
+  a1100: "11: 00",
+  a1200: "12: 00",
+  a1300: "13: 00",
+  a1400: "14: 00",
+  a1500: "15: 00",
+  a1600: "16: 00",
+  a1700: "17: 00",
+  a1800: "18: 00",
+  a1900: "19: 00",
+  a2000: "20: 00",
+  a2100: "21: 00",
+  a2200: "22: 00",
+  a2300: "23: 00",
+};
+const data1 = [
+  {
+    label: "00: 00",
+  },
+  {
+    label: "01: 00",
+  },
+  {
+    label: "02: 00",
+  },
+  {
+    label: "03: 00",
+  },
+  {
+    label: "04: 00",
+  },
+  {
+    label: "05: 00",
+  },
+  {
+    label: "06: 00",
+  },
+  {
+    label: "07: 00",
+  },
+  {
+    label: "08: 00",
+  },
+  {
+    label: "09: 00",
+  },
+  {
+    label: "10: 00",
+  },
+  {
+    label: "11: 00",
+  },
+  {
+    label: "12: 00",
+  },  {
+    label: "13: 00",
+  },  {
+    label: "14: 00",
+  },  {
+    label: "15: 00",
+  },  {
+    label: "16: 00",
+  },  {
+    label: "17: 00",
+  },  {
+    label: "18: 00",
+  },  {
+    label: "19: 00",
+  },  {
+    label: "20: 00",
+  },  {
+    label: "21: 00",
+  },  {
+    label: "22: 00",
+  },  {
+    label: "23: 00",
+  },  {
+    label: "24: 00",
+  },
+];
 export default function EditInforStoreTime({ navigation }) {
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -59,30 +150,15 @@ export default function EditInforStoreTime({ navigation }) {
       },
     });
   }, [navigation]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   // food
   const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
-  const [listCt, setListCt] = useState([]);
-  const [listTime, setListTime] = useState([0, 1500]);
-  const [a600, setA600] = useState([360, 420]);
-  const [a700, setA700] = useState([360, 480]);
-  const [a800, setA800] = useState([360, 540]);
-  const [a900, setA900] = useState([360, 600]);
-  const [a1000, setA1000] = useState([360, 660]);
-  const [a1100, setA1100] = useState([360, 720]);
-  const [a1200, setA1200] = useState([360, 780]);
-  const [a1300, setA1300] = useState([360, 840]);
-  const [a1400, setA1400] = useState([360, 900]);
-  const [a1500, setA1500] = useState([360, 960]);
-  const [a1600, setA1600] = useState([360, 1020]);
-  const [a1700, setA1700] = useState([360, 1080]);
-  const [a1800, setA1800] = useState([360, 1140]);
-  const [a1900, setA1900] = useState([360, 1200]);
-  const [a2000, setA2000] = useState([360, 1260]);
-  const [a2100, setA2100] = useState([360, 1320]);
+
   const [a2200, setA2200] = useState([360, 1380]);
   const [a2300, setA2300] = useState([360, 1440]);
+  const [listTime, setListTime] = useState([0, 1500]);
 
   useEffect(() => {
     const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
@@ -95,11 +171,14 @@ export default function EditInforStoreTime({ navigation }) {
   const foodStorePhone = foodStore.phone;
   // const foodStoreOpenTime = foodStore.openTime;
   // const foodStoreCate = foodStore.food_categories;
-
+  const [ok, setOk] = React.useState([textPrice1, textPrice]);
+  const [textPrice, setTextPrice] = React.useState();
+  const [textPrice1, setTextPrice1] = React.useState();
   const handleSaveTime = () => {
     updateDoc(doc(db, "food_stores", idFoodStore), {
-      opentime: a600,
+      opentime: a2200,
     });
+    navigation.goBack("EditInforStore");
   };
 
   useEffect(() => {
@@ -117,15 +196,62 @@ export default function EditInforStoreTime({ navigation }) {
       });
     }
   }, [foodStore.food_categories]);
-
-
+  // Styles
+  const styles = StyleSheet.create({
+    centeredView: {
+      // justifyContent: "center",
+      alignItems: "center",
+      marginTop: 140,
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+      width: 300,
+      height: 370,
+      paddingBottom: 10
+    },
+    button: {
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    buttonOpen: {
+      backgroundColor: "#F194FF",
+    },
+    buttonClose: {
+      backgroundColor: "#2196F3",
+      paddingTop: 10,
+    },
+    textStyle: {
+      color: "white",
+      fontWeight: "bold",
+      textAlign: "center",
+      marginLeft: 5,
+      marginRight: 5
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: "center",
+    },
+  });
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 0.85 }}>
+      <ScrollView style={{ flex: 0.8 }}>
         {/* Gio mo cua 7*/}
         <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
           {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
+          <TouchableOpacity onPress={() => setModalVisible(true)} className="">
             <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
               <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
               <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
@@ -138,478 +264,7 @@ export default function EditInforStoreTime({ navigation }) {
             <Text>{"-"}</Text>
           </View>
           {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Gio mo cua 8*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Gio mo cua 9*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 10*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 11*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 12*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-
-        {/* Gio mo cua 13*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 14*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 15*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 16*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 17*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 18*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 19*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* Gio mo cua 20*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Gio mo cua 21*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Gio mo cua 22*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Gio mo cua 23*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[1] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Gio mo cua 24*/}
-        <View className="p-4 border-b border-[#DDDDDD] flex-row justify-center items-center">
-          {/* Giờ mở cửa */}
-          <TouchableOpacity className="">
-            <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
-              <Text className="text-sm pl-2 text-[#aaaaaa]">Từ </Text>
-              <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
-                {foodStore.opentime !== undefined &&
-                  foodStore.opentime[0] / 60 + ":00"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View className="mx-10">
-            <Text>{"-"}</Text>
-          </View>
-          {/* Giờ đóng cửa */}
-          <TouchableOpacity className="">
+          <TouchableOpacity onPress={() => setModalVisible(true)} className="">
             <View className="flex-row border border-[#DDDDDD] rounded-md items-center justify-center">
               <Text className="text-[#aaaaaa] text-sm ">Đến </Text>
               <Text className="text-base rounded-full border w-auto p-2 border-[#AAAAAA]">
@@ -620,25 +275,60 @@ export default function EditInforStoreTime({ navigation }) {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* modal */}
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <ScrollView className="">
+                <View className="w-56">
+                  <RadioButtonRN
+                    className=""
+                    data={data1}
+                    //selectedBtn={(e) => console.log(e)}
+                    selectedBtn={(e) => console.log(e)}
+                  ></RadioButtonRN>
+                </View>
+              </ScrollView>
+
+              <Pressable
+                className=""
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Trở lại</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      </View>
+
       {/* Luu */}
       <View
         style={{
           paddingBottom: 0,
-          flex: 0.15,
+          flex: 0.2,
         }}
       >
         <View
           style={{
             backgroundColor: "#fff",
-            paddingTop: 10,
-            paddingBottom: 10,
             width: "100%",
             borderTopColor: "#808080",
             borderTopWidth: 0.3,
             bottom: 0,
           }}
         >
-          <View style={{ marginLeft: 10, marginRight: 10 }}>
+          <View style={{ marginLeft: 10, marginRight: 10, paddingTop: 10 }}>
             <TouchableOpacity
               style={{
                 backgroundColor: "#E94730",

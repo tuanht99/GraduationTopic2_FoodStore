@@ -12,7 +12,7 @@ import {
 
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
-
+import AllRating from "./AllRating";
 import {
   doc,
   setDoc,
@@ -32,22 +32,6 @@ import {
 import { db } from "../services/config";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
-const allReviews = () => (
-    <ScrollView>
-        <Text>Tất cả</Text>   
-    </ScrollView>
-)
-const goodReviews = () => (
-    <View>
-        <Text>Hài lòng</Text>   
-    </View>
-)
-const badlReviews = () => (
-    <View>
-        <Text>Không hài lòng</Text>   
-    </View>
-)
-
 // Navigation
 export default function ReviewsOfStore({ navigation }) {
   React.useLayoutEffect(() => {
@@ -57,12 +41,6 @@ export default function ReviewsOfStore({ navigation }) {
           <AntDesign name="arrowleft" size={24} color="black" />
         </TouchableOpacity>
       ),
-
-      // headerRight: () => (
-      //   <TouchableOpacity onPress={navigation.goBack}>
-      //     <Text>Lưu</Text>
-      //   </TouchableOpacity>
-      // ),
 
       title: "Đánh giá của khách hàng",
       headerTitleAlign: "center",
@@ -74,15 +52,11 @@ export default function ReviewsOfStore({ navigation }) {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "Tất cả"},
-    { key: "second", title: "Hài lòng"},
-    { key: "three", title: "Không hài lòng"}
+    { key: "first", title: "Tất cả" },
   ]);
 
   const renderScene = SceneMap({
-    first: allReviews,
-    second: goodReviews,
-    three: badlReviews,
+    first: AllRating,
   });
 
   return (
