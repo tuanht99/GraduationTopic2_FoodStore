@@ -117,3 +117,20 @@ export async function GetOpenTimeOfFoodStore() {
   });
   return openTime;
 }
+
+export async function GetAllRatting() {
+  const allRating = [];
+  const orderRef = collection(db, "ratting");
+  const q = query(
+    orderRef,
+    where("Store_ID", "==", "4dpAvRWJVrvdbml9vKDL")
+  );
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((docRef) => {
+    allRating.push({
+      ...docRef.data(),
+      id: docRef.id,
+    });
+  });
+  return allRating;
+}
