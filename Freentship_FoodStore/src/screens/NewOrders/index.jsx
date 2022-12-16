@@ -17,17 +17,35 @@ import formatCash from "../../components/FormatCash";
 
 import { db } from "../../services/config";
 import { collection, query, onSnapshot, where } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NewOrders = () => {
   const [orders, setOrders] = useState([]);
   const [orderDetailt, setOrderDetailt] = useState();
   const [isActiveOrders, setActiveOrders] = useState("");
+  const [idFoodStore, setIdFoodStore] = useState("");
 
-  console.log("orderDetailt", orderDetailt);
+  console.log('orderDetailt' , orderDetailt);
+  
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+
+
   useEffect(() => {
     const q = query(
       collection(db, "orders"),
-      where("food_store_id", "==", "4dpAvRWJVrvdbml9vKDL")
+      where("food_store_id", "==", idFoodStore)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const orders = [];
@@ -39,7 +57,7 @@ const NewOrders = () => {
     return () => {
       unsubscribe;
     };
-  }, []);
+  }, [idFoodStore]);
 
   const GetOrder = (id) => {
     if (orders.length > 0) {
@@ -87,7 +105,7 @@ const NewOrders = () => {
   };
 
   const OrderInfo = () => (
-    <View className="z-10">
+    <ScrollView className="z-10  mb-[500px]">
       <View className="h-14 bg-red-600 flex-row relative">
         <Image
           source={{ uri: orderDetailt.user.avatar }}
@@ -137,7 +155,7 @@ const NewOrders = () => {
               <View className="flex-col w-1/6">
                 {orderDetailt.order.ordered_food.map((o) => (
                   <Text className="text-base font-bold ">
-                    {o.qty + " "}
+                    {o.quantity + " "}
                     <Text className="font-normal text-[#888888]">x</Text>
                   </Text>
                 ))}
@@ -198,7 +216,7 @@ const NewOrders = () => {
           Đơn hàng đã được chuẩn bị xong
         </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 
   const OrderCard = ({ index, order, checkOrder, notCheckOrder, status }) => (
@@ -221,7 +239,7 @@ const NewOrders = () => {
   return (
     <View>
       <Header />
-      <ScrollView horizontal className="h-24  flex-row ">
+      <ScrollView horizontal className="h-32  flex-row ">
         {orders.map((order, index) => {
           const NotCheckOrder =
             "w-20 border h-20 m-2 rounded-md flex items-center p-1 justify-between";
@@ -270,7 +288,9 @@ const NewOrders = () => {
         })}
       </ScrollView>
       {orderDetailt !== undefined ? (
-        <OrderInfo />
+        <ScrollView>
+          <OrderInfo />
+        </ScrollView>
       ) : (
         <OrderDoesNotExits title={" Hiện tại chưa có đơn hàng nào"} />
       )}

@@ -28,8 +28,9 @@ import {
   editDoc,
   onSnapshot,
 } from "firebase/firestore";
-
+import { GetCategoriesByIds } from "../services/store";
 import { db } from "../services/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DATA = {
   id: 1,
@@ -53,8 +54,6 @@ const DATA = {
 // Navigation
 export default function EditMenuView({ navigation, route }) {
   const { inforStoreName } = route.params;
-  // const {category} = route.params;
-  // const { food } = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -62,13 +61,6 @@ export default function EditMenuView({ navigation, route }) {
           <AntDesign name="arrowleft" size={24} color="black" />
         </TouchableOpacity>
       ),
-
-      // headerRight: () => (
-      //   <TouchableOpacity onPress={navigation.goBack}>
-      //     <Text>Lưu</Text>
-      //   </TouchableOpacity>
-      // ),
-
       title: "Chỉnh sửa menu",
       headerTitleAlign: "center",
       headerTitleStyle: {
@@ -76,10 +68,54 @@ export default function EditMenuView({ navigation, route }) {
       },
     });
   }, [navigation]);
-
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
+  const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
   const [listCate, setListCate] = useState([]);
   const [listFood, setListFood] = useState([]);
+  useEffect(() => {
+    getData();
+  }, []);
 
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
+  }, [idFoodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+    }
+  }, [foodStore]);
+
+  const foodStoreName = foodStore.name;
+  const foodStoreImage = foodStore.image;
+  const foodStoreAddress = foodStore.address;
+  const foodStorePhone = foodStore.phone;
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      if (foodStore.food_categories) {
+        GetCategoriesByIds(foodStore.food_categories).then((result) => {
+          // console.log('list:', result);
+          setListCt(result);
+        });
+      }
+    }
+  }, [foodStore.food_categories]);
   // list cate
   useEffect(() => {
     let unsubscribe;
@@ -143,13 +179,15 @@ export default function EditMenuView({ navigation, route }) {
       >
         <View style={{ marginLeft: 10, marginRight: 10 }}>
           <View
-            style={{ 
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 10
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 10,
             }}
           >
-            <Text style={{fontWeight: "bold"}} className="decoration-red-500">{inforStoreName}</Text>
+            <Text style={{ fontWeight: "bold" }} className="decoration-red-500">
+              {inforStoreName}
+            </Text>
           </View>
 
           <View>

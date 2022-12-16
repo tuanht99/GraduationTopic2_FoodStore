@@ -33,7 +33,7 @@ export function LoginScreen({ navigation }) {
         const docRef = doc(db, 'food_stores', value + '')
         const docSnap = await getDoc(docRef)
         if (docSnap.exists() && docSnap.data().isActivated == true) {
-          navigation.navigate('EditMenuView')
+          navigation.navigate('BottomTab')
         }
       }
     } catch (e) {

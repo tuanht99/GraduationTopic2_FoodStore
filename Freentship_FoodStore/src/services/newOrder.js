@@ -13,7 +13,7 @@ import { async } from "@firebase/util";
 export async function GetNewOrder() {
   const q = query(
     collection(db, "orders"),
-    where("food_store_id", "==", "4dpAvRWJVrvdbml9vKDL")
+    where("food_store_id", "==", "4dpAvRWJVrvdbml9vKD")
     // where("status", "==", 3)
   );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -21,7 +21,6 @@ export async function GetNewOrder() {
     querySnapshot.forEach((doc) => {
       orders.push(...doc.data());
     });
-    console.log("Current cities in CA: ", orders.join(", "));
   });
   unsubscribe;
 }

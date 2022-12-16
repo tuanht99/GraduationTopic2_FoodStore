@@ -42,31 +42,38 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { GetCategoriesByIds } from "../../services";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button } from "react-native-paper";
 
 export default function Store({ navigation, route }) {
-  // const [inforStore, setInforStore] = useState([]);
-
-  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
   const [foodStore, setFoodStore] = useState([]);
-
   const [listCt, setListCt] = useState([]);
+
   useEffect(() => {
-    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
-      setFoodStore(doc.data());
-    });
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
   }, [idFoodStore]);
-  // console.log("d", foodStore.openTime);
-  // .map((e) => console.log("foodStore.opentime", e));
-  // Lay h
-  // useEffect(() => {
-  //   if (foodStore.opentime !== undefined) {
-  //     console.log(" foodStore.opentime[0]", foodStore.opentime[0]);
-  //   }
-  // }, [foodStore]);
 
   useEffect(() => {
     if (foodStore.opentime !== undefined) {
-      console.log(" foodStore.opentime[0]", foodStore.opentime[0]);
     }
   }, [foodStore]);
 
@@ -74,23 +81,23 @@ export default function Store({ navigation, route }) {
   const foodStoreImage = foodStore.image;
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
-  // const foodStoreOpenTime = foodStore.openTime;
-  // const foodStoreCate = foodStore.food_categories;
 
   // load categories
   useEffect(() => {
     if (foodStore) {
-      GetCategoriesByIds(foodStore.food_categories).then((result) => {
-        // console.log('list:', result);
-        setListCt(result);
-      });
+      if (foodStore.food_categories) {
+        GetCategoriesByIds(foodStore.food_categories).then((result) => {
+          // console.log('list:', result);
+          setListCt(result);
+        });
+      }
     }
   }, [foodStore.food_categories]);
 
   return (
     <View>
       <Header />
-      <ScrollView>
+      <ScrollView className="mb-20">
         <View className="h-32 flex-row justify-evenly items-center border-b border-[#DDDDDD]">
           <View className="relative w-24 h-24 rounded-xl ">
             <Image
@@ -214,8 +221,7 @@ export default function Store({ navigation, route }) {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("EditInforStore", {
-                  inforStoreName: foodStoreName,
-                  inforStoreImage: foodStoreImage,
+                  foodStore: foodStore,
                 })
               }
               className="flex-row"
@@ -283,8 +289,8 @@ export default function Store({ navigation, route }) {
             </Text>
           </TouchableOpacity>
         </View>
-        {/* Lien he voi loship */}
-        <View className="flex justify-center items-center h-20 mx-8 ">
+        {/* thong tin lie he*/}
+        <View className="flex justify-center items-center h-20 mx-8">
           <TouchableOpacity
             onPress={() =>
               call({
@@ -292,7 +298,7 @@ export default function Store({ navigation, route }) {
                 prompt: false,
               }).catch(console.error)
             }
-            className="flex-row justify-center items-center py-3 rounded-xl w-full bg-[#00FF33]"
+            className="flex-row justify-center items-center py-3 rounded-xl w-full bg-[#FF5733]"
           >
             <Feather name="phone" size={24} color="white" />
             <Text className="text-white font-bold text-base ml-2">
@@ -300,7 +306,21 @@ export default function Store({ navigation, route }) {
             </Text>
           </TouchableOpacity>
         </View>
-        <View className="h-20"></View>
+        {/* Đăng xuất */}
+        <View className="flex justify-center items-center h-20 mx-8">
+          <TouchableOpacity
+            className="flex-row justify-center items-center py-3 rounded-xl w-full bg-[#FF5733]"
+            onPress={() => {
+              AsyncStorage.removeItem("foodStoreID");
+              navigation.navigate("LoginScreen");
+            }}
+          >
+            <AntDesign name="logout" size={24} color="white" />
+            <Text className="text-white font-bold text-base ml-2">
+              Đăng xuất
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );

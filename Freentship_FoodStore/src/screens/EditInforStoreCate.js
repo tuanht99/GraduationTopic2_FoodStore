@@ -46,8 +46,9 @@ import {
 import { GetAllCate, GetCategoriesByIds } from "../services/store";
 import OrderDoesNotExits from "../components/OrderDoesNotExits";
 import { async } from "@firebase/util";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const FindCateCode = () => {
+const FindCateCode = ({ idFoodStore }) => {
   const [search, setSearch] = useState("");
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
@@ -69,8 +70,6 @@ const FindCateCode = () => {
     });
     return value;
   };
-
-  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [listCt, setListCt] = useState([]);
   const handleChangeListCt = (id) => {
     if (listCt.some((ct) => ct === id)) {
@@ -83,24 +82,30 @@ const FindCateCode = () => {
   };
 
   const handleSaveCate = () => {
-    updateDoc(doc(db, "food_stores", idFoodStore), {
-      food_categories: listCt,
-    });
+    if (idFoodStore !== "") {
+      updateDoc(doc(db, "food_stores", idFoodStore), {
+        food_categories: listCt,
+      });
+    }
   };
 
   // handle delete category by id
   const handleDeleteCategoryById = async (id) => {
-    const ctRef = doc(db, "food_stores", idFoodStore);
-    await updateDoc(ctRef, {
-      food_categories: arrayRemove(`${id}`),
-    });
+    if (idFoodStore !== "") {
+      const ctRef = doc(db, "food_stores", idFoodStore);
+      await updateDoc(ctRef, {
+        food_categories: arrayRemove(`${id}`),
+      });
+    }
   };
 
   const [foodStore, setFoodStore] = useState([]);
   useEffect(() => {
-    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
-      setFoodStore(doc.data());
-    });
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
   }, [idFoodStore]);
 
   // load categories
@@ -139,10 +144,6 @@ const FindCateCode = () => {
   };
 
   const ItemView = ({ item }) => {
-    console.log("listCt: ", listCt);
-    console.log("id:", item.id);
-    //console.log("name item", item.name)
-
     return (
       <TouchableOpacity
         onPress={() => handleChangeListCt(item.id)}
@@ -242,6 +243,17 @@ const FindCateCode = () => {
 
 // Navigation
 export default function EditInforStoreCate({ navigation, route }) {
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -258,13 +270,18 @@ export default function EditInforStoreCate({ navigation, route }) {
     });
   }, [navigation]);
 
-  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
   const [foodStore, setFoodStore] = useState([]);
   const [listCt, setListCt] = useState([]);
   useEffect(() => {
-    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
-      setFoodStore(doc.data());
-    });
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
   }, [idFoodStore]);
 
   // load categories
@@ -298,7 +315,7 @@ export default function EditInforStoreCate({ navigation, route }) {
         </ScrollView>
       </View>
 
-      <FindCateCode style={{ flex: 0.8 }} />
+      <FindCateCode idFoodStore={idFoodStore} style={{ flex: 0.8 }} />
     </View>
   );
 }

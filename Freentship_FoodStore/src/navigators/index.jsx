@@ -22,11 +22,15 @@ import ReviewsOfStore from "../screens/ReviewsOfStore"
 import QuestionCustomer from "../screens/QuestionCustomer"
 import PolicySellerView from "../screens/PolicySellerView"
 import AllRating from "../screens/AllRating";
+import { LoginScreen } from "../screens/LoginScreen";
+import { ConfirmOTP } from "../screens/ConfirmOTP";
 
 function Navigators() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+       initialRouteName="LoginScreen"
+      >
         <Stack.Screen
           options={{ headerShown: false }}
           name="BottomTab"
@@ -36,7 +40,8 @@ function Navigators() {
         <Stack.Screen name="Manage" component={Manage} />
         <Stack.Screen name="Store" component={Store} />
         <Stack.Screen name="BestSeller" component={BestSeller} />
-
+        <Stack.Screen name="ConfirmOTP" component={ConfirmOTP} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{ headerShown: false }} />
         <Stack.Screen name="EditMenuView" component={EditMenuView} />
         <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
         <Stack.Screen name="EditCategoryFoodView" component={EditCategoryFoodView} />

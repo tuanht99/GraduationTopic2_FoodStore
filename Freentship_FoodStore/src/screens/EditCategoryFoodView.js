@@ -53,8 +53,6 @@ const DATA = {
 export default function EditCategoryFoodView({ navigation, route }) {
   const { category } = route.params;
   const [namePathImage, setNamePathImage] = React.useState(null);
-  console.log("id:", category);
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -110,11 +108,6 @@ export default function EditCategoryFoodView({ navigation, route }) {
       quality: 1,
     });
 
-    console.log(result);
-
-    // if (!result.cancelled) {
-    //   setImage(result.uri);
-    // }
     if (!result.cancelled) {
       const storage = getStorage();
       // const id = Math.random().toString(36).substring(7);
@@ -148,8 +141,6 @@ export default function EditCategoryFoodView({ navigation, route }) {
   };
 
   const [listCate, setListCate] = useState([]);
-
-  console.log(listCate);
 
   return (
     <View style={{ flex: 1 }}>

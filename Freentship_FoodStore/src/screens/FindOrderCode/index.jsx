@@ -12,16 +12,16 @@ import { GetAllOrder } from "../../services";
 import OrderDoesNotExits from "../../components/OrderDoesNotExits";
 
 const FindOrderCode = () => {
-  console.log(" new Date(selectedDate)");
-
   const [search, setSearch] = useState("");
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
 
-  // console.log("filteredDataSource", filteredDataSource);
+  console.log("filteredDataSource", filteredDataSource);
+
   useEffect(() => {
     GetAllOrder()
       .then((data) => {
+        console.log("dadasdasd", data);
         setFilteredDataSource(data);
         setMasterDataSource(data);
       })
@@ -87,7 +87,7 @@ const FindOrderCode = () => {
         </TouchableWithoutFeedback>
       </View>
 
-      {filteredDataSource.length > 0 ? (
+      {filteredDataSource && filteredDataSource.length > 0 ? (
         <FlatList
           data={filteredDataSource}
           keyExtractor={(item) => item.id}

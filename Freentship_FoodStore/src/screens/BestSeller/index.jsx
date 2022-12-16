@@ -10,7 +10,6 @@ const BestSeller = () => {
   const [orderByDate, setOrderByDate] = useState([]);
 
   const { order } = route.params;
-  console.log("orderByDate", orderByDate);
   const callback = (payload, type) => {
     setSelectedDate(payload);
     setType(type);

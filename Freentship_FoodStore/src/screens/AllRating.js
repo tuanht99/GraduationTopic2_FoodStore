@@ -13,7 +13,7 @@ import { GetAllRatting } from "../services/store";
 const AllRating = () => {
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
-
+  console.log("a",filteredDataSource);
   useEffect(() => {
     GetAllRatting()
       .then((data) => {
@@ -24,7 +24,6 @@ const AllRating = () => {
         console.error(error);
       });
   }, []);
-  console.log("filteredDataSource", filteredDataSource);
   const ItemView = ({ item }) => {
     return (
       <View className="bg-white border-b first-letter:border-[#a8a8a8]">
@@ -46,7 +45,7 @@ const AllRating = () => {
 
   return (
     <View>
-      {filteredDataSource.length > 0 ? (
+      {filteredDataSource && filteredDataSource.length > 0 ? (
         <FlatList
           data={filteredDataSource}
           keyExtractor={(item) => item.id}

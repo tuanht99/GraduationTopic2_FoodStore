@@ -40,28 +40,14 @@ import {
   getDownloadURL,
   getBlob,
 } from "firebase/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Navigation
 export default function EditInforStoreName({ navigation, route }) {
-  const {inforStoreName,inforStoreImage} = route.params;
+  const {foodStore} = route.params;
   // food
-  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
-  const [foodStore, setFoodStore] = useState([]);
-  
-  useEffect(() => {
-    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
-      setFoodStore(doc.data());
-    });
-  }, [idFoodStore]);
-  const foodStoreName = foodStore.name;
-  const foodStoreImage = foodStore.image;
-  const foodStoreAddress = foodStore.address;
-  const foodStorePhone = foodStore.phone;
-  const foodStoreOpenTime = foodStore.openTime;
-  const foodStoreCate = foodStore.food_categories;
-  
-  const [text, setText] = useState(inforStoreName)
-  const [image, setImage] = useState(inforStoreImage);
+  const [text, setText] = useState(foodStore.name)
+  const [image, setImage] = useState(foodStore.image);
   
   const [namePathImage, setNamePathImage] = React.useState(null);
   function edit(text) {
@@ -69,7 +55,7 @@ export default function EditInforStoreName({ navigation, route }) {
     getDownloadURL(ref(storage, namePathImage))
       .then((url) => {
         setImage(url);
-        updateDoc(doc(db, "food_stores", idFoodStore), {
+        updateDoc(doc(db, "food_stores", foodStore.id), {
           name: text,
           image: url,
         });
@@ -88,8 +74,6 @@ export default function EditInforStoreName({ navigation, route }) {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     // if (!result.cancelled) {
     //   setImage(result.uri);

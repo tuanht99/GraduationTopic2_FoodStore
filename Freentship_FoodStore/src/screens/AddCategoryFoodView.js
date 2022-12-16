@@ -62,9 +62,106 @@ export default function AddCategoryFoodView({ navigation }) {
     });
   }, [navigation]);
 
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
+  const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
+  const [listCate, setListCate] = useState([]);
+  const [listFood, setListFood] = useState([]);
+  useEffect(() => {
+    getData();
+  }, [idFoodStore]);
+
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
+  }, [idFoodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+    }
+  }, [foodStore]);
+
+  const foodStoreName = foodStore.name;
+  const foodStoreImage = foodStore.image;
+  const foodStoreAddress = foodStore.address;
+  const foodStorePhone = foodStore.phone;
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      if (foodStore.food_categories) {
+        GetCategoriesByIds(foodStore.food_categories).then((result) => {
+          // console.log('list:', result);
+          setListCt(result);
+        });
+      }
+    }
+  }, [foodStore.food_categories]);
+  // list cate
+  useEffect(() => {
+    let unsubscribe;
+    setListCate(null);
+    const getCat = async () => {
+      const catRef = collection(db, "categories");
+      const c = query(catRef);
+
+      const querySnapshot = await getDocs(c);
+      const listCate = [];
+      unsubscribe = onSnapshot(c, (querySnapshot) => {
+        setListCate(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      });
+    };
+    getCat();
+    return unsubscribe;
+  }, []);
+
+  // list food of cate
+  useEffect(() => {
+    let unsubscribe;
+    setListFood(null);
+    const getFood = async () => {
+      const foodRef = collection(db, "foods");
+      const c = query(
+        foodRef,
+        where("category_Id", "==", "uHBXNbOrJgocBGCTAaA2")
+      );
+
+      const querySnapshot = await getDocs(c);
+      const listFood = [];
+      unsubscribe = onSnapshot(c, (querySnapshot) => {
+        setListFood(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      });
+    };
+    getFood();
+    return unsubscribe;
+  }, []);
+
   const [categoryId] = React.useState("");
   const [category_Name, setCategoryName] = React.useState("");
-  
+
   const [namePathImage, setNamePathImage] = React.useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -74,6 +171,7 @@ export default function AddCategoryFoodView({ navigation }) {
       .then((url) => {
         setImage(url);
         addDoc(collection(db, "categories"), {
+          food_store_id: idFoodStore,
           name: category_Name,
           image: url,
         });
@@ -94,8 +192,6 @@ export default function AddCategoryFoodView({ navigation }) {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.cancelled) {
       const storage = getStorage();

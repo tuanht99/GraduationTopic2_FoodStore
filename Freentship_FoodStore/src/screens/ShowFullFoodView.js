@@ -83,7 +83,6 @@ export default function ShowFullFoodView({ navigation, route }) {
     const getCat = async () => {
       const catRef = collection(db, "categories");
       const c = query(catRef);
-      console.log(collection(db, "categories"));
       const querySnapshot = await getDocs(c);
       const listCate = [];
       unsubscribe = onSnapshot(c, (querySnapshot) => {
@@ -126,7 +125,6 @@ export default function ShowFullFoodView({ navigation, route }) {
         foodRef,
         where("category_Id", "==", category.id)
       );
-      console.log(collection(db, "foods"));
       const querySnapshot = await getDocs(c);
       const listFood = [];
       unsubscribe = onSnapshot(c, (querySnapshot) => {

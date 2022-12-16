@@ -10,35 +10,57 @@ import {
   where,
 } from "firebase/firestore";
 import { async } from "@firebase/util";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function GetStore() {
-  const store = [];
-  const ref = doc(db, "food_stores", "4dpAvRWJVrvdbml9vKDL");
-  const docSnap = await getDoc(ref);
-  if (docSnap.exists()) {
-    store.push(docSnap.data());
-  } else {
-    console.log("No such document!");
-  }
-  return store;
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        const store = [];
+        const ref = doc(db, "food_stores", value);
+        const docSnap = await getDoc(ref);
+        if (docSnap.exists()) {
+          store.push(docSnap.data());
+        } else {
+          console.log("No such document!");
+        }
+        return store;
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
 }
 
 export async function GetAllOrder() {
-  const allOrder = [];
-  const orderRef = collection(db, "orders");
-  const q = query(
-    orderRef,
-    where("food_store_id", "==", "4dpAvRWJVrvdbml9vKDL")
-  );
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((docRef) => {
-    allOrder.push({
-      ...docRef.data(),
-      orderDate: docRef.data().order_date.seconds,
-      id: docRef.id,
-    });
-  });
-  return allOrder;
+  // const getData = async () => {
+  //   try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      
+      if (value !== null) {
+        const allOrder = [];
+        const orderRef = collection(db, "orders");
+        const q = query(orderRef, where("food_store_id", "==", value));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((docRef) => {
+          
+          allOrder.push({
+            ...docRef.data(),
+            orderDate: docRef.data().order_date.seconds,
+            id: docRef.id,
+          });
+        });
+
+        console.log('allOrder' , allOrder);
+        return allOrder;
+      }
+    // } catch (e) {
+    //   console.log("ErrorError");
+    // }
+  // };
+  // getData()
+
 }
 
 export async function GetFoods(id) {
@@ -53,27 +75,34 @@ export async function GetFoods(id) {
 }
 
 export async function SeacrhOrderById() {
-  const orders = [];
-  const orderRef = collection(db, "orders");
-  const q = query(orderRef, where(documentId(), "in", "3MiJP5Ywfn4mmbvFW4MN"));
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        const orders = [];
+        const orderRef = collection(db, "orders");
+        const q = query(orderRef, where(documentId(), "in", value));
 
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((docRef) => {
-    orders.push({
-      ...docRef.data(),
-      orderDate: docRef.data().order_date.seconds,
-      id: docRef.id,
-    });
-  });
-  return orders;
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((docRef) => {
+          orders.push({
+            ...docRef.data(),
+            orderDate: docRef.data().order_date.seconds,
+            id: docRef.id,
+          });
+        });
+        return orders;
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
 }
 
 export async function GetAllCate() {
   const allCate = [];
   const cateRef = collection(db, "categories");
-  const q = query(
-    cateRef
-  );
+  const q = query(cateRef);
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((docRef) => {
     allCate.push({
@@ -83,22 +112,19 @@ export async function GetAllCate() {
   });
   // console.log("logvate", allCate);
   return allCate;
- 
 }
 
 export async function GetCategoriesByIds(ids) {
   const allCate = [];
   const cateRef = collection(db, "categories");
-  const q = query(
-    cateRef
-  );
+  const q = query(cateRef);
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((docRef) => {
-    if (ids.some(id => id === docRef.id)) {
+    if (ids.some((id) => id === docRef.id)) {
       allCate.push({
         ...docRef.data(),
-        id: docRef.id
-      })
+        id: docRef.id,
+      });
     }
   });
   return allCate;
@@ -109,7 +135,7 @@ export async function GetOpenTimeOfFoodStore() {
   const timeRef = collection(db, "food_stores");
   const q = query(timeRef);
   const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((docRef)=>{
+  querySnapshot.forEach((docRef) => {
     openTime.push({
       ...docRef.data(),
       id: docRef.id,
@@ -119,18 +145,24 @@ export async function GetOpenTimeOfFoodStore() {
 }
 
 export async function GetAllRatting() {
-  const allRating = [];
-  const orderRef = collection(db, "ratting");
-  const q = query(
-    orderRef,
-    where("Store_ID", "==", "4dpAvRWJVrvdbml9vKDL")
-  );
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((docRef) => {
-    allRating.push({
-      ...docRef.data(),
-      id: docRef.id,
-    });
-  });
-  return allRating;
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        const allRating = [];
+        const orderRef = collection(db, "ratting");
+        const q = query(orderRef, where("Store_ID", "==", value));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((docRef) => {
+          allRating.push({
+            ...docRef.data(),
+            id: docRef.id,
+          });
+        });
+        return allRating;
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
 }

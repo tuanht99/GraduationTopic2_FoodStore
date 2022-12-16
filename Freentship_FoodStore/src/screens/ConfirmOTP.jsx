@@ -44,7 +44,6 @@ export function ConfirmOTP({ route, navigation }) {
     }
   }
   const isActivatedAccount = () => {
-    console.log('current', auth.currentUser.uid)
     storeData()
     const unsub = onSnapshot(
       doc(db, 'food_stores', auth.currentUser.uid + ''),
@@ -53,7 +52,7 @@ export function ConfirmOTP({ route, navigation }) {
         if (doc.data() != undefined) {
           if (doc.data().isActivated == false)
             navigation.navigate('SignupPending')
-          else navigation.navigate('EditMenuView')
+          else navigation.navigate('BottomTab')
         } else navigation.navigate('SignupScreen')
       },
     )

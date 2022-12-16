@@ -49,6 +49,7 @@ import { GetAllCate, GetCategoriesByIds } from "../services/store";
 import { FlatList } from "react-native-gesture-handler";
 import { RadioButton } from "react-native-paper";
 import RadioButtonRN from "radio-buttons-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const DATA = {
   a600: "06: 00",
   a700: "07: 00",
@@ -108,29 +109,41 @@ const data1 = [
   },
   {
     label: "12: 00",
-  },  {
+  },
+  {
     label: "13: 00",
-  },  {
+  },
+  {
     label: "14: 00",
-  },  {
+  },
+  {
     label: "15: 00",
-  },  {
+  },
+  {
     label: "16: 00",
-  },  {
+  },
+  {
     label: "17: 00",
-  },  {
+  },
+  {
     label: "18: 00",
-  },  {
+  },
+  {
     label: "19: 00",
-  },  {
+  },
+  {
     label: "20: 00",
-  },  {
+  },
+  {
     label: "21: 00",
-  },  {
+  },
+  {
     label: "22: 00",
-  },  {
+  },
+  {
     label: "23: 00",
-  },  {
+  },
+  {
     label: "24: 00",
   },
 ];
@@ -151,51 +164,63 @@ export default function EditInforStoreTime({ navigation }) {
     });
   }, [navigation]);
   const [modalVisible, setModalVisible] = useState(false);
-
-  // food
-  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
-  const [foodStore, setFoodStore] = useState([]);
-
-  const [a2200, setA2200] = useState([360, 1380]);
+  const [a2200, setA2200] = useState([360, 1500]);
   const [a2300, setA2300] = useState([360, 1440]);
   const [listTime, setListTime] = useState([0, 1500]);
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
+  const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
 
   useEffect(() => {
-    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
-      setFoodStore(doc.data());
-    });
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
   }, [idFoodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+    }
+  }, [foodStore]);
+
   const foodStoreName = foodStore.name;
   const foodStoreImage = foodStore.image;
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
-  // const foodStoreOpenTime = foodStore.openTime;
-  // const foodStoreCate = foodStore.food_categories;
-  const [ok, setOk] = React.useState([textPrice1, textPrice]);
-  const [textPrice, setTextPrice] = React.useState();
-  const [textPrice1, setTextPrice1] = React.useState();
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      if (foodStore.food_categories) {
+        GetCategoriesByIds(foodStore.food_categories).then((result) => {
+          // console.log('list:', result);
+          setListCt(result);
+        });
+      }
+    }
+  }, [foodStore.food_categories]);
+
   const handleSaveTime = () => {
     updateDoc(doc(db, "food_stores", idFoodStore), {
       opentime: a2200,
     });
     navigation.goBack("EditInforStore");
   };
-
-  useEffect(() => {
-    if (foodStore.opentime !== undefined) {
-      console.log(" foodStore.opentime[0]", foodStore.opentime[0]);
-    }
-  }, [foodStore]);
-
-  // load categories
-  useEffect(() => {
-    if (foodStore) {
-      GetCategoriesByIds(foodStore.food_categories).then((result) => {
-        // console.log('list:', result);
-        setListCt(result);
-      });
-    }
-  }, [foodStore.food_categories]);
   // Styles
   const styles = StyleSheet.create({
     centeredView: {
@@ -219,7 +244,7 @@ export default function EditInforStoreTime({ navigation }) {
       elevation: 5,
       width: 300,
       height: 370,
-      paddingBottom: 10
+      paddingBottom: 10,
     },
     button: {
       borderRadius: 20,
@@ -238,7 +263,7 @@ export default function EditInforStoreTime({ navigation }) {
       fontWeight: "bold",
       textAlign: "center",
       marginLeft: 5,
-      marginRight: 5
+      marginRight: 5,
     },
     modalText: {
       marginBottom: 15,

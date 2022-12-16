@@ -96,8 +96,6 @@ export default function AddCategoryFoodView({ navigation, route }) {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
       const storage = getStorage();
       // const id = Math.random().toString(36).substring(7);

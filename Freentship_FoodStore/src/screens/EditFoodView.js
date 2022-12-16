@@ -93,7 +93,6 @@ export default function EditFoodView({ navigation, route }) {
   const [textImage, setTextImage] = React.useState(food.image);
 
   function editFood() {
-    console.log("food name: ", textName);
     const storage = getStorage();
     getDownloadURL(ref(storage, namePathImage)).then((url) => {
       setImage(url);
@@ -131,11 +130,6 @@ export default function EditFoodView({ navigation, route }) {
       quality: 1,
     });
 
-    console.log(result);
-
-    // if (!result.cancelled) {
-    //   setImage(result.uri);
-    // }
     if (!result.cancelled) {
       const storage = getStorage();
       // const id = Math.random().toString(36).substring(7);

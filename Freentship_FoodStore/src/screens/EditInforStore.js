@@ -41,10 +41,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { GetAllCate, GetCategoriesByIds } from "../services/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function EditInforStore({ navigation, route }) {
-  const { inforStoreName, inforStoreImage } = route.params;
-  console.log("infor store: ", inforStoreName);
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -61,35 +60,51 @@ export default function EditInforStore({ navigation, route }) {
     });
   }, [navigation]);
 
-  // food
-  const idFoodStore = "4dpAvRWJVrvdbml9vKDL";
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
   const [foodStore, setFoodStore] = useState([]);
   const [listCt, setListCt] = useState([]);
+
   useEffect(() => {
-    const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
-      setFoodStore(doc.data());
-    });
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
   }, [idFoodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+    }
+  }, [foodStore]);
+
   const foodStoreName = foodStore.name;
   const foodStoreImage = foodStore.image;
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
-  // const foodStoreOpenTime = foodStore.openTime;
-  // const foodStoreCate = foodStore.food_categories;
-
-  useEffect(() => {
-    if (foodStore.opentime !== undefined) {
-      console.log(" foodStore.opentime[0]", foodStore.opentime[0]);
-    }
-  }, [foodStore]);
 
   // load categories
   useEffect(() => {
     if (foodStore) {
-      GetCategoriesByIds(foodStore.food_categories).then((result) => {
-        // console.log('list:', result);
-        setListCt(result);
-      });
+      if (foodStore.food_categories) {
+        GetCategoriesByIds(foodStore.food_categories).then((result) => {
+          // console.log('list:', result);
+          setListCt(result);
+        });
+      }
     }
   }, [foodStore.food_categories]);
 
@@ -103,8 +118,7 @@ export default function EditInforStore({ navigation, route }) {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("EditInforStoreName", {
-                  inforStoreName: foodStoreName,
-                  inforStoreImage: foodStoreImage,
+                  foodStore: foodStore
                 })
               }
               className="flex-row"
@@ -115,7 +129,7 @@ export default function EditInforStore({ navigation, route }) {
           </View>
 
           <View>
-            <Text className="font-bold text-lg">{foodStoreName}</Text>
+            <Text className="font-bold text-lg">{foodStore.name}</Text>
           </View>
 
           <View className="flex-row py-1">
