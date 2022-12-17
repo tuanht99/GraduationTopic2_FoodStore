@@ -41,21 +41,67 @@ import {
   getBlob,
 } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GetAllCate, GetCategoriesByIds } from "../services/store";
 
 // Navigation
 export default function EditInforStoreName({ navigation, route }) {
-  const {foodStore} = route.params;
+  const { foodStore1} = route.params;
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [foodStore, setFoodStore] = useState([]);
+  const [idFoodStore, setIdFoodStore] = useState("");
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
+  }, [idFoodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+    }
+  }, [foodStore]);
+
+  const foodStoreName = foodStore.name;
+  const foodStoreImage = foodStore.image;
+  const foodStoreAddress = foodStore.address;
+  const foodStorePhone = foodStore.phone;
   // food
-  const [text, setText] = useState(foodStore.name)
-  const [image, setImage] = useState(foodStore.image);
-  
+  const [text, setText] = useState(foodStore1.name);
+  const [image, setImage] = useState(foodStore1.image);
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      if (foodStore.food_categories) {
+        GetCategoriesByIds(foodStore.food_categories).then((result) => {
+          // console.log('list:', result);
+          setListCt(result);
+        });
+      }
+    }
+  }, [foodStore.food_categories]);
+  console.log("ia", idFoodStore);
   const [namePathImage, setNamePathImage] = React.useState(null);
   function edit(text) {
     const storage = getStorage();
     getDownloadURL(ref(storage, namePathImage))
       .then((url) => {
         setImage(url);
-        updateDoc(doc(db, "food_stores", foodStore.id), {
+        updateDoc(doc(db, "food_stores", idFoodStore), {
           name: text,
           image: url,
         });
@@ -109,7 +155,7 @@ export default function EditInforStoreName({ navigation, route }) {
       setImage(result.uri);
     }
   };
-  
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -170,7 +216,7 @@ export default function EditInforStoreName({ navigation, route }) {
                     <View>
                       {image && (
                         <Image
-                          source={{ uri: image}}
+                          source={{ uri: image }}
                           style={{
                             borderRadius: 15,
                             width: "100%",
@@ -217,8 +263,8 @@ export default function EditInforStoreName({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                    onChangeText={(text) => setText(text)}
-                    value={text}
+                  onChangeText={(text) => setText(text)}
+                  value={text}
                 />
               </View>
             </View>

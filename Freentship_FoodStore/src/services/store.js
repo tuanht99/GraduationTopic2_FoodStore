@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { async } from "@firebase/util";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+const id = "WY5BZ0bcinh1nHPJG6X2MQmWxAu2"
 export async function GetStore() {
   const getData = async () => {
     try {
@@ -36,31 +36,29 @@ export async function GetStore() {
 export async function GetAllOrder() {
   // const getData = async () => {
   //   try {
-      const value = await AsyncStorage.getItem("foodStoreID");
-      
-      if (value !== null) {
-        const allOrder = [];
-        const orderRef = collection(db, "orders");
-        const q = query(orderRef, where("food_store_id", "==", value));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((docRef) => {
-          
-          allOrder.push({
-            ...docRef.data(),
-            orderDate: docRef.data().order_date.seconds,
-            id: docRef.id,
-          });
-        });
+  const value = await AsyncStorage.getItem("foodStoreID");
 
-        console.log('allOrder' , allOrder);
-        return allOrder;
-      }
-    // } catch (e) {
-    //   console.log("ErrorError");
-    // }
+  if (value !== null) {
+    const allOrder = [];
+    const orderRef = collection(db, "orders");
+    const q = query(orderRef, where("food_store_id", "==", value));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((docRef) => {
+      allOrder.push({
+        ...docRef.data(),
+        orderDate: docRef.data().order_date.seconds,
+        id: docRef.id,
+      });
+    });
+
+    console.log("allOrder", allOrder);
+    return allOrder;
+  }
+  // } catch (e) {
+  //   console.log("ErrorError");
+  // }
   // };
   // getData()
-
 }
 
 export async function GetFoods(id) {
@@ -145,24 +143,15 @@ export async function GetOpenTimeOfFoodStore() {
 }
 
 export async function GetAllRatting() {
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("foodStoreID");
-      if (value !== null) {
-        const allRating = [];
-        const orderRef = collection(db, "ratting");
-        const q = query(orderRef, where("Store_ID", "==", value));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((docRef) => {
-          allRating.push({
-            ...docRef.data(),
-            id: docRef.id,
-          });
-        });
-        return allRating;
-      }
-    } catch (e) {
-      console.log("ErrorError");
-    }
-  };
+  const allRating = [];
+  const orderRef = collection(db, "ratting");
+  const q = query(orderRef, where("Store_ID", "==", id));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((docRef) => {
+    allRating.push({
+      ...docRef.data(),
+      id: docRef.id,
+    });
+  });
+  return allRating;
 }

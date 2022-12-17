@@ -118,7 +118,7 @@ export default function EditInforStore({ navigation, route }) {
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("EditInforStoreName", {
-                  foodStore: foodStore
+                  foodStore1: foodStore,
                 })
               }
               className="flex-row"

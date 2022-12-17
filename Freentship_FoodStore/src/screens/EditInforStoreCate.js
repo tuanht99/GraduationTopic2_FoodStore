@@ -299,7 +299,7 @@ export default function EditInforStoreCate({ navigation, route }) {
       <View style={{ flex: 0.2 }} className="m-2 ">
         <View className="flex-row justify-start pl-2 items-center">
           <Text className="font-bold text-sm text-[#E94730]">
-            Vui lòng chọn tối đa 3 danh mục
+            Danh mục của cửa hàng
           </Text>
         </View>
         <ScrollView horizontal className="flex h-10 pl-2">
