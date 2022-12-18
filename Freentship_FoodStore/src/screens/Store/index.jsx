@@ -256,7 +256,6 @@ export default function Store({ navigation, route }) {
           <View className="flex-row py-1">
             <Ionicons name="phone-portrait-outline" size={24} color="black" />
             <Text className="ml-2 text-gray-600 text-base">
-              {"0"}
               {user.phone}
             </Text>
           </View>

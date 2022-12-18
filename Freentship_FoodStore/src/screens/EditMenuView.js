@@ -191,7 +191,6 @@ export default function EditMenuView({ navigation, route }) {
           </View>
 
           <View>
-            {/* // */}
             <View style={{ marginRight: 10 }}>
               <TouchableOpacity
                 onPress={() => navigation.navigate("AddCategoryFoodView")}

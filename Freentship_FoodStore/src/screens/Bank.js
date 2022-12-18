@@ -147,7 +147,7 @@ export default function Bank({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 0.85 }}>
-        {/* Tạo danh mục */}
+        
         <View
           style={{
             flex: 1,
@@ -158,7 +158,7 @@ export default function Bank({ navigation }) {
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
             <View style={{ paddingBottom: 20 }}>
-              <Text style={{ fontWeight: "bold" }}>Tên danh mục</Text>
+              <Text style={{ fontWeight: "bold" }}>Tên ngân hàng</Text>
             </View>
 
             <View>
@@ -173,7 +173,44 @@ export default function Bank({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  placeholder={"Nhập tên danh mục"}
+                  placeholder={"Nhập tên ngân hàng"}
+                  onChangeText={(nameBank) => {
+                    setNameBank(nameBank);
+                  }}
+                  value={nameBank}
+                ></TextInput>
+              </View>
+            </View>
+          </View>
+        </View>
+
+         
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+        >
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <View style={{ paddingBottom: 20 }}>
+              <Text style={{ fontWeight: "bold" }}>Số tài khoản</Text>
+            </View>
+
+            <View>
+              {/* // */}
+              <View style={{ marginRight: 10 }}>
+                <TextInput
+                  style={{
+                    height: 40,
+                    margin: 12,
+                    borderWidth: 1,
+                    padding: 10,
+                    borderColor: "#E94730",
+                    borderRadius: 5,
+                  }}
+                  placeholder={"Nhập số tài khoản"}
                   onChangeText={(nameBank) => {
                     setNameBank(nameBank);
                   }}

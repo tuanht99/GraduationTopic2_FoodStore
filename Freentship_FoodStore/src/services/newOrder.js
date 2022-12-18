@@ -9,11 +9,10 @@ import {
   onSnapshot,
   where,
 } from "firebase/firestore";
-import { async } from "@firebase/util";
-export async function GetNewOrder() {
+export async function GetNewOrder(id) {
   const q = query(
     collection(db, "orders"),
-    where("food_store_id", "==", "4dpAvRWJVrvdbml9vKD")
+    where("food_store_id", "==",`${id}`)
     // where("status", "==", 3)
   );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
