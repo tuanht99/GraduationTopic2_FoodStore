@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Switch,
+  Button,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -20,6 +21,14 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "../services/config";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  getBlob,
+} from "firebase/storage";
+import * as ImagePicker from "expo-image-picker";
 
 const DATA = {
   id: 1,
@@ -43,8 +52,7 @@ const DATA = {
 // Navigation
 export default function EditCategoryFoodView({ navigation, route }) {
   const { category } = route.params;
-  console.log('id:', category);
-
+  const [namePathImage, setNamePathImage] = React.useState(null);
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -61,7 +69,6 @@ export default function EditCategoryFoodView({ navigation, route }) {
     });
   }, [navigation]);
 
-  
   const [category_Name, setCategoryName] = React.useState(text);
   const [isEnabled, setIsEnabled] = React.useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -70,9 +77,18 @@ export default function EditCategoryFoodView({ navigation, route }) {
   console.log(text);
 
   function editCategories(text) {
-    updateDoc(doc(db, "categories", category.id), {
-      name: text,
-    });
+    const storage = getStorage();
+    getDownloadURL(ref(storage, namePathImage))
+      .then((url) => {
+        setImage(url);
+        updateDoc(doc(db, "categories", category.id), {
+          name: text,
+          image: url,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     navigation.goBack("EditMenuView");
   }
 
@@ -81,13 +97,101 @@ export default function EditCategoryFoodView({ navigation, route }) {
     navigation.goBack("EditMenuView");
   }
 
+  const [image, setImage] = useState(category.image);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      const storage = getStorage();
+      // const id = Math.random().toString(36).substring(7);
+      // const id = React.useId()
+      const bytes = new Uint8Array(result.uri);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+      const imgName = "img-" + new Date().getTime();
+      setNamePathImage(`images/${imgName}.jpg`);
+      const storageRef = ref(storage, `images/${imgName}.jpg`);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function () {
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", result.uri, true);
+        xhr.send(null);
+      });
+
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        // causes crash
+        console.log("Uploaded a blob or file!");
+      });
+      setImage(result.uri);
+    }
+  };
+
   const [listCate, setListCate] = useState([]);
-  
-  console.log(listCate);
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 0.85 }}>
+        {/* image */}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingTop: 10,
+            paddingBottom: 10,
+            width: "100%",
+            height: 420,
+          }}
+        >
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <View style={{ paddingRight: 10 }}>
+              <View
+                style={{
+                  borderRadius: 15,
+                  borderColor: "#E94730",
+                  borderWidth: 1,
+                  width: "100%",
+                  height: 342,
+                  paddingBottom: 10,
+                }}
+              >
+                <TouchableOpacity onPress={pickImage}>
+                  <View>
+                    <View>
+                      {image && (
+                        <Image
+                          source={{ uri: image }}
+                          style={{
+                            borderRadius: 15,
+                            width: "100%",
+                            height: 340,
+                          }}
+                        />
+                      )}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <View style={{ paddingTop: 20 }}>
+                  <Button title="Chọn hình" onPress={pickImage} />
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+
         {/* Tạo danh mục */}
         <View
           style={{

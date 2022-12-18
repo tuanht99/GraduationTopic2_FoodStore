@@ -28,8 +28,9 @@ import {
   editDoc,
   onSnapshot,
 } from "firebase/firestore";
-
+import { GetCategoriesByIds } from "../services/store";
 import { db } from "../services/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DATA = {
   id: 1,
@@ -52,9 +53,7 @@ const DATA = {
 
 // Navigation
 export default function EditMenuView({ navigation, route }) {
-  console.log(route.params);
-  // const {category} = route.params;
-  // const { food } = route.params;
+  const { inforStoreName } = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -62,13 +61,6 @@ export default function EditMenuView({ navigation, route }) {
           <AntDesign name="arrowleft" size={24} color="black" />
         </TouchableOpacity>
       ),
-
-      // headerRight: () => (
-      //   <TouchableOpacity onPress={navigation.goBack}>
-      //     <Text>Lưu</Text>
-      //   </TouchableOpacity>
-      // ),
-
       title: "Chỉnh sửa menu",
       headerTitleAlign: "center",
       headerTitleStyle: {
@@ -76,12 +68,54 @@ export default function EditMenuView({ navigation, route }) {
       },
     });
   }, [navigation]);
-
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
+  const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
   const [listCate, setListCate] = useState([]);
   const [listFood, setListFood] = useState([]);
-  console.log(listCate);
-  //console.log(listFood);
+  useEffect(() => {
+    getData();
+  }, []);
 
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
+  }, [idFoodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+    }
+  }, [foodStore]);
+
+  const foodStoreName = foodStore.name;
+  const foodStoreImage = foodStore.image;
+  const foodStoreAddress = foodStore.address;
+  const foodStorePhone = foodStore.phone;
+
+  // load categories
+  useEffect(() => {
+    if (foodStore) {
+      if (foodStore.food_categories) {
+        GetCategoriesByIds(foodStore.food_categories).then((result) => {
+          // console.log('list:', result);
+          setListCt(result);
+        });
+      }
+    }
+  }, [foodStore.food_categories]);
   // list cate
   useEffect(() => {
     let unsubscribe;
@@ -89,7 +123,6 @@ export default function EditMenuView({ navigation, route }) {
     const getCat = async () => {
       const catRef = collection(db, "categories");
       const c = query(catRef);
-      console.log(collection(db, "categories"));
 
       const querySnapshot = await getDocs(c);
       const listCate = [];
@@ -105,7 +138,6 @@ export default function EditMenuView({ navigation, route }) {
     getCat();
     return unsubscribe;
   }, []);
-  console.log("listCate", listCate);
 
   // list food of cate
   useEffect(() => {
@@ -117,7 +149,6 @@ export default function EditMenuView({ navigation, route }) {
         foodRef,
         where("category_Id", "==", "uHBXNbOrJgocBGCTAaA2")
       );
-      console.log(collection(db, "foods"));
 
       const querySnapshot = await getDocs(c);
       const listFood = [];
@@ -131,7 +162,6 @@ export default function EditMenuView({ navigation, route }) {
       });
     };
     getFood();
-    console.log("listFood category: ", listFood);
     return unsubscribe;
   }, []);
 
@@ -144,11 +174,20 @@ export default function EditMenuView({ navigation, route }) {
           backgroundColor: "#fff",
           paddingTop: 10,
           paddingBottom: 10,
+          flex: 0.2,
         }}
       >
         <View style={{ marginLeft: 10, marginRight: 10 }}>
-          <View style={{ paddingBottom: 20 }}>
-            <Text style={{ fontWeight: "bold" }}>Anh ba gà</Text>
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 10,
+            }}
+          >
+            <Text style={{ fontWeight: "bold" }} className="decoration-red-500">
+              {inforStoreName}
+            </Text>
           </View>
 
           <View>
@@ -190,6 +229,7 @@ export default function EditMenuView({ navigation, route }) {
       <View style={{ paddingBottom: 10 }}></View>
       {/* ds danh muc, mon an */}
       <FlatList
+        style={{ flex: 0.8 }}
         data={listCate}
         numColumns={1}
         renderItem={({ item }) => (
@@ -206,25 +246,52 @@ export default function EditMenuView({ navigation, route }) {
             >
               {/* Danh muc */}
               <View style={{ marginLeft: 10, marginRight: 10 }}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
-                    {item.name}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("ShowFullFoodView", {
-                        category: item
-                      })
-                    }
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "row",
+                    }}
                   >
-                    <Text style={{ fontWeight: "bold", paddingBottom: 20 }}>
-                      Xem tất cả
-                    </Text>
-                  </TouchableOpacity>
+                    <View style={{ paddingRight: 10 }}>
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width: 40, height: 40, borderRadius: 25 }}
+                      />
+                    </View>
+                    <View>
+                      <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("ShowFullFoodView", {
+                          category: item,
+                        })
+                      }
+                    >
+                      <Text style={{ fontWeight: "bold" }}>Xem tất cả</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
                 {/* 2 cai nut */}
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", paddingTop: 10 }}>
                   {/* // */}
                   <View style={{ marginRight: 10, paddingRight: "24%" }}>
                     <TouchableOpacity

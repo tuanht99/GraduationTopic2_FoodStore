@@ -28,17 +28,16 @@ export function LoginScreen({ navigation }) {
   const phoneInput = useRef(null)
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('userID')
+      const value = await AsyncStorage.getItem('foodStoreID')
       if (value !== null) {
-        const docRef = doc(db, 'shippers', value + '')
+        const docRef = doc(db, 'food_stores', value + '')
         const docSnap = await getDoc(docRef)
-        console.log(docSnap.data())
         if (docSnap.exists() && docSnap.data().isActivated == true) {
-          navigation.navigate('LocationScreen')
+          navigation.navigate('BottomTab')
         }
       }
     } catch (e) {
-      console.log(12444)
+      console.log('ErrorError')
     }
   }
 
@@ -65,7 +64,7 @@ export function LoginScreen({ navigation }) {
             withDarkTheme
             withShadow
             autoFocus
-            placeholder="Nhập số điện thoại ở đây..."
+            placeholder="Nhập số điện thoại..."
             countryPickerProps={{}}
           />
           <TouchableOpacity

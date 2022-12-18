@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -6,15 +6,33 @@ import {
   Text,
   TouchableOpacity,
   Switch,
-  RefreshControl,
+  Platform,
   Button,
 } from "react-native";
+
+import {
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+  where,
+  query,
+  QuerySnapshot,
+  editDoc,
+  onSnapshot,
+} from "firebase/firestore";
+
+import * as ImagePicker from "expo-image-picker";
+
+import { db } from "../services/config";
 
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
-import { db } from "../services/config";
 import {
   getStorage,
   ref,
@@ -22,46 +40,12 @@ import {
   getDownloadURL,
   getBlob,
 } from "firebase/storage";
-import * as ImagePicker from "expo-image-picker";
-
-const DATA = {
-  id: 1,
-  name: "Nước ngọt c2",
-  discription: "Thơm ngon mời bạn ăn nha, getgo, getgo,...",
-  location: "",
-  relationship: "Đối tác lo ship",
-  price: "20.000",
-  status: "",
-  shopaddress: "52 Bế văn đàn, an bình, dĩ an, bình dương",
-  shopSl: "14 sản phẩm",
-  shopname: "Tea 1998",
-  shopimage: require("../../assets/nuoc_c2.png"),
-  monAn1: require("../../assets/monAn1.png"),
-  txtChonMua: "CHỌN MUA",
-  txtsplq: "Sản phẩm cùng cửa hàng",
-
-  txtDis: "Thông tin sản phẩm",
-};
-//
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GetAllCate, GetCategoriesByIds } from "../services/store";
 
 // Navigation
-export default function AddCategoryFoodView({ navigation }) {
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity onPress={navigation.goBack}>
-          <AntDesign name="arrowleft" size={24} color="black" />
-        </TouchableOpacity>
-      ),
-
-      title: "Tạo danh mục",
-      headerTitleAlign: "center",
-      headerTitleStyle: {
-        fontSize: 15,
-      },
-    });
-  }, [navigation]);
-
+export default function EditInforStoreName({ navigation, route }) {
+  const { foodStore1} = route.params;
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("foodStoreID");
@@ -72,14 +56,11 @@ export default function AddCategoryFoodView({ navigation }) {
       console.log("ErrorError");
     }
   };
-  const [idFoodStore, setIdFoodStore] = useState("");
   const [foodStore, setFoodStore] = useState([]);
-  const [listCt, setListCt] = useState([]);
-  const [listCate, setListCate] = useState([]);
-  const [listFood, setListFood] = useState([]);
+  const [idFoodStore, setIdFoodStore] = useState("");
   useEffect(() => {
     getData();
-  }, [idFoodStore]);
+  }, []);
 
   useEffect(() => {
     if (idFoodStore !== "") {
@@ -98,6 +79,9 @@ export default function AddCategoryFoodView({ navigation }) {
   const foodStoreImage = foodStore.image;
   const foodStoreAddress = foodStore.address;
   const foodStorePhone = foodStore.phone;
+  // food
+  const [text, setText] = useState(foodStore1.name);
+  const [image, setImage] = useState(foodStore1.image);
 
   // load categories
   useEffect(() => {
@@ -110,79 +94,23 @@ export default function AddCategoryFoodView({ navigation }) {
       }
     }
   }, [foodStore.food_categories]);
-  // list cate
-  useEffect(() => {
-    let unsubscribe;
-    setListCate(null);
-    const getCat = async () => {
-      const catRef = collection(db, "categories");
-      const c = query(catRef);
-
-      const querySnapshot = await getDocs(c);
-      const listCate = [];
-      unsubscribe = onSnapshot(c, (querySnapshot) => {
-        setListCate(
-          querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-        );
-      });
-    };
-    getCat();
-    return unsubscribe;
-  }, []);
-
-  // list food of cate
-  useEffect(() => {
-    let unsubscribe;
-    setListFood(null);
-    const getFood = async () => {
-      const foodRef = collection(db, "foods");
-      const c = query(
-        foodRef,
-        where("category_Id", "==", "uHBXNbOrJgocBGCTAaA2")
-      );
-
-      const querySnapshot = await getDocs(c);
-      const listFood = [];
-      unsubscribe = onSnapshot(c, (querySnapshot) => {
-        setListFood(
-          querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-        );
-      });
-    };
-    getFood();
-    return unsubscribe;
-  }, []);
-
-  const [categoryId] = React.useState("");
-  const [category_Name, setCategoryName] = React.useState("");
-
+  console.log("ia", idFoodStore);
   const [namePathImage, setNamePathImage] = React.useState(null);
-  const [uploading, setUploading] = useState(false);
-
-  function create() {
+  function edit(text) {
     const storage = getStorage();
     getDownloadURL(ref(storage, namePathImage))
       .then((url) => {
         setImage(url);
-        addDoc(collection(db, "categories"), {
-          food_store_id: idFoodStore,
-          name: category_Name,
+        updateDoc(doc(db, "food_stores", idFoodStore), {
+          name: text,
           image: url,
         });
       })
       .catch((error) => {
         console.log(error);
       });
-    navigation.goBack("EditMenuView");
+    navigation.goBack("EditInforStore");
   }
-
-  const [image, setImage] = useState("");
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -193,6 +121,9 @@ export default function AddCategoryFoodView({ navigation }) {
       quality: 1,
     });
 
+    // if (!result.cancelled) {
+    //   setImage(result.uri);
+    // }
     if (!result.cancelled) {
       const storage = getStorage();
       // const id = Math.random().toString(36).substring(7);
@@ -225,6 +156,21 @@ export default function AddCategoryFoodView({ navigation }) {
     }
   };
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={navigation.goBack}>
+          <AntDesign name="arrowleft" size={24} color="black" />
+        </TouchableOpacity>
+      ),
+
+      title: "Chỉnh sửa thông tin cửa hảng",
+      headerTitleAlign: "center",
+      headerTitleStyle: {
+        fontSize: 15,
+      },
+    });
+  }, [navigation]);
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 0.85 }}>
@@ -240,7 +186,7 @@ export default function AddCategoryFoodView({ navigation }) {
           }}
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
-            <View style={{ paddingRight: 2 }}>
+            <View style={{ paddingRight: 10 }}>
               <View
                 style={{
                   borderRadius: 15,
@@ -253,12 +199,32 @@ export default function AddCategoryFoodView({ navigation }) {
               >
                 <TouchableOpacity onPress={pickImage}>
                   <View>
-                    {image && (
-                      <Image
-                        source={{ uri: image }}
-                        style={{ borderRadius: 15, width: "100%", height: 340 }}
-                      />
-                    )}
+                    {/* image2 */}
+                    {/* <View>
+                      {image && (
+                        <Image
+                          source={{ uri: image }}
+                          style={{
+                            borderRadius: 15,
+                            width: "100%",
+                            height: 340,
+                          }}
+                        />
+                      )}
+                    </View> */}
+                    {/* image1 */}
+                    <View>
+                      {image && (
+                        <Image
+                          source={{ uri: image }}
+                          style={{
+                            borderRadius: 15,
+                            width: "100%",
+                            height: 340,
+                          }}
+                        />
+                      )}
+                    </View>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -271,7 +237,7 @@ export default function AddCategoryFoodView({ navigation }) {
 
         <View style={{ paddingBottom: 10 }}></View>
 
-        {/* Tạo danh mục */}
+        {/* Tên quán */}
         <View
           style={{
             flex: 1,
@@ -282,7 +248,7 @@ export default function AddCategoryFoodView({ navigation }) {
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
             <View style={{ paddingBottom: 20 }}>
-              <Text style={{ fontWeight: "bold" }}>Tên danh mục</Text>
+              <Text style={{ fontWeight: "bold" }}>Tên quán</Text>
             </View>
 
             <View>
@@ -297,18 +263,13 @@ export default function AddCategoryFoodView({ navigation }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
-                  placeholder={"Nhập tên danh mục"}
-                  onChangeText={(category_Name) => {
-                    setCategoryName(category_Name);
-                  }}
-                  value={category_Name}
-                ></TextInput>
+                  onChangeText={(text) => setText(text)}
+                  value={text}
+                />
               </View>
             </View>
           </View>
         </View>
-
-        <View style={{ paddingBottom: 10 }}></View>
       </ScrollView>
       <View style={{ flex: 0.15 }}>
         <View
@@ -320,23 +281,24 @@ export default function AddCategoryFoodView({ navigation }) {
             width: "100%",
             borderTopColor: "#808080",
             borderTopWidth: 0.3,
-
             bottom: 0,
           }}
         >
           <View style={{ marginLeft: 10, marginRight: 10 }}>
             <TouchableOpacity
-              onPress={create}
               style={{
                 backgroundColor: "#E94730",
                 borderRadius: 15,
-                width: "98%",
+                width: "97%",
                 height: 50,
                 alignItems: "center",
                 justifyContent: "center",
               }}
+              onPress={() => {
+                edit(text);
+              }}
             >
-              <Text style={{ color: "#fff" }}>Tạo danh mục</Text>
+              <Text style={{ color: "#fff" }}>Lưu</Text>
             </TouchableOpacity>
           </View>
         </View>
