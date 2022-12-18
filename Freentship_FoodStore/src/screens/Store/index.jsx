@@ -77,8 +77,6 @@ export default function Store({ navigation, route }) {
     }
   }, [idFoodStore]);
 
-
-
   useEffect(() => {
     if (foodStore.opentime !== undefined) {
     }
@@ -171,9 +169,7 @@ export default function Store({ navigation, route }) {
               className="flex flex-row justify-between items-center"
               onPress={() => navigation.navigate("ReviewsOfStore")}
             >
-              <Text className="p-4 text-[#808080] text-base">
-                Đánh giá{" "}
-              </Text>
+              <Text className="p-4 text-[#808080] text-base">Đánh giá </Text>
               <View className="pr-4">
                 <AntDesign name="arrowright" size={24} color="black" />
               </View>
@@ -190,6 +186,16 @@ export default function Store({ navigation, route }) {
               <Text className="p-4 text-[#808080] text-base">
                 Chỉnh sửa menu{" "}
               </Text>
+              <View className="pr-4">
+                <AntDesign name="arrowright" size={24} color="black" />
+              </View>
+            </TouchableOpacity>
+            {/* Ngân hàng */}
+            <TouchableOpacity
+              className="flex flex-row justify-between items-center"
+              onPress={() => navigation.navigate("Bank")}
+            >
+              <Text className="p-4 text-[#808080] text-base">Ngân hàng </Text>
               <View className="pr-4">
                 <AntDesign name="arrowright" size={24} color="black" />
               </View>
@@ -287,6 +293,7 @@ export default function Store({ navigation, route }) {
             </Text>
           </View>
         </View>
+
         {/* Tao ma giam gia */}
         <View className="flex justify-center items-center h-20 mx-8">
           <TouchableOpacity className="flex-row justify-center items-center py-3 rounded-xl w-full bg-[#FF5733]">

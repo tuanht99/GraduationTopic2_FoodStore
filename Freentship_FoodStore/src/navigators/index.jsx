@@ -26,6 +26,8 @@ import { LoginScreen } from "../screens/LoginScreen";
 import { ConfirmOTP } from "../screens/ConfirmOTP";
 import { SignupScreen } from "../screens/SignupScreen";
 import { SignupPending } from "../screens/SignupPending";
+import Bank from "../screens/Bank"
+import StatusStore from "../screens/StatusStore";
 function Navigators() {
   return (
     <NavigationContainer>
@@ -76,7 +78,8 @@ function Navigators() {
         <Stack.Screen name="AllRating" component={AllRating} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="SignupPending" component={SignupPending} />
-       
+        <Stack.Screen name="Bank" component={Bank} />
+        <Stack.Screen name="StatusStore" component={StatusStore} />
       </Stack.Navigator>
     </NavigationContainer>
   );

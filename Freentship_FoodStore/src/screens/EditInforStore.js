@@ -33,6 +33,8 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StyleSheet,
+  Modal,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -42,7 +44,57 @@ import { Ionicons } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { GetAllCate, GetCategoriesByIds } from "../services/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { Switch } from "react-native";
+import { Pressable } from "react-native";
+// Styles
+const styles = StyleSheet.create({
+  centeredView: {
+    // justifyContent: "center",
+    alignItems: "center",
+    marginTop: 140,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: 300,
+    height: 370,
+    paddingBottom: 10,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+    paddingTop: 10,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+});
 export default function EditInforStore({ navigation, route }) {
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -59,7 +111,10 @@ export default function EditInforStore({ navigation, route }) {
       },
     });
   }, [navigation]);
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isEnabled, setIsEnabled] = React.useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  const modalConfirm = () => setModalVisible(true);
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("foodStoreID");
@@ -123,7 +178,7 @@ export default function EditInforStore({ navigation, route }) {
               onPress={() =>
                 navigation.navigate("EditInforStoreName", {
                   foodStore1: foodStore,
-                  user1: user
+                  user1: user,
                 })
               }
               className="flex-row"
@@ -205,7 +260,21 @@ export default function EditInforStore({ navigation, route }) {
             </Text>
           </View>
         </View>
-        <View className="h-40"></View>
+        <View style={{ paddingBottom: 10 }}></View>
+
+        
+
+        {/* đóng cửa hàng */}
+        <TouchableOpacity
+          className="flex flex-row justify-between items-center"
+          onPress={() => navigation.navigate("StatusStore")}
+        >
+          <Text className="p-4 text-[#808080] text-base">Đóng cửa hàng</Text>
+          <View className="pr-4">
+            <AntDesign name="arrowright" size={24} color="black" />
+          </View>
+        </TouchableOpacity>
+
       </ScrollView>
     </View>
   );
