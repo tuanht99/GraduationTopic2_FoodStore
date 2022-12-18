@@ -165,7 +165,7 @@ export default function Store({ navigation, route }) {
               onPress={() => navigation.navigate("ReviewsOfStore")}
             >
               <Text className="p-4 text-[#808080] text-base">
-                Đánh giá trên Loship{" "}
+                Đánh giá{" "}
               </Text>
               <View className="pr-4">
                 <AntDesign name="arrowright" size={24} color="black" />
