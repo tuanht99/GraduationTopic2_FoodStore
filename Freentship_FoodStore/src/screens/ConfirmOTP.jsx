@@ -69,7 +69,7 @@ export function ConfirmOTP({ route, navigation }) {
       )
       setVerificationId(verificationId)
       showMessage({
-        text: 'Verification code has been sent to your phone.',
+        text: 'Mã xác thực đã gửi đến điện thoại của bạn.',
       })
     } catch (err) {
       showMessage({ text: `Error: ${err.message}`, color: 'red' })
@@ -87,7 +87,7 @@ export function ConfirmOTP({ route, navigation }) {
         firebaseConfig={app.options}
         // attemptInvisibleVerification
       />
-      <Text style={{ marginTop: 20 }}>Enter Verification code</Text>
+      <Text style={{ marginTop: 20 }}>Nhập mã OTP</Text>
       <TextInput
         style={{ marginVertical: 10, fontSize: 17 }}
         // editable={!!verificationId}

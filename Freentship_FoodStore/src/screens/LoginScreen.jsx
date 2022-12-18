@@ -5,6 +5,7 @@ import {
   StatusBar,
   SafeAreaView,
   TouchableOpacity,
+  Image,
 } from 'react-native'
 import PhoneInput from 'react-native-phone-number-input'
 import React, { useEffect, useState, useRef } from 'react'
@@ -47,11 +48,17 @@ export function LoginScreen({ navigation }) {
       <StatusBar barStyle="dark-content" />
       <View style={styles.container}>
         <SafeAreaView style={styles.wrapper}>
+          <Image
+            source={require('../../assets/logo-store.png')}
+            style={{ width: 110, height: 110, marginBottom: 10 }}
+          ></Image>
           {showMessage && (
             <View style={styles.message}>
-              <Text>Value : {value}</Text>
-              <Text>Formatted Value : {formattedValue}</Text>
-              <Text>Valid : {valid ? 'true' : 'false'}</Text>
+              {!valid ? (
+                <Text style={{ color: 'red' }}>Nhập sai định dạng!</Text>
+              ) : (
+                setShowMessage(false)
+              )}
             </View>
           )}
           <PhoneInput
@@ -80,7 +87,7 @@ export function LoginScreen({ navigation }) {
               }
             }}
           >
-            <Text style={{ color: 'white' }}>Check</Text>
+            <Text style={{ color: 'white' }}>Đăng nhập</Text>
           </TouchableOpacity>
         </SafeAreaView>
       </View>
