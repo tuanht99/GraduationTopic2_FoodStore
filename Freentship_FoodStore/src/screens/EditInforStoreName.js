@@ -31,7 +31,7 @@ import * as ImagePicker from "expo-image-picker";
 import { db } from "../services/config";
 
 import { AntDesign } from "@expo/vector-icons";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 
 import {
   getStorage,
@@ -42,10 +42,11 @@ import {
 } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GetAllCate, GetCategoriesByIds } from "../services/store";
+import { TextInput } from "react-native";
 
 // Navigation
 export default function EditInforStoreName({ navigation, route }) {
-  const { foodStore1} = route.params;
+  const { foodStore1, user1 } = route.params;
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("foodStoreID");
@@ -58,6 +59,7 @@ export default function EditInforStoreName({ navigation, route }) {
   };
   const [foodStore, setFoodStore] = useState([]);
   const [idFoodStore, setIdFoodStore] = useState("");
+  const [user, setUser] = useState([]);
   useEffect(() => {
     getData();
   }, []);
@@ -66,6 +68,10 @@ export default function EditInforStoreName({ navigation, route }) {
     if (idFoodStore !== "") {
       const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
         setFoodStore(doc.data());
+      });
+
+      const us = onSnapshot(doc(db, "users", idFoodStore), (doc) => {
+        setUser(doc.data());
       });
     }
   }, [idFoodStore]);
@@ -82,6 +88,9 @@ export default function EditInforStoreName({ navigation, route }) {
   // food
   const [text, setText] = useState(foodStore1.name);
   const [image, setImage] = useState(foodStore1.image);
+  const [slogan, setSlogan] = useState(foodStore1.slogan);
+  const [address, setAddress] = useState(foodStore1.address);
+  const [phone, setPhone] = useState(user1.phone);
 
   // load categories
   useEffect(() => {
@@ -96,6 +105,7 @@ export default function EditInforStoreName({ navigation, route }) {
   }, [foodStore.food_categories]);
   console.log("ia", idFoodStore);
   const [namePathImage, setNamePathImage] = React.useState(null);
+
   function edit(text) {
     const storage = getStorage();
     getDownloadURL(ref(storage, namePathImage))
@@ -104,6 +114,9 @@ export default function EditInforStoreName({ navigation, route }) {
         updateDoc(doc(db, "food_stores", idFoodStore), {
           name: text,
           image: url,
+          slogan: slogan,
+          address: address,
+          phone: phone,
         });
       })
       .catch((error) => {
@@ -268,6 +281,111 @@ export default function EditInforStoreName({ navigation, route }) {
                 />
               </View>
             </View>
+          </View>
+        </View>
+
+        {/* Slogon */}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+        >
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <View style={{ paddingBottom: 20 }}>
+              <Text style={{ fontWeight: "bold" }}>Slogan</Text>
+            </View>
+
+            <View>
+              {/* // */}
+              <View style={{ marginRight: 10 }}>
+                <TextInput
+                  style={{
+                    height: 40,
+                    margin: 12,
+                    borderWidth: 1,
+                    padding: 10,
+                    borderColor: "#E94730",
+                    borderRadius: 5,
+                  }}
+                  onChangeText={(slogan) => setSlogan(slogan)}
+                  value={slogan}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Phone */}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+        >
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <View style={{ paddingBottom: 20 }}>
+              <Text style={{ fontWeight: "bold" }}>Số điện thoại</Text>
+            </View>
+
+            <View>
+              {/* // */}
+              <View style={{ marginRight: 10 }}>
+                <TextInput
+                  style={{
+                    height: 40,
+                    margin: 12,
+                    borderWidth: 1,
+                    padding: 10,
+                    borderColor: "#E94730",
+                    borderRadius: 5,
+                  }}
+                  editable={false}
+                  keyboardType="numeric"
+                  onChangeText={(phone) => setPhone(phone)}
+                  value={phone}
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* address */}
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+        >
+          <View style={{ marginLeft: 10, marginRight: 10 }}>
+            <View style={{ paddingBottom: 20 }}>
+              <Text style={{ fontWeight: "bold" }}>Address</Text>
+            </View>
+
+            <TouchableOpacity>
+              {/* // */}
+              <View style={{ marginRight: 10 }}>
+                <TextInput
+                  style={{
+                    height: 40,
+                    margin: 12,
+                    borderWidth: 1,
+                    padding: 10,
+                    borderColor: "#E94730",
+                    borderRadius: 5,
+                  }}
+                  editable={false}
+                  onChangeText={(address) => setAddress(address)}
+                  value={address}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

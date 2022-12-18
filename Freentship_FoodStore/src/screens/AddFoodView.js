@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Button, Image, Text, TouchableOpacity, View} from "react-native";
 
 import {AntDesign} from "@expo/vector-icons";
@@ -6,9 +6,10 @@ import {ScrollView, TextInput} from "react-native-gesture-handler";
 
 import * as ImagePicker from 'expo-image-picker';
 
-import {addDoc, collection} from "firebase/firestore";
+import {addDoc, collection, onSnapshot, doc} from "firebase/firestore";
 import {db} from '../services/config'
 import {getStorage, ref, uploadBytes, getDownloadURL, getBlob} from "firebase/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const DATA = {
@@ -51,6 +52,37 @@ export default function AddCategoryFoodView({ navigation, route }) {
       },
     });
   }, [navigation]);
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("foodStoreID");
+      if (value !== null) {
+        setIdFoodStore(value);
+      }
+    } catch (e) {
+      console.log("ErrorError");
+    }
+  };
+  const [idFoodStore, setIdFoodStore] = useState("");
+  const [foodStore, setFoodStore] = useState([]);
+  const [listCt, setListCt] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (idFoodStore !== "") {
+      const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
+        setFoodStore(doc.data());
+      });
+    }
+  }, [idFoodStore]);
+
+  useEffect(() => {
+    if (foodStore.opentime !== undefined) {
+    }
+  }, [foodStore]);
+
 
   const [namePathImage, setNamePathImage] = React.useState(null);
   const [category_Name, setCategoryName] = React.useState("");
@@ -73,7 +105,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
         price:food_Price,
         description: food_Description,
         image: url,
-        food_store_id: '7T5uG3Si5NHioADgam1Z',
+        food_store_id: idFoodStore,
         discount: 0,
         status: 1
       });
@@ -220,6 +252,7 @@ export default function AddCategoryFoodView({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
+                  editable={false}
                   onChangeText={(text) => setText(text)}
                   value={text}
                 ></TextInput>

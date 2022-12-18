@@ -8,6 +8,7 @@ import {
   Switch,
   Platform,
   Button,
+  TextInput,
 } from "react-native";
 
 import {
@@ -31,7 +32,7 @@ import * as ImagePicker from "expo-image-picker";
 import { db } from "../services/config";
 
 import { AntDesign } from "@expo/vector-icons";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { ScrollView,} from "react-native-gesture-handler";
 
 const DATA = {
   id: 1,
@@ -239,6 +240,7 @@ export default function EditFoodView({ navigation, route }) {
                     borderColor: "#E94730",
                     borderRadius: 5,
                   }}
+                  editable={false}
                   onChangeText={(text) => setText(text)}
                   value={text}
                 ></TextInput>

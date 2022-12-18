@@ -59,6 +59,7 @@ export default function Store({ navigation, route }) {
   const [idFoodStore, setIdFoodStore] = useState("");
   const [foodStore, setFoodStore] = useState([]);
   const [listCt, setListCt] = useState([]);
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
     getData();
@@ -69,8 +70,14 @@ export default function Store({ navigation, route }) {
       const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
         setFoodStore(doc.data());
       });
+
+      const us = onSnapshot(doc(db, "users", idFoodStore), (doc) => {
+        setUser(doc.data());
+      });
     }
   }, [idFoodStore]);
+
+
 
   useEffect(() => {
     if (foodStore.opentime !== undefined) {
@@ -244,7 +251,7 @@ export default function Store({ navigation, route }) {
             <Ionicons name="phone-portrait-outline" size={24} color="black" />
             <Text className="ml-2 text-gray-600 text-base">
               {"0"}
-              {foodStorePhone}
+              {user.phone}
             </Text>
           </View>
           {/* gio mo cua */}

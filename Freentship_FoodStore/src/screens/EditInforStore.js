@@ -73,7 +73,7 @@ export default function EditInforStore({ navigation, route }) {
   const [idFoodStore, setIdFoodStore] = useState("");
   const [foodStore, setFoodStore] = useState([]);
   const [listCt, setListCt] = useState([]);
-
+  const [user, setUser] = useState([]);
   useEffect(() => {
     getData();
   }, []);
@@ -82,6 +82,10 @@ export default function EditInforStore({ navigation, route }) {
     if (idFoodStore !== "") {
       const fs = onSnapshot(doc(db, "food_stores", idFoodStore), (doc) => {
         setFoodStore(doc.data());
+      });
+
+      const us = onSnapshot(doc(db, "users", idFoodStore), (doc) => {
+        setUser(doc.data());
       });
     }
   }, [idFoodStore]);
@@ -119,6 +123,7 @@ export default function EditInforStore({ navigation, route }) {
               onPress={() =>
                 navigation.navigate("EditInforStoreName", {
                   foodStore1: foodStore,
+                  user1: user
                 })
               }
               className="flex-row"
@@ -145,7 +150,7 @@ export default function EditInforStore({ navigation, route }) {
             <Ionicons name="phone-portrait-outline" size={24} color="black" />
             <Text className="ml-2 text-gray-600 text-base">
               {"0"}
-              {foodStorePhone}
+              {user.phone}
             </Text>
           </View>
         </View>

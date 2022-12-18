@@ -8,29 +8,28 @@ import Store from "../screens/Store";
 import BestSeller from "../screens/BestSeller";
 const Stack = createNativeStackNavigator();
 
-import EditMenuView from "../screens/EditMenuView"
-import AddCategoryFoodView from "../screens/AddCategoryFoodView"
-import EditCategoryFoodView from "../screens/EditCategoryFoodView"
-import AddFoodView from "../screens/AddFoodView"
-import EditFoodView from "../screens/EditFoodView"
-import ShowFullFoodView from "../screens/ShowFullFoodView"
+import EditMenuView from "../screens/EditMenuView";
+import AddCategoryFoodView from "../screens/AddCategoryFoodView";
+import EditCategoryFoodView from "../screens/EditCategoryFoodView";
+import AddFoodView from "../screens/AddFoodView";
+import EditFoodView from "../screens/EditFoodView";
+import ShowFullFoodView from "../screens/ShowFullFoodView";
 import EditInforStore from "../screens/EditInforStore";
-import EditInforStoreName from "../screens/EditInforStoreName"
-import EditInforStoreCate from "../screens/EditInforStoreCate"
-import EditInforStoreTime from "../screens/EditInforStoreTime"
-import ReviewsOfStore from "../screens/ReviewsOfStore"
-import QuestionCustomer from "../screens/QuestionCustomer"
-import PolicySellerView from "../screens/PolicySellerView"
+import EditInforStoreName from "../screens/EditInforStoreName";
+import EditInforStoreCate from "../screens/EditInforStoreCate";
+import EditInforStoreTime from "../screens/EditInforStoreTime";
+import ReviewsOfStore from "../screens/ReviewsOfStore";
+import QuestionCustomer from "../screens/QuestionCustomer";
+import PolicySellerView from "../screens/PolicySellerView";
 import AllRating from "../screens/AllRating";
 import { LoginScreen } from "../screens/LoginScreen";
 import { ConfirmOTP } from "../screens/ConfirmOTP";
-
+import { SignupScreen } from "../screens/SignupScreen";
+import { SignupPending } from "../screens/SignupPending";
 function Navigators() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-       initialRouteName="LoginScreen"
-      >
+      <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen
           options={{ headerShown: false }}
           name="BottomTab"
@@ -41,21 +40,43 @@ function Navigators() {
         <Stack.Screen name="Store" component={Store} />
         <Stack.Screen name="BestSeller" component={BestSeller} />
         <Stack.Screen name="ConfirmOTP" component={ConfirmOTP} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{ headerShown: false }} />
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="EditMenuView" component={EditMenuView} />
-        <Stack.Screen name="AddCategoryFoodView" component={AddCategoryFoodView} />
-        <Stack.Screen name="EditCategoryFoodView" component={EditCategoryFoodView} />
+        <Stack.Screen
+          name="AddCategoryFoodView"
+          component={AddCategoryFoodView}
+        />
+        <Stack.Screen
+          name="EditCategoryFoodView"
+          component={EditCategoryFoodView}
+        />
         <Stack.Screen name="AddFoodView" component={AddFoodView} />
         <Stack.Screen name="EditFoodView" component={EditFoodView} />
         <Stack.Screen name="ShowFullFoodView" component={ShowFullFoodView} />
-        <Stack.Screen name="EditInforStore" component={EditInforStore}/>
-        <Stack.Screen name="EditInforStoreName" component={EditInforStoreName}/>
-        <Stack.Screen name="EditInforStoreCate" component={EditInforStoreCate}/>
-        <Stack.Screen name="EditInforStoreTime" component={EditInforStoreTime}/>
-        <Stack.Screen name="ReviewsOfStore" component={ReviewsOfStore}/>
-        <Stack.Screen name="QuestionCustomer" component={QuestionCustomer}/>
-        <Stack.Screen name="PolicySellerView" component={PolicySellerView}/>
-        <Stack.Screen name="AllRating" component={AllRating}/>
+        <Stack.Screen name="EditInforStore" component={EditInforStore} />
+        <Stack.Screen
+          name="EditInforStoreName"
+          component={EditInforStoreName}
+        />
+        <Stack.Screen
+          name="EditInforStoreCate"
+          component={EditInforStoreCate}
+        />
+        <Stack.Screen
+          name="EditInforStoreTime"
+          component={EditInforStoreTime}
+        />
+        <Stack.Screen name="ReviewsOfStore" component={ReviewsOfStore} />
+        <Stack.Screen name="QuestionCustomer" component={QuestionCustomer} />
+        <Stack.Screen name="PolicySellerView" component={PolicySellerView} />
+        <Stack.Screen name="AllRating" component={AllRating} />
+        <Stack.Screen name="SignupScreen" component={SignupScreen} />
+        <Stack.Screen name="SignupPending" component={SignupPending} />
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

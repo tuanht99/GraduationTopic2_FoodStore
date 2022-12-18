@@ -7,35 +7,37 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { doc, setDoc } from 'firebase/firestore'
 import { db } from '../services/config'
 import { async } from '@firebase/util'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../services/config'
 
 export function SignupScreen({ navigation }) {
-  const [selectedSex, setSelectedSex] = useState()
+  const [selectedSex, setSelectedSex] = useState("Nam")
   const [name, setName] = useState()
   const [phone, setPhone] = useState()
   const [address, setAddress] = useState()
   const [citizenID, setcitizenID] = useState()
-  const [userID, setUserID] = useState()
+  const [authUser, setAuthUser] = useState()
 
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('foodStoreID')
-      if (value !== null) {
-        setUserID(value)
+  useEffect(() => {
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        setAuthUser(user)
+      } else {
+        // User is signed out
+        // ...
       }
-    } catch (e) {
-      // error reading value
-    }
-  }
-
+    })
+  }, [])
+ 
   const signUp = async () => {
-    await setDoc(doc(db, 'users', userID + ''), {
+    await setDoc(doc(db, 'users', authUser.uid + ''), {
       name: name,
       phone: phone,
       citizenID: citizenID,
       sex: selectedSex,
     })
 
-    await setDoc(doc(db, 'food_stores', userID + ''), {
+    await setDoc(doc(db, 'food_stores', authUser.uid + ''), {
       isActivated: false,
       status: 0,
       address: '',
@@ -43,9 +45,6 @@ export function SignupScreen({ navigation }) {
     })
   }
 
-  useEffect(() => {
-    getData()
-  }, [])
 
   return (
     <SafeAreaView style={{ padding: 16 }}>
