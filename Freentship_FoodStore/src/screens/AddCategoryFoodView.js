@@ -20,7 +20,6 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
-  getBlob,
 } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 

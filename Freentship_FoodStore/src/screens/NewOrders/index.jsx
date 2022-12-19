@@ -12,6 +12,7 @@ import {
   GetShipper,
   GetFoods,
   UpdateStatus,
+  UpdateOrderConfirm,
 } from "../../services";
 import formatCash from "../../components/FormatCash";
 
@@ -25,8 +26,8 @@ const NewOrders = () => {
   const [isActiveOrders, setActiveOrders] = useState("");
   const [idFoodStore, setIdFoodStore] = useState("");
 
-  console.log('orderDetailt' , orderDetailt);
-  
+  console.log("isActiveOrders", orderDetailt);
+
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem("foodStoreID");
@@ -40,7 +41,6 @@ const NewOrders = () => {
   useEffect(() => {
     getData();
   }, []);
-
 
   useEffect(() => {
     const q = query(
@@ -96,13 +96,6 @@ const NewOrders = () => {
     }
   }, [orders]);
 
-  const Rose = (money) => {
-    return (money * 20) / 100;
-  };
-
-  const Total = (a, b) => {
-    return a - b;
-  };
 
   const OrderInfo = () => (
     <ScrollView className="z-10  mb-[500px]">
@@ -162,8 +155,8 @@ const NewOrders = () => {
               </View>
 
               <View className="flex-col w-2/3">
-                {orderDetailt.foods.map((f) => (
-                  <Text className="text-base font-bold ">{f[1].name}</Text>
+                {orderDetailt.foods.map((f , index) => (
+                  <Text key={index} className="text-base font-bold ">{f[1].name}</Text>
                   // <Text className="text-base font-bold text-red-600"></Text>
                 ))}
               </View>
@@ -173,27 +166,16 @@ const NewOrders = () => {
       </View>
       <View className="h-auto p-3 bg-[#FFFFCC]">
         <View className="flex-row justify-between">
-          <Text className="text-[15px] text-[#777777]">Giá tiền:</Text>
+          <Text className="text-[15px] text-[#777777]">Tiền cọc:</Text>
           <Text className="text-base font-bold text-red-600">
-            {formatCash(orderDetailt.order.total_food + "")}đ
+            {formatCash(orderDetailt.order.deposit + "")}đ
           </Text>
         </View>
-        <View className="flex-row justify-between">
-          <Text className="text-[15px] text-[#777777]">Hoa hồng(20%):</Text>
-          <Text className="text-base font-bold text-red-600">
-            - {formatCash(Rose(orderDetailt.order.total_food) + "")}đ
-          </Text>
-        </View>
+
         <View className="flex-row justify-between border-y border-[#777777] py-2 my-1">
           <Text className="text-[15px] text-[#777777]">Tổng:</Text>
           <Text className="text-base font-bold text-red-600">
-            {formatCash(
-              Total(
-                orderDetailt.order.total_food,
-                Rose(orderDetailt.order.total_food)
-              ) + ""
-            )}
-            đ
+            {formatCash(orderDetailt.order.totalPrice + "")}đ
           </Text>
         </View>
         <View className="flex-row justify-between">
@@ -208,6 +190,19 @@ const NewOrders = () => {
           công
         </Text>
       </View>
+      {orderDetailt.order.status === 3 ? <TouchableOpacity
+        onPress={() => UpdateOrderConfirm(isActiveOrders)}
+        className="bg-[#0099FF] flex justify-center items-center px-5 py-3 m-3 rounded-md"
+      >
+        <Text className="font-bold text-white">Xác nhận đơn hàng</Text>
+      </TouchableOpacity> : <TouchableOpacity
+        disabled
+        className="bg-[#c2c8cc] flex justify-center items-center px-5 py-3 m-3 rounded-md"
+      >
+        <Text className="font-bold text-white">Xác nhận đơn hàng</Text>
+      </TouchableOpacity>}
+      
+
       <TouchableOpacity
         onPress={() => UpdateStatus(isActiveOrders)}
         className="bg-[#0099FF] flex justify-center items-center px-5 py-3 m-3 rounded-md"
@@ -256,7 +251,7 @@ const NewOrders = () => {
 
           let status;
 
-          if (order.info.status === 3) {
+          if (order.info.status === 3 || order.info.status === 1) {
             status = newOrd;
             return (
               <OrderCard
@@ -270,7 +265,7 @@ const NewOrders = () => {
             );
           }
 
-          if (order.info.status === 4) {
+          if (order.info.status === 4 || order.info.status === 6) {
             status = successOrd;
             return (
               <OrderCard

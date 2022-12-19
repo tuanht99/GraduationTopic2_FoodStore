@@ -1,7 +1,6 @@
 import { db } from "../services";
 import {
   collection,
-  documentId ,
   updateDoc,
   query,
   doc,
@@ -12,7 +11,7 @@ import {
 export async function GetNewOrder(id) {
   const q = query(
     collection(db, "orders"),
-    where("food_store_id", "==",`${id}`)
+    where("food_store_id", "==", `${id}`)
     // where("status", "==", 3)
   );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -39,5 +38,13 @@ export async function UpdateStatus(id) {
   // Set the "capital" field of the city 'DC'
   await updateDoc(washingtonRef, {
     status: 4,
+  });
+}
+
+export async function UpdateOrderConfirm(id) {
+  const washingtonRef = doc(db, "orders", `${id}`);
+  // Set the "capital" field of the city 'DC'
+  await updateDoc(washingtonRef, {
+    status: 1,
   });
 }
